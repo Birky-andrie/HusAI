@@ -1,0 +1,8 @@
+node_modules/
+.env
+dist/
+backend/logs/
+desktop/renderer/
+desktop/out/
+*.log
+.DS_Store

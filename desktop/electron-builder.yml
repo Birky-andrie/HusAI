@@ -1,0 +1,22 @@
+appId: app.husai.alpha
+productName: HusAI
+directories:
+  output: out
+files:
+  - main.js
+  - preload.js
+  - renderer/**
+
+win:
+  target: nsis
+  # Unsigned for the alpha — testers click SmartScreen "More info" -> "Run anyway".
+
+mac:
+  target: dmg
+  category: public.app-category.productivity
+  # Unsigned for the alpha (no $99/yr Apple Developer Program) — testers
+  # right-click -> Open, or run: xattr -cr /Applications/HusAI.app
+  identity: null
+  extendInfo:
+    # Without this, macOS silently denies mic access with no visible error.
+    NSMicrophoneUsageDescription: 'HusAI listens to your call audio to transcribe it and coach you in real time. Audio is processed for coaching only.'

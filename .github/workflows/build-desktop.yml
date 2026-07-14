@@ -1,0 +1,51 @@
+name: Build desktop apps
+
+on:
+  workflow_dispatch:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        include:
+          - os: windows-latest
+            build_cmd: dist:win
+            artifact_name: HusAI-windows
+            artifact_path: desktop/out/*.exe
+          - os: macos-latest
+            build_cmd: dist:mac
+            artifact_name: HusAI-macos
+            artifact_path: desktop/out/*.dmg
+    runs-on: ${{ matrix.os }}
+    env:
+      # Alpha builds are unsigned — stop electron-builder looking for certificates.
+      CSC_IDENTITY_AUTO_DISCOVERY: 'false'
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Build frontend
+        working-directory: frontend
+        env:
+          # Set this repository variable to your deployed Render/Railway backend URL.
+          VITE_API_BASE_URL: ${{ vars.VITE_API_BASE_URL }}
+        run: |
+          npm ci
+          npm run build
+
+      - name: Build desktop app
+        working-directory: desktop
+        run: |
+          npm ci
+          npm run ${{ matrix.build_cmd }}
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.artifact_name }}
+          path: ${{ matrix.artifact_path }}

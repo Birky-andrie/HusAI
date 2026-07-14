@@ -1,0 +1,41 @@
+// Phase 0 schema: users + settings only. Meeting/Conversation/Review/Training
+// entities land with their phases (see the migration plan).
+//
+// Portability rule: no enums, no provider-specific types — this schema must work
+// unchanged on SQLite (local dev) and Postgres (deploy, e.g. Neon). Role-like
+// fields are strings validated in application code.
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+model User {
+  id           String        @id @default(cuid())
+  email        String        @unique
+  passwordHash String
+  displayName  String?
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  settings     UserSettings?
+}
+
+model UserSettings {
+  id     String @id @default(cuid())
+  userId String @unique
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // Days conversation transcripts are kept before the cleanup job deletes them.
+  // Reviews and progress metrics are never auto-deleted.
+  transcriptRetentionDays Int @default(30)
+
+  // Seconds of post-client-turn silence before a Lifeline fires (Phase 2).
+  lifelinePauseSeconds Float @default(1.5)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}

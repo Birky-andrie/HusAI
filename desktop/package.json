@@ -1,0 +1,19 @@
+{
+  "name": "husai-desktop",
+  "version": "0.1.0",
+  "private": true,
+  "description": "HusAI — live call coach for VAs (desktop shell)",
+  "main": "main.js",
+  "author": "HusAI Team",
+  "scripts": {
+    "dev": "cross-env HUSAI_DEV_URL=http://localhost:5173 electron .",
+    "copy-renderer": "node copy-renderer.js",
+    "dist:win": "npm run copy-renderer && electron-builder --win",
+    "dist:mac": "npm run copy-renderer && electron-builder --mac"
+  },
+  "devDependencies": {
+    "cross-env": "^7.0.3",
+    "electron": "^33.2.0",
+    "electron-builder": "^25.1.8"
+  }
+}
