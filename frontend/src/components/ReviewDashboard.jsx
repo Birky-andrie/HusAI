@@ -1,4 +1,44 @@
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { api } from '../lib/api.js';
+
+function ScoreStrip({ overallScore, scores }) {
+  if (!scores) return null;
+  const items = [
+    ['Overall', overallScore],
+    ['Confidence', scores.confidence],
+    ['Clarity', scores.clarity],
+    ['Conciseness', scores.conciseness],
+    ['Professionalism', scores.professionalism],
+  ];
+  return (
+    <div className="score-strip">
+      {items.map(([label, value]) => (
+        <div className={`score-tile${label === 'Overall' ? ' overall' : ''}`} key={label}>
+          <span className="score-value">{value ?? '—'}</span>
+          <span className="score-label">{label}</span>
+        </div>
+      ))}
+    </div>
+  );
+}
+
 export default function ReviewDashboard({ review, loading, error, onRetry, onClose }) {
+  const navigate = useNavigate();
+  const [startingPractice, setStartingPractice] = useState(false);
+
+  const startPractice = async () => {
+    if (!review?.id || startingPractice) return;
+    setStartingPractice(true);
+    try {
+      const { session } = await api.post('/api/practice/sessions', { reviewId: review.id });
+      navigate(`/practice/${session.id}`);
+    } catch (err) {
+      console.warn('practice start failed:', err.message);
+      setStartingPractice(false);
+    }
+  };
+
   if (loading) {
     return (
       <div className="review-panel">
@@ -35,6 +75,8 @@ export default function ReviewDashboard({ review, loading, error, onRetry, onClo
         </button>
       </div>
 
+      <ScoreStrip overallScore={review.overallScore} scores={review.scores} />
+
       <h3>What we noticed</h3>
       <div className="insight-list">
         {review.insights.map((insight, i) => (
@@ -56,6 +98,14 @@ export default function ReviewDashboard({ review, loading, error, onRetry, onClo
           </div>
         ))}
       </div>
+
+      {review.id && (
+        <div className="review-actions">
+          <button className="primary" onClick={startPractice} disabled={startingPractice}>
+            {startingPractice ? 'Setting up your roleplay…' : '🎯 Practice these patterns now'}
+          </button>
+        </div>
+      )}
     </div>
   );
 }

@@ -7,6 +7,9 @@ import transcribeRouter from './modules/transcribe/routes.js';
 import reviewRouter from './modules/review/routes.js';
 import authRouter from './modules/auth/routes.js';
 import usersRouter from './modules/users/routes.js';
+import meetingsRouter from './modules/meetings/routes.js';
+import practiceRouter from './modules/practice/routes.js';
+import progressRouter from './modules/progress/routes.js';
 import { quotaStatus } from './middleware/quotaGuard.js';
 import { attachWsHub, connectedClientCount } from './ws/hub.js';
 
@@ -31,7 +34,10 @@ app.use('/api/lifeline', lifelineRouter);
 app.use('/api/transcribe', transcribeRouter);
 app.use('/api/review', reviewRouter);
 app.use('/api/auth', authRouter);
-app.use('/api', usersRouter); // GET /api/me
+app.use('/api', usersRouter); // /api/me + settings + providers
+app.use('/api/meetings', meetingsRouter);
+app.use('/api/practice', practiceRouter);
+app.use('/api/progress', progressRouter);
 
 const server = http.createServer(app);
 attachWsHub(server);

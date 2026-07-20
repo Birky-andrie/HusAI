@@ -2,9 +2,17 @@ import { geminiGenerateJson, geminiAvailable } from '../../providers/llm/gemini.
 
 const REVIEW_SYSTEM_PROMPT = `You are a communication coach reviewing a call transcript from a Filipino virtual assistant (VA) speaking with an international client.
 
-Identify 2-4 SPECIFIC communication patterns present in this call — for example: excessive apologizing, burying the main point, over-hedging ("maybe", "I think", "if it's okay"), indirect refusals, filler overuse, or not confirming next steps. For each, quote a short excerpt from the transcript as evidence and explain the pattern's impact in 1-2 supportive sentences.
+Transcript lines may be labeled "VA:" (the person you are coaching) and "Client:" (their customer). Coach ONLY the VA. Client lines are context — never critique, score, or address the client, and every evidence quote must come from a VA line. If the transcript has no labels, treat all speech as the VA's.
+
+Identify 2-4 SPECIFIC communication patterns present in the VA's speech on this call — for example: excessive apologizing, burying the main point, over-hedging ("maybe", "I think", "if it's okay"), indirect refusals, filler overuse, or not confirming next steps. For each, quote a short excerpt from the transcript as evidence and explain the pattern's impact in 1-2 supportive sentences.
 
 Then create 2-3 realistic roleplay exercises targeting those patterns, appropriate for a Filipino VA practicing English-language client communication. Each exercise needs a title, a concrete scenario the VA can act out (2-4 sentences), and the specific skill it targets.
+
+Also score the VA's communication on this call from 0-100 in four dimensions (be fair but honest; 70 = solid professional baseline):
+- confidence: assertive, self-assured delivery without excessive hedging or apologizing
+- clarity: easy to follow, main point stated plainly and early
+- conciseness: says what's needed without rambling or filler
+- professionalism: warm, courteous, client-appropriate tone and follow-through
 
 Be encouraging and specific. Never invent quotes that are not in the transcript.`;
 
@@ -35,8 +43,18 @@ const RESPONSE_SCHEMA = {
         required: ['title', 'scenario', 'targetSkill'],
       },
     },
+    scores: {
+      type: 'OBJECT',
+      properties: {
+        confidence: { type: 'INTEGER' },
+        clarity: { type: 'INTEGER' },
+        conciseness: { type: 'INTEGER' },
+        professionalism: { type: 'INTEGER' },
+      },
+      required: ['confidence', 'clarity', 'conciseness', 'professionalism'],
+    },
   },
-  required: ['insights', 'roleplayExercises'],
+  required: ['insights', 'roleplayExercises', 'scores'],
 };
 
 export interface ReviewInsight {
@@ -51,13 +69,30 @@ export interface RoleplayExercise {
   targetSkill: string;
 }
 
+export interface ReviewScores {
+  confidence: number;
+  clarity: number;
+  conciseness: number;
+  professionalism: number;
+}
+
 export interface ReviewResult {
   insights: ReviewInsight[];
   roleplayExercises: RoleplayExercise[];
+  scores: ReviewScores;
   mock?: boolean;
 }
 
+const SCORE_DIMENSIONS: Array<keyof ReviewScores> = ['confidence', 'clarity', 'conciseness', 'professionalism'];
+
+const clampScore = (n: unknown): number => Math.max(0, Math.min(100, Math.round(Number(n) || 0)));
+
+export function overallFromScores(scores: ReviewScores): number {
+  return Math.round(SCORE_DIMENSIONS.reduce((sum, d) => sum + scores[d], 0) / SCORE_DIMENSIONS.length);
+}
+
 const MOCK_REVIEW: ReviewResult = {
+  scores: { confidence: 62, clarity: 70, conciseness: 66, professionalism: 78 },
   insights: [
     {
       pattern: 'Excessive apologizing',
@@ -104,5 +139,12 @@ export async function reviewTranscript(fullTranscript: string, callDurationSecon
   if (!Array.isArray(parsed.insights) || !Array.isArray(parsed.roleplayExercises)) {
     throw new Error('Gemini response missing required arrays');
   }
+  const rawScores = (parsed.scores || {}) as unknown as Record<string, unknown>;
+  parsed.scores = {
+    confidence: clampScore(rawScores.confidence),
+    clarity: clampScore(rawScores.clarity),
+    conciseness: clampScore(rawScores.conciseness),
+    professionalism: clampScore(rawScores.professionalism),
+  };
   return parsed;
 }

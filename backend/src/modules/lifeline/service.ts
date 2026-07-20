@@ -1,6 +1,6 @@
 import { groqChatJson, groqChatAvailable } from '../../providers/llm/groqChat.js';
 
-const LIFELINE_SYSTEM_PROMPT = `You are a real-time call coach for Filipino virtual assistants (VAs) on live phone calls with international (mostly US/UK/AU) clients. The client has gone silent. Based on the recent transcript, suggest exactly 3 short things the VA could say RIGHT NOW to keep the call moving.
+const LIFELINE_SYSTEM_PROMPT = `You are a real-time call coach for Filipino virtual assistants (VAs) on live phone calls with international (mostly US/UK/AU) clients. The conversation has paused and it is the VA's turn to speak. Transcript lines may be labeled "VA:" and "Client:" — pay closest attention to the client's last line; that is usually what the VA is stuck responding to. Suggest exactly 3 short things the VA could say RIGHT NOW to keep the call moving.
 
 Rules:
 - Each suggestion is ONE sentence the VA can say verbatim, under 15 words.

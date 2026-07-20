@@ -15,13 +15,122 @@ datasource db {
 }
 
 model User {
-  id           String        @id @default(cuid())
-  email        String        @unique
-  passwordHash String
-  displayName  String?
-  createdAt    DateTime      @default(now())
-  updatedAt    DateTime      @updatedAt
-  settings     UserSettings?
+  id              String        @id @default(cuid())
+  email           String        @unique
+  // Empty string for OAuth-only accounts (no password sign-in until they set one).
+  passwordHash    String
+  displayName     String?
+  emailVerifiedAt DateTime?
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+  settings        UserSettings?
+  oauthAccounts   OAuthAccount[]
+  refreshTokens   RefreshToken[]
+  actionTokens    ActionToken[]
+  meetings        Meeting[]
+  reviews         Review[]
+  practiceSessions PracticeSession[]
+  progressMetrics ProgressMetric[]
+}
+
+model OAuthAccount {
+  id                String   @id @default(cuid())
+  userId            String
+  user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  provider          String // 'google' | 'microsoft'
+  providerAccountId String
+  email             String
+  createdAt         DateTime @default(now())
+
+  @@unique([provider, providerAccountId])
+}
+
+model RefreshToken {
+  id        String    @id @default(cuid())
+  userId    String
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tokenHash String    @unique // sha256 — raw token never touches the database
+  expiresAt DateTime
+  rotatedAt DateTime? // set when consumed; a rotated token presented again = reuse, revoke it
+  createdAt DateTime  @default(now())
+}
+
+model ActionToken {
+  id        String    @id @default(cuid())
+  userId    String
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  type      String // 'verify-email' | 'reset-password'
+  tokenHash String    @unique
+  expiresAt DateTime
+  usedAt    DateTime?
+  createdAt DateTime  @default(now())
+}
+
+model Meeting {
+  id              String   @id @default(cuid())
+  userId          String
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  startedAt       DateTime
+  durationSeconds Int
+  platform        String // 'web' | 'desktop'
+  transcript      String // "VA:"/"Client:"-labeled lines
+  createdAt       DateTime @default(now())
+  review          Review?
+}
+
+model Review {
+  id            String   @id @default(cuid())
+  meetingId     String   @unique
+  meeting       Meeting  @relation(fields: [meetingId], references: [id], onDelete: Cascade)
+  userId        String
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  overallScore  Int
+  insightsJson  String // JSON as String: Prisma has no Json type on SQLite
+  exercisesJson String
+  scoresJson    String
+  metricsJson   String
+  createdAt     DateTime @default(now())
+  practiceSessions PracticeSession[]
+}
+
+model PracticeSession {
+  id               String    @id @default(cuid())
+  userId           String
+  user             User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  reviewId         String?
+  review           Review?   @relation(fields: [reviewId], references: [id], onDelete: SetNull)
+  title            String
+  scenario         String
+  targetSkillsJson String
+  difficulty       Int // 1-5
+  status           String    @default("active") // 'active' | 'completed'
+  summaryJson      String?
+  createdAt        DateTime  @default(now())
+  endedAt          DateTime?
+  turns            PracticeTurn[]
+}
+
+model PracticeTurn {
+  id           String          @id @default(cuid())
+  sessionId    String
+  session      PracticeSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  role         String // 'client' | 'va'
+  text         String
+  feedbackJson String?
+  createdAt    DateTime        @default(now())
+}
+
+model ProgressMetric {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  source    String // 'call' | 'practice'
+  refId     String // meetingId or practiceSessionId
+  dimension String // 'overall' | 'confidence' | 'clarity' | ...
+  value     Float
+  createdAt DateTime @default(now())
+
+  @@index([userId, dimension, createdAt])
 }
 
 model UserSettings {
@@ -35,6 +144,9 @@ model UserSettings {
 
   // Seconds of post-client-turn silence before a Lifeline fires (Phase 2).
   lifelinePauseSeconds Float @default(1.5)
+
+  // JSON as String (SQLite): { emailReviewReady?: boolean, emailPracticeReminders?: boolean }
+  notificationPrefsJson String?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

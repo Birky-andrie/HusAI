@@ -1,5 +1,14 @@
-const { app, BrowserWindow, session } = require('electron');
+const { app, BrowserWindow, ipcMain, session } = require('electron');
 const path = require('path');
+
+// During an active call the renderer asks the window to float above other
+// apps (Zoom, browsers, CRMs) so the coach stays visible without Alt+Tab.
+ipcMain.on('husai:set-float', (event, enabled) => {
+  const win = BrowserWindow.fromWebContents(event.sender);
+  if (!win) return;
+  win.setAlwaysOnTop(Boolean(enabled), 'floating');
+  if (process.platform === 'darwin') win.setVisibleOnAllWorkspaces(Boolean(enabled), { visibleOnFullScreen: true });
+});
 
 function createWindow() {
   const win = new BrowserWindow({

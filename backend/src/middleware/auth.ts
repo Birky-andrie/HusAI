@@ -21,10 +21,12 @@ export interface JwtPayload {
   email: string;
 }
 
+// Short-lived: real session longevity comes from rotating refresh tokens
+// (modules/auth/tokens.ts), so a leaked access token ages out in an hour.
 export function signToken(user: { id: string; email: string }): string {
   return jwt.sign({ email: user.email }, config.jwtSecret, {
     subject: user.id,
-    expiresIn: '30d',
+    expiresIn: '1h',
   });
 }
 
