@@ -49,7 +49,7 @@ export default function LoginPage() {
         : ''
   );
   const [busy, setBusy] = useState(false);
-  const from = location.state?.from || '/call';
+  const from = location.state?.from || '/dashboard';
 
   useEffect(() => {
     if (user) navigate(from, { replace: true });

@@ -1,5 +1,8 @@
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Logo from './Logo.jsx';
+import AudioWaveform from './ui/AudioWaveform.jsx';
+import FAQAccordion from './FAQAccordion.jsx';
 
 /* ---- tiny inline glyphs (stroke, currentColor) ---- */
 const g = { width: 22, height: 22, viewBox: '0 0 24 24', fill: 'none', stroke: 'currentColor', strokeWidth: 1.7, strokeLinecap: 'round', strokeLinejoin: 'round' };
@@ -66,6 +69,25 @@ export default function LandingPage({ onStart, startDisabled }) {
   const navigate = useNavigate();
   const start = onStart || (() => navigate('/register'));
   const scrollTo = (id) => document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  const [menuOpen, setMenuOpen] = useState(false);
+  const go = (id) => {
+    scrollTo(id);
+    setMenuOpen(false);
+  };
+
+  // Scroll-reveal: fade+rise each section into view once. Reduced-motion users
+  // see everything immediately. One observer, no per-element wrapping.
+  useEffect(() => {
+    if (window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) return undefined;
+    const els = Array.from(document.querySelectorAll('.lp-section, .lp-final'));
+    els.forEach((el) => el.classList.add('lp-reveal'));
+    const io = new IntersectionObserver(
+      (entries) => entries.forEach((e) => e.isIntersecting && (e.target.classList.add('in'), io.unobserve(e.target))),
+      { threshold: 0.1, rootMargin: '0px 0px -8% 0px' }
+    );
+    els.forEach((el) => io.observe(el));
+    return () => io.disconnect();
+  }, []);
 
   return (
     <div className="lp">
@@ -79,12 +101,34 @@ export default function LandingPage({ onStart, startDisabled }) {
             <button onClick={() => scrollTo('how')}>How it works</button>
             <button onClick={() => scrollTo('features')}>Features</button>
             <button onClick={() => scrollTo('pricing')}>Pricing</button>
+            <button onClick={() => scrollTo('faq')}>FAQ</button>
           </nav>
           <div className="lp-nav-actions">
             <button className="lp-link" onClick={() => navigate('/login')}>Sign in</button>
             <button className="primary" onClick={start} disabled={startDisabled}>Get Started</button>
           </div>
+          <button
+            className="lp-menu-btn"
+            onClick={() => setMenuOpen((v) => !v)}
+            aria-label={menuOpen ? 'Close menu' : 'Open menu'}
+            aria-expanded={menuOpen}
+          >
+            {menuOpen ? '✕' : '☰'}
+          </button>
         </div>
+        {menuOpen && (
+          <div className="lp-mobile-menu">
+            <button onClick={() => go('how')}>How it works</button>
+            <button onClick={() => go('features')}>Features</button>
+            <button onClick={() => go('pricing')}>Pricing</button>
+            <button onClick={() => go('faq')}>FAQ</button>
+            <div className="lp-mobile-divider" />
+            <button onClick={() => { setMenuOpen(false); navigate('/login'); }}>Sign in</button>
+            <button className="primary" onClick={() => { setMenuOpen(false); start(); }} disabled={startDisabled}>
+              Get Started
+            </button>
+          </div>
+        )}
       </header>
 
       {/* Hero */}
@@ -95,12 +139,17 @@ export default function LandingPage({ onStart, startDisabled }) {
           Speak with <em>confidence.</em><br />Respond with <em>intelligence.</em>
         </h1>
         <p className="lp-hero-sub">
-          The AI-powered live communication coach that helps Filipino virtual assistants master sales calls,
-          interviews, and client meetings in real time — unobtrusive, intelligent, and always in your corner.
+          "Husay" is Filipino for skill/finesse — HusAI sharpens it in real time helps virtual workers master sales calls,
+          interviews, and client meetings — unobtrusive, intelligent, and always in your corner.
         </p>
         <div className="lp-hero-cta">
           <button className="primary" onClick={start} disabled={startDisabled}>Get Started Free</button>
           <button className="lp-ghost" onClick={() => scrollTo('how')}><GPlay /> Watch Demo</button>
+        </div>
+        <div className="lp-hero-wave" aria-hidden="true">
+          <span className="lp-hero-mic"><GMic /></span>
+          <AudioWaveform bars={9} className="lg" />
+          <span className="lp-hero-listening">Listening…</span>
         </div>
       </section>
 
@@ -260,6 +309,14 @@ export default function LandingPage({ onStart, startDisabled }) {
               <button className={p.popular ? 'primary' : 'secondary'} onClick={start} style={{ width: '100%' }}>{p.cta}</button>
             </div>
           ))}
+        </div>
+      </section>
+
+      {/* FAQ */}
+      <section className="lp-section" id="faq">
+        <SectionHead eyebrow="FAQ" title="Questions, answered." sub="Everything you need to know before your next call." />
+        <div className="lp-faq-wrap">
+          <FAQAccordion />
         </div>
       </section>
 

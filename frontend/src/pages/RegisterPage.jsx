@@ -13,7 +13,7 @@ export default function RegisterPage() {
   const [busy, setBusy] = useState(false);
 
   useEffect(() => {
-    if (user) navigate('/call', { replace: true });
+    if (user) navigate('/dashboard', { replace: true });
   }, [user, navigate]);
 
   const submit = async (e) => {
@@ -22,7 +22,7 @@ export default function RegisterPage() {
     setBusy(true);
     try {
       await register(email, password, displayName);
-      navigate('/call', { replace: true });
+      navigate('/dashboard', { replace: true });
     } catch (err) {
       setError(err.message);
     } finally {

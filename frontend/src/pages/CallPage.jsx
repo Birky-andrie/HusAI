@@ -298,7 +298,13 @@ export default function CallPage() {
       />
 
       {/* Suggestions persist until dismissed or replaced — see the silence detector above. */}
-      <LifelineCard bullets={bullets} onDismiss={() => setBullets(null)} />
+      <LifelineCard
+        bullets={bullets}
+        onDismiss={() => setBullets(null)}
+        onRefresh={requestLifeline}
+        micStream={callActive ? micStream : undefined}
+        active={callActive}
+      />
 
       {pip.pipWindow &&
         createPortal(
@@ -308,6 +314,8 @@ export default function CallPage() {
             isDesktop={isDesktop}
             bullets={bullets}
             onDismissBullets={() => setBullets(null)}
+            onRefreshBullets={requestLifeline}
+            micStream={micStream}
             clientAudioActive={Boolean(clientStream)}
           />,
           pip.pipWindow.document.body

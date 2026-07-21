@@ -19,7 +19,7 @@ export default function OAuthCompletePage() {
       return;
     }
     completeOAuth(ticket)
-      .then(() => navigate('/call', { replace: true }))
+      .then(() => navigate('/dashboard', { replace: true }))
       .catch(() => setFailed(true));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);

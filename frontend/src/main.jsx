@@ -5,6 +5,7 @@ import App from './App.jsx';
 import { AuthProvider } from './auth/AuthContext.jsx';
 import { ThemeProvider } from './theme/ThemeProvider.jsx';
 import './styles.css';
+import './components/ui/ui.css';
 import './components/landing.css';
 
 // HashRouter (not BrowserRouter): the same build must route correctly under

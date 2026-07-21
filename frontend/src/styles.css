@@ -1466,3 +1466,117 @@ a.list-row:hover {
     max-height: 56vh;
   }
 }
+
+/* ============================================================================
+   Lifeline (redesigned) + floating coach header
+   ========================================================================== */
+
+.coach-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--border);
+}
+.coach-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+.coach-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--accent-bright);
+  box-shadow: 0 0 0 0 var(--accent);
+  animation: coach-pulse 1.8s ease-in-out infinite;
+}
+@keyframes coach-pulse {
+  0% { box-shadow: 0 0 0 0 var(--accent-soft); }
+  70% { box-shadow: 0 0 0 7px transparent; }
+  100% { box-shadow: 0 0 0 0 transparent; }
+}
+.coach-substatus {
+  margin: 2px 0;
+}
+
+.lifeline-title-group {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.lifeline-title-group .mic-viz {
+  padding: 4px 9px;
+}
+.lifeline-controls {
+  display: flex;
+  gap: 4px;
+}
+.lifeline-icon-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--text-secondary);
+  border: none;
+  cursor: pointer;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+.lifeline-icon-btn:hover {
+  background: var(--card-2);
+  color: var(--text);
+}
+
+.smart-replies {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.smart-reply {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 12px 14px;
+  border-radius: 12px;
+  background: var(--card-2);
+  border: 1px solid var(--border);
+  transition: border-color 0.2s ease, background 0.2s ease;
+}
+.smart-reply:hover {
+  border-color: var(--border-accent);
+}
+.smart-reply-text {
+  flex: 1;
+  font-size: 0.92rem;
+  line-height: 1.5;
+  color: var(--text);
+}
+.smart-reply-copy {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border-radius: 8px;
+  border: none;
+  background: transparent;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+.smart-reply-copy:hover {
+  background: var(--card);
+  color: var(--accent-text);
+}
