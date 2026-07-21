@@ -7,13 +7,12 @@ import { api } from '../lib/api.js';
  * dimension. Inline SVG per the dataviz method: 2px line, ≥8px markers with a
  * 2px surface ring, 10%-opacity area wash, hairline gridlines, endpoint-only
  * direct label, crosshair+tooltip hover, and a table view for accessibility.
- * Line hue #5b8aff — validated for the dark surface (lightness band, chroma,
- * contrast ≥3:1) with scripts/validate_palette.js.
+ * Emerald line hue on the dark green-tinted surface, matching the brand theme.
  */
 
-const LINE = '#5b8aff';
-const SURFACE = '#151c2c';
-const GRID = '#232c40';
+const LINE = '#10b981';
+const SURFACE = '#111a15';
+const GRID = 'rgba(255,255,255,0.09)';
 
 const SCORE_LABELS = {
   overall: 'Overall',
@@ -242,24 +241,26 @@ export default function ProgressPage() {
                 <p>No data points for this dimension yet.</p>
               </div>
             ) : showTable ? (
-              <table className="data-table">
-                <thead>
-                  <tr>
-                    <th>Date</th>
-                    <th>Source</th>
-                    <th>{SCORE_LABELS[dimension] || RATE_LABELS[dimension]}</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {history.map((p, i) => (
-                    <tr key={i}>
-                      <td>{new Date(p.at).toLocaleString()}</td>
-                      <td>{p.source === 'call' ? 'Real call' : 'Practice'}</td>
-                      <td className="num">{p.value}</td>
+              <div className="table-scroll">
+                <table className="data-table">
+                  <thead>
+                    <tr>
+                      <th>Date</th>
+                      <th>Source</th>
+                      <th>{SCORE_LABELS[dimension] || RATE_LABELS[dimension]}</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
+                  </thead>
+                  <tbody>
+                    {history.map((p, i) => (
+                      <tr key={i}>
+                        <td>{new Date(p.at).toLocaleString()}</td>
+                        <td>{p.source === 'call' ? 'Real call' : 'Practice'}</td>
+                        <td className="num">{p.value}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
             ) : (
               <TrendChart points={history} isScore={isScoreDim} label={SCORE_LABELS[dimension] || RATE_LABELS[dimension]} />
             )}
