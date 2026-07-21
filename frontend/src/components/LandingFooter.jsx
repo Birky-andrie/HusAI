@@ -18,7 +18,7 @@ export default function LandingFooter({ onGetStarted }) {
       <div className="lp-footer-inner">
         <div className="lp-footer-brand">
           <Logo size={26} />
-          <p>Your AI communication coach. Built for Filipino virtual assistants.</p>
+          <p>Your AI communication coach.</p>
         </div>
         <div className="lp-footer-links">
           <button onClick={() => goSection('features')}>Features</button>
