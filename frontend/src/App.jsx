@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Routes, Route, NavLink, Link, useNavigate } from 'react-router-dom';
+import { Routes, Route, NavLink, Link, useNavigate, useLocation } from 'react-router-dom';
 import usePlatform from './hooks/usePlatform.js';
 import { useAuth } from './auth/AuthContext.jsx';
 import RequireAuth from './auth/RequireAuth.jsx';
@@ -68,6 +68,7 @@ export default function App() {
   const isDesktop = platform === 'desktop';
   const { user, logout } = useAuth();
   const navigate = useNavigate();
+  const { pathname } = useLocation();
   const [menuOpen, setMenuOpen] = useState(false);
   const closeMenu = () => setMenuOpen(false);
 
@@ -127,18 +128,25 @@ export default function App() {
     );
   }
 
-  return (
-    <div className="app">
-      <div className="public-top">
-        <Link to="/" className="brand">
-          <Logo size={28} />
-        </Link>
-        <span className="grow" />
-        <Link to="/login" className="header-auth link-button">
-          Sign in
-        </Link>
+  // Auth pages keep the centred chrome; the landing (and catch-all) renders
+  // full-bleed so its funnel sections span the whole viewport.
+  const AUTH_PATHS = ['/login', '/register', '/verify-email', '/forgot-password', '/reset-password', '/oauth-complete'];
+  if (AUTH_PATHS.includes(pathname)) {
+    return (
+      <div className="app">
+        <div className="public-top">
+          <Link to="/" className="brand">
+            <Logo size={28} />
+          </Link>
+          <span className="grow" />
+          <Link to="/login" className="header-auth link-button">
+            Sign in
+          </Link>
+        </div>
+        <AppRoutes />
       </div>
-      <AppRoutes />
-    </div>
-  );
+    );
+  }
+
+  return <AppRoutes />;
 }

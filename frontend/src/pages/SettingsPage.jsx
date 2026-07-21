@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../auth/AuthContext.jsx';
+import { useTheme } from '../theme/ThemeProvider.jsx';
 import { api, API_BASE, clearTokens } from '../lib/api.js';
 
 function Section({ title, children }) {
@@ -9,6 +10,39 @@ function Section({ title, children }) {
       <h3>{title}</h3>
       {children}
     </section>
+  );
+}
+
+const THEME_OPTIONS = [
+  { value: 'light', label: 'Light', hint: 'Clean & airy' },
+  { value: 'dark', label: 'Dark', hint: 'Calm & cinematic' },
+  { value: 'system', label: 'System', hint: 'Match your OS' },
+];
+
+function AppearanceControl() {
+  const { preference, theme, setTheme } = useTheme();
+  return (
+    <div>
+      <div className="theme-switch" role="radiogroup" aria-label="Theme">
+        {THEME_OPTIONS.map((opt) => (
+          <button
+            key={opt.value}
+            role="radio"
+            aria-checked={preference === opt.value}
+            className={`theme-option${preference === opt.value ? ' selected' : ''}`}
+            onClick={() => setTheme(opt.value)}
+          >
+            <span className="theme-option-label">{opt.label}</span>
+            <span className="theme-option-hint">{opt.hint}</span>
+          </button>
+        ))}
+      </div>
+      <p className="list-sub" style={{ marginTop: 10 }}>
+        {preference === 'system'
+          ? `Following your operating system — currently ${theme}.`
+          : `Using ${preference} mode. Your choice is saved on this device.`}
+      </p>
+    </div>
   );
 }
 
@@ -143,6 +177,10 @@ export default function SettingsPage() {
             {profileMsg && <span className="list-sub">{profileMsg}</span>}
           </div>
         </form>
+      </Section>
+
+      <Section title="Appearance">
+        <AppearanceControl />
       </Section>
 
       <Section title={account.hasPassword ? 'Change password' : 'Set a password'}>
