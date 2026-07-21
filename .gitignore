@@ -6,3 +6,7 @@ desktop/renderer/
 desktop/out/
 *.log
 .DS_Store
+
+# Local design reference images — kept on disk, not part of the app or repo
+ui/ux pics/
+
