@@ -5,6 +5,8 @@ import { useAuth } from './auth/AuthContext.jsx';
 import RequireAuth from './auth/RequireAuth.jsx';
 import Logo from './components/Logo.jsx';
 import LandingPage from './components/LandingPage.jsx';
+import LandingNav from './components/LandingNav.jsx';
+import LandingFooter from './components/LandingFooter.jsx';
 import DashboardPage from './pages/DashboardPage.jsx';
 import CallPage from './pages/CallPage.jsx';
 import LoginPage from './pages/LoginPage.jsx';
@@ -132,22 +134,18 @@ export default function App() {
     );
   }
 
-  // Auth pages keep the centred chrome; the landing (and catch-all) renders
-  // full-bleed so its funnel sections span the whole viewport.
+  // Auth pages share the landing header + footer so the chrome stays consistent;
+  // the auth card centres between them. The landing (and catch-all) renders its
+  // own nav/footer, so it just renders full-bleed here.
   const AUTH_PATHS = ['/login', '/register', '/verify-email', '/forgot-password', '/reset-password', '/oauth-complete'];
   if (AUTH_PATHS.includes(pathname)) {
     return (
-      <div className="app">
-        <div className="public-top">
-          <Link to="/" className="brand">
-            <Logo size={28} />
-          </Link>
-          <span className="grow" />
-          <Link to="/login" className="header-auth link-button">
-            Sign in
-          </Link>
-        </div>
-        <AppRoutes />
+      <div className="lp auth-shell">
+        <LandingNav onGetStarted={() => navigate('/register')} />
+        <main className="auth-main">
+          <AppRoutes />
+        </main>
+        <LandingFooter onGetStarted={() => navigate('/register')} />
       </div>
     );
   }

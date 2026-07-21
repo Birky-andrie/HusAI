@@ -1,8 +1,10 @@
-import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useEffect } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import Logo from './Logo.jsx';
 import AudioWaveform from './ui/AudioWaveform.jsx';
 import FAQAccordion from './FAQAccordion.jsx';
+import LandingNav from './LandingNav.jsx';
+import LandingFooter from './LandingFooter.jsx';
 
 /* ---- tiny inline glyphs (stroke, currentColor) ---- */
 const g = { width: 22, height: 22, viewBox: '0 0 24 24', fill: 'none', stroke: 'currentColor', strokeWidth: 1.7, strokeLinecap: 'round', strokeLinejoin: 'round' };
@@ -69,11 +71,14 @@ export default function LandingPage({ onStart, startDisabled }) {
   const navigate = useNavigate();
   const start = onStart || (() => navigate('/register'));
   const scrollTo = (id) => document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-  const [menuOpen, setMenuOpen] = useState(false);
-  const go = (id) => {
-    scrollTo(id);
-    setMenuOpen(false);
-  };
+  const location = useLocation();
+
+  // Arriving from another page's nav (e.g. the auth pages) with a section
+  // target in router state → scroll to it once the sections have rendered.
+  useEffect(() => {
+    const id = location.state?.scrollTo;
+    if (id) requestAnimationFrame(() => document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' }));
+  }, [location.state]);
 
   // Scroll-reveal: fade+rise each section into view once. Reduced-motion users
   // see everything immediately. One observer, no per-element wrapping.
@@ -91,45 +96,7 @@ export default function LandingPage({ onStart, startDisabled }) {
 
   return (
     <div className="lp">
-      {/* Nav */}
-      <header className="lp-nav">
-        <div className="lp-nav-inner">
-          <button className="lp-brand" onClick={() => scrollTo('lp-top')} aria-label="HusAI home">
-            <Logo size={28} />
-          </button>
-          <nav className="lp-nav-links">
-            <button onClick={() => scrollTo('how')}>How it works</button>
-            <button onClick={() => scrollTo('features')}>Features</button>
-            <button onClick={() => scrollTo('pricing')}>Pricing</button>
-            <button onClick={() => scrollTo('faq')}>FAQ</button>
-          </nav>
-          <div className="lp-nav-actions">
-            <button className="lp-link" onClick={() => navigate('/login')}>Sign in</button>
-            <button className="primary" onClick={start} disabled={startDisabled}>Get Started</button>
-          </div>
-          <button
-            className="lp-menu-btn"
-            onClick={() => setMenuOpen((v) => !v)}
-            aria-label={menuOpen ? 'Close menu' : 'Open menu'}
-            aria-expanded={menuOpen}
-          >
-            {menuOpen ? '✕' : '☰'}
-          </button>
-        </div>
-        {menuOpen && (
-          <div className="lp-mobile-menu">
-            <button onClick={() => go('how')}>How it works</button>
-            <button onClick={() => go('features')}>Features</button>
-            <button onClick={() => go('pricing')}>Pricing</button>
-            <button onClick={() => go('faq')}>FAQ</button>
-            <div className="lp-mobile-divider" />
-            <button onClick={() => { setMenuOpen(false); navigate('/login'); }}>Sign in</button>
-            <button className="primary" onClick={() => { setMenuOpen(false); start(); }} disabled={startDisabled}>
-              Get Started
-            </button>
-          </div>
-        )}
-      </header>
+      <LandingNav onGetStarted={start} startDisabled={startDisabled} />
 
       {/* Hero */}
       <section className="lp-hero" id="lp-top">
@@ -329,22 +296,7 @@ export default function LandingPage({ onStart, startDisabled }) {
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="lp-footer">
-        <div className="lp-footer-inner">
-          <div className="lp-footer-brand">
-            <Logo size={26} />
-            <p>Your AI communication coach. Built for Filipino virtual assistants.</p>
-          </div>
-          <div className="lp-footer-links">
-            <button onClick={() => scrollTo('features')}>Features</button>
-            <button onClick={() => scrollTo('pricing')}>Pricing</button>
-            <button onClick={() => navigate('/login')}>Sign in</button>
-            <button onClick={start}>Get Started</button>
-          </div>
-        </div>
-        <div className="lp-footer-legal">© {new Date().getFullYear()} HusAI. All rights reserved.</div>
-      </footer>
+      <LandingFooter onGetStarted={start} />
     </div>
   );
 }
