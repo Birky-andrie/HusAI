@@ -2,7 +2,8 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../auth/AuthContext.jsx';
 import { useTheme } from '../theme/ThemeProvider.jsx';
-import { api, API_BASE, clearTokens } from '../lib/api.js';
+import { api } from '../lib/api.js';
+import { supabase } from '../lib/supabase.js';
 
 function Section({ title, children }) {
   return (
@@ -47,7 +48,7 @@ function AppearanceControl() {
 }
 
 export default function SettingsPage() {
-  const { user, account, refreshMe, logout } = useAuth();
+  const { user, account, refreshMe, logout, updatePassword, resendConfirmation } = useAuth();
   const navigate = useNavigate();
   const isDesktop = Boolean(window.electronAPI?.isDesktop);
 
@@ -78,8 +79,17 @@ export default function SettingsPage() {
     e.preventDefault();
     setPasswordMsg('');
     try {
-      const result = await api.post('/api/auth/change-password', { currentPassword, newPassword });
-      setPasswordMsg(result.message || 'Password changed.');
+      // Supabase's updateUser doesn't check the current password, so when the
+      // user already has one we re-authenticate first to verify it.
+      if (account.hasPassword) {
+        const { error } = await supabase.auth.signInWithPassword({ email: user.email, password: currentPassword });
+        if (error) {
+          setPasswordMsg('Your current password is incorrect.');
+          return;
+        }
+      }
+      await updatePassword(newPassword);
+      setPasswordMsg('Password saved.');
       setCurrentPassword('');
       setNewPassword('');
       await refreshMe();
@@ -91,8 +101,8 @@ export default function SettingsPage() {
   const resendVerification = async () => {
     setVerifyMsg('');
     try {
-      await api.post('/api/auth/resend-verification');
-      setVerifyMsg('Verification email sent — check your inbox (or the backend terminal in local dev).');
+      await resendConfirmation(user.email);
+      setVerifyMsg('Confirmation email sent — check your inbox.');
     } catch (err) {
       setVerifyMsg(err.message);
     }
@@ -104,13 +114,25 @@ export default function SettingsPage() {
     await refreshMe();
   };
 
-  const unlinkProvider = async (provider) => {
-    try {
-      await api.del(`/api/me/providers/${provider}`);
-      await refreshMe();
-    } catch (err) {
-      alert(err.message);
+  // OAuth identities linked via Supabase (exclude the built-in 'email' identity).
+  const oauthIdentities = (account.identities || []).filter((i) => i.provider !== 'email');
+
+  const unlinkProvider = async (identity) => {
+    if ((account.identities || []).length <= 1) {
+      alert('This is your only sign-in method — set a password or link another provider first.');
+      return;
     }
+    const { error } = await supabase.auth.unlinkIdentity(identity);
+    if (error) alert(error.message);
+    else await refreshMe();
+  };
+
+  const linkGoogle = async () => {
+    const { error } = await supabase.auth.linkIdentity({
+      provider: 'google',
+      options: { redirectTo: window.location.origin },
+    });
+    if (error) alert(error.message);
   };
 
   const testMic = async () => {
@@ -135,7 +157,6 @@ export default function SettingsPage() {
     }
     try {
       await api.del('/api/me');
-      clearTokens();
       await logout().catch(() => {});
       navigate('/');
     } catch (err) {
@@ -212,30 +233,30 @@ export default function SettingsPage() {
       </Section>
 
       <Section title="Connected sign-in providers">
-        {account.providers.length === 0 ? (
+        {oauthIdentities.length === 0 ? (
           <p className="list-sub">No providers linked. You sign in with email and password.</p>
         ) : (
           <div className="list">
-            {account.providers.map((p) => (
-              <div className="list-row" key={p.provider}>
+            {oauthIdentities.map((identity) => (
+              <div className="list-row" key={identity.identity_id || identity.id}>
                 <div>
-                  <div className="list-title">{p.provider === 'google' ? 'Google' : 'Microsoft'}</div>
-                  <div className="list-sub">{p.email}</div>
+                  <div className="list-title">{identity.provider === 'google' ? 'Google' : identity.provider}</div>
+                  <div className="list-sub">{identity.identity_data?.email || user.email}</div>
                 </div>
-                <button className="secondary" onClick={() => unlinkProvider(p.provider)}>
+                <button className="secondary" onClick={() => unlinkProvider(identity)}>
                   Unlink
                 </button>
               </div>
             ))}
           </div>
         )}
-        {!isDesktop && (
-          <p className="list-sub" style={{ marginTop: 8 }}>
-            Link another provider by signing in with it (same email links automatically):{' '}
-            <a href={`${API_BASE}/api/auth/oauth/google/start`}>Google</a> ·{' '}
-            <a href={`${API_BASE}/api/auth/oauth/microsoft/start`}>Microsoft</a> — buttons only work once the provider
-            is configured on the backend.
-          </p>
+        {!isDesktop && !oauthIdentities.some((i) => i.provider === 'google') && (
+          <div className="settings-actions" style={{ marginTop: 8 }}>
+            <button className="secondary" onClick={linkGoogle}>
+              Link Google account
+            </button>
+            <span className="list-sub">Requires manual linking to be enabled in Supabase Auth settings.</span>
+          </div>
         )}
       </Section>
 

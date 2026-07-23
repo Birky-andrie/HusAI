@@ -1,53 +1,49 @@
 import { useEffect, useState } from 'react';
-import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../auth/AuthContext.jsx';
-import { API_BASE } from '../lib/api.js';
 
-/** Google/Microsoft buttons — rendered only for providers the backend reports as configured, and never inside Electron (providers block embedded-webview OAuth). */
+/**
+ * Google sign-in (Supabase OAuth). Hidden inside Electron for now — the OAuth
+ * redirect returns to a web origin, not the packaged file:// app; desktop users
+ * sign in with email/password until deep-link handling lands.
+ */
 export function OAuthButtons({ label = 'or continue with' }) {
-  const [providers, setProviders] = useState(null);
+  const { signInWithGoogle } = useAuth();
+  const [error, setError] = useState('');
   const isDesktop = Boolean(window.electronAPI?.isDesktop);
+  if (isDesktop) return null;
 
-  useEffect(() => {
-    if (isDesktop) return;
-    fetch(`${API_BASE}/api/auth/providers`)
-      .then((r) => r.json())
-      .then((d) => setProviders(d.providers))
-      .catch(() => setProviders(null));
-  }, [isDesktop]);
-
-  if (isDesktop || !providers) return null;
-  const enabled = Object.entries(providers).filter(([, on]) => on);
-  if (!enabled.length) return null;
+  const google = async () => {
+    setError('');
+    try {
+      await signInWithGoogle(); // redirects away on success
+    } catch (err) {
+      setError(err.message);
+    }
+  };
 
   return (
     <div className="oauth-block">
       <div className="oauth-divider">{label}</div>
+      {error && <div className="banner error">{error}</div>}
       <div className="oauth-buttons">
-        {enabled.map(([name]) => (
-          <a key={name} className="oauth-button" href={`${API_BASE}/api/auth/oauth/${name}/start`}>
-            {name === 'google' ? 'Google' : 'Microsoft'}
-          </a>
-        ))}
+        <button type="button" className="oauth-button" onClick={google}>
+          Google
+        </button>
       </div>
     </div>
   );
 }
 
 export default function LoginPage() {
-  const { user, login } = useAuth();
+  const { user, login, resendConfirmation } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
-  const [searchParams] = useSearchParams();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [error, setError] = useState(
-    searchParams.get('error') === 'oauth-failed'
-      ? 'Sign-in with that provider failed. Try again or use your email and password.'
-      : searchParams.get('error') === 'oauth-no-email'
-        ? 'That provider account has no email address we can use. Try another sign-in method.'
-        : ''
-  );
+  const [error, setError] = useState('');
+  const [needsConfirm, setNeedsConfirm] = useState(false);
+  const [resent, setResent] = useState(false);
   const [busy, setBusy] = useState(false);
   const from = location.state?.from || '/dashboard';
 
@@ -58,14 +54,26 @@ export default function LoginPage() {
   const submit = async (e) => {
     e.preventDefault();
     setError('');
+    setNeedsConfirm(false);
+    setResent(false);
     setBusy(true);
     try {
       await login(email, password);
       navigate(from, { replace: true });
     } catch (err) {
       setError(err.message);
+      if (err.code === 'email_not_confirmed') setNeedsConfirm(true);
     } finally {
       setBusy(false);
+    }
+  };
+
+  const resend = async () => {
+    try {
+      await resendConfirmation(email);
+      setResent(true);
+    } catch (err) {
+      setError(err.message);
     }
   };
 
@@ -75,6 +83,12 @@ export default function LoginPage() {
         <h2>Welcome back</h2>
         <p className="auth-sub">Sign in to your HusAI account.</p>
         {error && <div className="banner error">{error}</div>}
+        {needsConfirm && !resent && (
+          <button type="button" className="link-inline" onClick={resend}>
+            Resend confirmation email
+          </button>
+        )}
+        {resent && <div className="banner info">Confirmation email sent — check your inbox.</div>}
         <label>
           Email
           <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} required autoFocus />

@@ -39,18 +39,20 @@ export function attachWsHub(server: HttpServer): WebSocketServer {
     }
 
     const token = url.searchParams.get('token') || '';
-    const user = token ? verifyToken(token) : null;
-    if (!user) {
-      // Complete the upgrade so we can send a meaningful close code instead of a raw TCP reset.
-      wss.handleUpgrade(req, socket, head, (ws) => {
-        ws.close(CLOSE_UNAUTHORIZED, 'invalid or missing token');
-      });
-      return;
-    }
+    void (async () => {
+      const user = token ? await verifyToken(token) : null;
+      if (!user) {
+        // Complete the upgrade so we can send a meaningful close code instead of a raw TCP reset.
+        wss.handleUpgrade(req, socket, head, (ws) => {
+          ws.close(CLOSE_UNAUTHORIZED, 'invalid or missing token');
+        });
+        return;
+      }
 
-    wss.handleUpgrade(req, socket, head, (ws) => {
-      wss.emit('connection', ws, req, user);
-    });
+      wss.handleUpgrade(req, socket, head, (ws) => {
+        wss.emit('connection', ws, req, user);
+      });
+    })();
   });
 
   wss.on('connection', (ws: WebSocket, _req: IncomingMessage, user: AuthUser) => {

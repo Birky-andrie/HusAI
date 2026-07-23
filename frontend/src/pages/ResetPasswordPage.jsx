@@ -1,15 +1,19 @@
 import { useState } from 'react';
-import { Link, useNavigate, useSearchParams } from 'react-router-dom';
-import { postJSON } from '../lib/api.js';
+import { Link, useNavigate } from 'react-router-dom';
+import { useAuth } from '../auth/AuthContext.jsx';
 
+/**
+ * Reached after clicking the password-recovery email link: Supabase establishes a
+ * short-lived recovery session and AuthContext routes here on the PASSWORD_RECOVERY
+ * event. We just collect the new password and call updateUser.
+ */
 export default function ResetPasswordPage() {
-  const [searchParams] = useSearchParams();
+  const { user, updatePassword } = useAuth();
   const navigate = useNavigate();
   const [password, setPassword] = useState('');
   const [confirm, setConfirm] = useState('');
   const [error, setError] = useState('');
   const [busy, setBusy] = useState(false);
-  const token = searchParams.get('token') || '';
 
   const submit = async (e) => {
     e.preventDefault();
@@ -20,8 +24,8 @@ export default function ResetPasswordPage() {
     setError('');
     setBusy(true);
     try {
-      await postJSON('/api/auth/reset-password', { token, newPassword: password });
-      navigate('/login', { replace: true, state: { message: 'Password updated — sign in with your new password.' } });
+      await updatePassword(password);
+      navigate('/dashboard', { replace: true });
     } catch (err) {
       setError(err.message);
     } finally {
@@ -33,7 +37,11 @@ export default function ResetPasswordPage() {
     <div className="auth-page">
       <form className="auth-card" onSubmit={submit}>
         <h2>Choose a new password</h2>
-        {!token && <div className="banner error">This reset link is missing its token — request a new one.</div>}
+        {!user && (
+          <div className="banner error">
+            Open the reset link from your email to change your password — this page needs that secure session.
+          </div>
+        )}
         {error && <div className="banner error">{error}</div>}
         <label>
           New password
@@ -50,7 +58,7 @@ export default function ResetPasswordPage() {
           Confirm new password
           <input type="password" value={confirm} onChange={(e) => setConfirm(e.target.value)} required minLength={8} />
         </label>
-        <button className="primary" type="submit" disabled={busy || !token}>
+        <button className="primary" type="submit" disabled={busy || !user}>
           {busy ? 'Updating…' : 'Update password'}
         </button>
         <div className="auth-links">

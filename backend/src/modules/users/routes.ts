@@ -1,9 +1,23 @@
 import { Router } from 'express';
 import { prisma } from '../../db.js';
+import { config } from '../../config.js';
 import { authRequired } from '../../middleware/auth.js';
-import { toPublicUser } from '../auth/service.js';
 
 const router = Router();
+
+type DbUser = { id: string; email: string; displayName: string | null; emailVerifiedAt: Date | null; createdAt: Date };
+
+// The app's public view of a user. Supabase owns credentials/verification; we
+// keep displayName + settings as the app's own profile data.
+function toPublicUser(user: DbUser) {
+  return {
+    id: user.id,
+    email: user.email,
+    displayName: user.displayName,
+    emailVerified: Boolean(user.emailVerifiedAt),
+    createdAt: user.createdAt,
+  };
+}
 
 // Everything under /api/me is the authenticated user's own data — never keyed
 // by a client-supplied user id.
@@ -12,7 +26,7 @@ router.use('/me', authRequired);
 router.get('/me', async (req, res) => {
   const user = await prisma.user.findUnique({
     where: { id: req.user!.id },
-    include: { settings: true, oauthAccounts: { select: { provider: true, email: true, createdAt: true } } },
+    include: { settings: true },
   });
   if (!user) {
     // Valid token but the user row is gone (deleted account).
@@ -20,8 +34,6 @@ router.get('/me', async (req, res) => {
   }
   res.json({
     user: toPublicUser(user),
-    hasPassword: Boolean(user.passwordHash),
-    providers: user.oauthAccounts,
     settings: user.settings && {
       transcriptRetentionDays: user.settings.transcriptRetentionDays,
       lifelinePauseSeconds: user.settings.lifelinePauseSeconds,
@@ -81,27 +93,31 @@ router.patch('/me/settings', async (req, res) => {
   });
 });
 
-router.delete('/me/providers/:provider', async (req, res) => {
-  const user = await prisma.user.findUnique({
-    where: { id: req.user!.id },
-    include: { oauthAccounts: true },
-  });
-  if (!user) return res.status(401).json({ error: 'unauthorized' });
-  // Never sever the last way into the account.
-  if (!user.passwordHash && user.oauthAccounts.length <= 1) {
-    return res.status(400).json({
-      error: 'last-sign-in-method',
-      message: 'Set a password first — this is currently your only way to sign in.',
-    });
+/** Best-effort removal of the Supabase auth identity — needs the service-role key. */
+async function deleteSupabaseUser(id: string): Promise<void> {
+  if (!config.supabaseServiceRoleKey) {
+    console.warn(`account ${id} deleted locally, but SUPABASE_SERVICE_ROLE_KEY is unset — the Supabase auth user remains.`);
+    return;
   }
-  await prisma.oAuthAccount.deleteMany({ where: { userId: user.id, provider: req.params.provider } });
-  res.json({ ok: true });
-});
+  try {
+    const resp = await fetch(`${config.supabaseUrl}/auth/v1/admin/users/${id}`, {
+      method: 'DELETE',
+      headers: {
+        apikey: config.supabaseServiceRoleKey,
+        Authorization: `Bearer ${config.supabaseServiceRoleKey}`,
+      },
+    });
+    if (!resp.ok) console.error(`Supabase admin delete failed for ${id}:`, resp.status, (await resp.text()).slice(0, 200));
+  } catch (err) {
+    console.error(`Supabase admin delete error for ${id}:`, (err as Error).message);
+  }
+}
 
 router.delete('/me', async (req, res) => {
-  // Cascades wipe settings, tokens, oauth accounts, meetings, reviews,
-  // practice sessions/turns, and progress metrics with the user row.
+  // Cascades wipe settings, meetings, reviews, practice sessions/turns, and
+  // progress metrics with the user row; then remove the Supabase auth identity.
   await prisma.user.delete({ where: { id: req.user!.id } });
+  await deleteSupabaseUser(req.user!.id);
   res.json({ ok: true });
 });
 

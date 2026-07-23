@@ -1,53 +1,36 @@
-import { useEffect, useRef, useState } from 'react';
-import { Link, useSearchParams } from 'react-router-dom';
-import { postJSON } from '../lib/api.js';
+import { Link } from 'react-router-dom';
 import { useAuth } from '../auth/AuthContext.jsx';
 
+/**
+ * Fallback page. Email confirmation is handled by Supabase: clicking the link
+ * signs the user in and AuthContext routes them into the app. A user only lands
+ * here from an old/manual link, so we just orient them.
+ */
 export default function VerifyEmailPage() {
-  const [searchParams] = useSearchParams();
-  const { user, refreshMe } = useAuth();
-  const [state, setState] = useState('working'); // 'working' | 'done' | 'failed'
-  const ranRef = useRef(false); // the token is single-use; StrictMode must not consume it twice
-
-  useEffect(() => {
-    if (ranRef.current) return;
-    ranRef.current = true;
-    const token = searchParams.get('token');
-    if (!token) {
-      setState('failed');
-      return;
-    }
-    postJSON('/api/auth/verify-email', { token })
-      .then(() => {
-        setState('done');
-        if (user) refreshMe().catch(() => {});
-      })
-      .catch(() => setState('failed'));
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  const { user } = useAuth();
+  // Supabase surfaces confirmation failures as query/hash params on the redirect.
+  const params = new URLSearchParams(window.location.search || window.location.hash.replace(/^#/, ''));
+  const errorDesc = params.get('error_description');
 
   return (
     <div className="auth-page">
       <div className="auth-card">
-        <h2>Email verification</h2>
-        {state === 'working' && <p className="auth-sub">Verifying your email…</p>}
-        {state === 'done' && (
+        <h2>Email confirmation</h2>
+        {errorDesc ? (
           <>
-            <div className="banner info">✓ Your email is verified. You're all set.</div>
-            <Link className="link-button" to={user ? '/call' : '/login'}>
-              {user ? 'Go to your coach' : 'Sign in'}
-            </Link>
+            <div className="banner error">{decodeURIComponent(errorDesc.replace(/\+/g, ' '))}</div>
+            <p className="auth-sub">The link may have expired. Sign in to request a fresh confirmation email.</p>
           </>
+        ) : user ? (
+          <div className="banner info">✓ You&apos;re signed in. Your email is confirmed.</div>
+        ) : (
+          <p className="auth-sub">
+            Click the confirmation link in your email to activate your account. Once confirmed, you can sign in.
+          </p>
         )}
-        {state === 'failed' && (
-          <>
-            <div className="banner error">This verification link is invalid or has expired.</div>
-            <p className="auth-sub">You can request a fresh link from Settings after signing in.</p>
-            <Link className="link-button" to="/login">
-              Sign in
-            </Link>
-          </>
-        )}
+        <Link className="link-button" to={user ? '/dashboard' : '/login'}>
+          {user ? 'Go to dashboard' : 'Sign in'}
+        </Link>
       </div>
     </div>
   );

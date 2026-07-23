@@ -1,22 +1,31 @@
 import 'dotenv/config';
-import crypto from 'node:crypto';
-
-// Missing JWT_SECRET falls back to a per-boot random secret: auth still works in
-// dev, but every restart invalidates tokens — loud warning instead of a footgun.
-const jwtSecret = process.env.JWT_SECRET || crypto.randomBytes(48).toString('base64url');
-if (!process.env.JWT_SECRET) {
-  console.warn('JWT_SECRET not set — using an ephemeral secret; sessions will not survive a restart.');
-}
 
 const port = Number(process.env.PORT || 3001);
+
+const databaseUrl = process.env.DATABASE_URL || '';
+if (!databaseUrl) {
+  console.warn(
+    'DATABASE_URL not set — set your Supabase/Postgres connection string (Session pooler, port 5432) in backend/.env.',
+  );
+}
+
+// Supabase Auth: the backend verifies Supabase-issued access tokens against the
+// project's public JWKS, so no shared secret is needed. SUPABASE_URL is the
+// project API URL, e.g. https://<ref>.supabase.co.
+const supabaseUrl = (process.env.SUPABASE_URL || '').replace(/\/$/, '');
+if (!supabaseUrl) {
+  console.warn('SUPABASE_URL not set — auth token verification will reject every request.');
+}
 
 export const config = {
   port,
   frontendOrigin: process.env.FRONTEND_ORIGIN || undefined,
   groqApiKey: process.env.GROQ_API_KEY || '',
   geminiApiKey: process.env.GEMINI_API_KEY || '',
-  databaseUrl: process.env.DATABASE_URL || 'file:./dev.db',
-  jwtSecret,
+  databaseUrl,
+  supabaseUrl,
+  // Only needed for hard-deleting the Supabase auth user on account deletion.
+  supabaseServiceRoleKey: process.env.SUPABASE_SERVICE_ROLE_KEY || '',
 
   // Where auth emails link back to (verify-email / reset-password pages).
   frontendUrl: process.env.FRONTEND_URL || 'http://localhost:5173',

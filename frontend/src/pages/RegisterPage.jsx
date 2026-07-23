@@ -11,6 +11,7 @@ export default function RegisterPage() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [busy, setBusy] = useState(false);
+  const [sent, setSent] = useState(false);
 
   useEffect(() => {
     if (user) navigate('/dashboard', { replace: true });
@@ -21,14 +22,35 @@ export default function RegisterPage() {
     setError('');
     setBusy(true);
     try {
-      await register(email, password, displayName);
-      navigate('/dashboard', { replace: true });
+      const { needsConfirmation } = await register(email, password, displayName);
+      if (needsConfirmation) {
+        setSent(true); // confirmation required — no session yet
+      } else {
+        navigate('/dashboard', { replace: true });
+      }
     } catch (err) {
       setError(err.message);
     } finally {
       setBusy(false);
     }
   };
+
+  if (sent) {
+    return (
+      <div className="auth-page">
+        <div className="auth-card">
+          <h2>Confirm your email</h2>
+          <div className="banner info">
+            We sent a confirmation link to <strong>{email}</strong>. Click it to activate your account, then sign in.
+          </div>
+          <p className="auth-sub">Didn&apos;t get it? Check spam, or try signing in to resend.</p>
+          <Link className="link-button" to="/login">
+            Go to sign in
+          </Link>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="auth-page">

@@ -5,7 +5,6 @@ import { config } from './config.js';
 import lifelineRouter from './modules/lifeline/routes.js';
 import transcribeRouter from './modules/transcribe/routes.js';
 import reviewRouter from './modules/review/routes.js';
-import authRouter from './modules/auth/routes.js';
 import usersRouter from './modules/users/routes.js';
 import meetingsRouter from './modules/meetings/routes.js';
 import practiceRouter from './modules/practice/routes.js';
@@ -33,8 +32,9 @@ app.get('/api/health', (_req, res) => {
 app.use('/api/lifeline', lifelineRouter);
 app.use('/api/transcribe', transcribeRouter);
 app.use('/api/review', reviewRouter);
-app.use('/api/auth', authRouter);
-app.use('/api', usersRouter); // /api/me + settings + providers
+// Auth (sign-up/in, OAuth, password reset, email confirmation) is handled by
+// Supabase Auth directly from the client; the backend only verifies tokens.
+app.use('/api', usersRouter); // /api/me + settings
 app.use('/api/meetings', meetingsRouter);
 app.use('/api/practice', practiceRouter);
 app.use('/api/progress', progressRouter);

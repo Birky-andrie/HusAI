@@ -1,9 +1,10 @@
-// Phase 0 schema: users + settings only. Meeting/Conversation/Review/Training
-// entities land with their phases (see the migration plan).
+// Database: PostgreSQL (Supabase) for both local dev and production.
 //
-// Portability rule: no enums, no provider-specific types — this schema must work
-// unchanged on SQLite (local dev) and Postgres (deploy, e.g. Neon). Role-like
-// fields are strings validated in application code.
+// Portability legacy: this schema was written provider-agnostic (no enums, no
+// provider-specific types; JSON stored as String; role-like fields are strings
+// validated in application code). Those constraints are kept so the schema stays
+// simple, but the target is now Postgres only. The connection URL comes from
+// DATABASE_URL via prisma.config.ts (migrations) and the pg driver adapter (runtime).
 
 generator client {
   provider = "prisma-client"
@@ -11,59 +12,25 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
 }
 
+// Identity is owned by Supabase Auth (auth.users). This row mirrors the Supabase
+// user so the app's data can foreign-key to it: `id` is the Supabase auth uid,
+// provisioned just-in-time on the user's first authenticated request. No
+// password/token/oauth columns — Supabase manages credentials and sessions.
 model User {
-  id              String        @id @default(cuid())
-  email           String        @unique
-  // Empty string for OAuth-only accounts (no password sign-in until they set one).
-  passwordHash    String
+  id              String   @id // = Supabase auth uid (uuid)
+  email           String   @unique
   displayName     String?
   emailVerifiedAt DateTime?
-  createdAt       DateTime      @default(now())
-  updatedAt       DateTime      @updatedAt
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
   settings        UserSettings?
-  oauthAccounts   OAuthAccount[]
-  refreshTokens   RefreshToken[]
-  actionTokens    ActionToken[]
   meetings        Meeting[]
   reviews         Review[]
   practiceSessions PracticeSession[]
   progressMetrics ProgressMetric[]
-}
-
-model OAuthAccount {
-  id                String   @id @default(cuid())
-  userId            String
-  user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  provider          String // 'google' | 'microsoft'
-  providerAccountId String
-  email             String
-  createdAt         DateTime @default(now())
-
-  @@unique([provider, providerAccountId])
-}
-
-model RefreshToken {
-  id        String    @id @default(cuid())
-  userId    String
-  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  tokenHash String    @unique // sha256 — raw token never touches the database
-  expiresAt DateTime
-  rotatedAt DateTime? // set when consumed; a rotated token presented again = reuse, revoke it
-  createdAt DateTime  @default(now())
-}
-
-model ActionToken {
-  id        String    @id @default(cuid())
-  userId    String
-  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  type      String // 'verify-email' | 'reset-password'
-  tokenHash String    @unique
-  expiresAt DateTime
-  usedAt    DateTime?
-  createdAt DateTime  @default(now())
 }
 
 model Meeting {
