@@ -1,0 +1,30 @@
+# Render blueprint for the HusAI backend (Express + Prisma, long-running with WS).
+# Deploy: Render dashboard → New → Blueprint → connect the HusAI repo.
+# Secrets (sync: false) are entered in the dashboard, never committed.
+services:
+  - type: web
+    name: husai-backend
+    runtime: node
+    rootDir: backend
+    plan: free
+    # Force dev deps (Render sets NODE_ENV=production, which would skip prisma/tsc),
+    # generate the Prisma client, compile, then apply any pending migrations.
+    buildCommand: npm install --include=dev && npx prisma generate && npm run build && npx prisma migrate deploy
+    startCommand: npm start
+    healthCheckPath: /api/health
+    envVars:
+      # Non-secret, safe to commit:
+      - key: SUPABASE_URL
+        value: https://mzxpbrqrbpyhjrwbfmbh.supabase.co
+      - key: FRONTEND_ORIGIN
+        value: https://hus-ai-five.vercel.app
+      # Secrets — set these in the Render dashboard (copy from backend/.env):
+      - key: DATABASE_URL
+        sync: false
+      - key: GROQ_API_KEY
+        sync: false
+      - key: GEMINI_API_KEY
+        sync: false
+      # Optional — only needed to hard-delete a user's Supabase auth identity:
+      - key: SUPABASE_SERVICE_ROLE_KEY
+        sync: false
