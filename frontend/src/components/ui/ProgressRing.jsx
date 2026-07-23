@@ -1,5 +1,5 @@
 /**
- * Circular progress gauge with the emerald brand gradient. Theme-aware (track
+ * Circular progress gauge with the violet brand gradient. Theme-aware (track
  * uses --inset, stroke uses the brand gradient). `value` 0–max.
  */
 export default function ProgressRing({ value = 0, max = 100, size = 118, stroke = 8, label, suffix = '%' }) {

@@ -1,5 +1,5 @@
 /**
- * Compact bar chart (emerald gradient) for weekly/recent trends. Pure SVG so it
+ * Compact bar chart (violet gradient) for weekly/recent trends. Pure SVG so it
  * scales fluidly; the tallest bar is emphasized. `data` = [{ value, label }].
  */
 export default function MiniBars({ data = [], height = 150 }) {

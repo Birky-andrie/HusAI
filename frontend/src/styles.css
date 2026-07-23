@@ -1,98 +1,122 @@
 /* ============================================================================
-   HusAI — emerald design system (dark). Retheme only: every class name from the
-   previous stylesheet is preserved, so component markup and behavior are
-   unchanged. Visual language matches the brand reference: near-black green-tinted
-   surfaces, emerald/teal accent, the H-soundwave logo, generous rounded cards.
+   HusAI — violet design system. Raycast / Apple / Linear / Notion aesthetic:
+   layered low-contrast slate surfaces (never pure black or pure white), a
+   single violet accent that earns attention at AI moments, fuchsia reserved
+   for LIVE / active-AI signals, soft elevation over hard borders, large radii,
+   and invisible 250–350ms motion. Palette target ~90% neutral / 8% violet /
+   2% fuchsia. This is a token-level retheme: every class name is preserved, so
+   component markup and behaviour are unchanged.
    ========================================================================== */
 
 /* Shared, theme-independent tokens */
 :root {
-  --grad: linear-gradient(135deg, #10b981, #0d9488);
-  --radius: 16px;
-  --radius-sm: 10px;
-  --font: -apple-system, 'SF Pro Display', 'SF Pro Text', 'Inter', system-ui, 'Segoe UI', sans-serif;
+  --grad: linear-gradient(135deg, #8b5cf6, #6366f1);   /* violet → indigo — primary */
+  --grad-accent: linear-gradient(135deg, #d946ef, #8b5cf6); /* fuchsia → violet — AI */
 
-  /* Fluid layout tokens — scale spacing with the viewport instead of fixed px. */
-  --page-pad-x: clamp(16px, 3.5vw, 44px);
-  --page-pad-y: clamp(20px, 2.5vw, 40px);
+  --radius-lg: 24px;
+  --radius: 18px;
+  --radius-sm: 12px;
+  --font: -apple-system, 'SF Pro Display', 'SF Pro Text', 'Inter', system-ui, 'Segoe UI', sans-serif;
+  --font-mono: 'SF Mono', 'JetBrains Mono', ui-monospace, 'Cascadia Code', 'Segoe UI Mono', monospace;
+
+  /* Motion — invisible, calm. Raycast: 250–350ms, gentle easing. */
+  --ease: cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --dur: 280ms;
+
+  /* Fluid layout tokens — 8pt-grid aligned, scale with the viewport. */
+  --page-pad-x: clamp(20px, 3.5vw, 48px);
+  --page-pad-y: clamp(24px, 2.5vw, 40px);
   --content-max: 1520px;
-  --card-pad: clamp(16px, 2vw, 22px);
-  --gap: clamp(10px, 1.4vw, 16px);
-  --sidebar-w: clamp(220px, 18vw, 260px);
+  --card-pad: clamp(18px, 2vw, 24px);
+  --gap: clamp(12px, 1.4vw, 16px);
+  --sidebar-w: clamp(224px, 18vw, 264px);
 }
 
-/* DARK — the default. Intentional dark palette (near-black green-tinted
-   surfaces, white text, subtle white borders), emerald accent brightened for
-   legibility on dark. Applies with no attribute AND with [data-theme="dark"]. */
+/* DARK — the default. Layered violet-tinted slate surfaces (never pure black),
+   slate text, hairline white borders, violet accent brightened for legibility,
+   fuchsia held back for LIVE/AI. Applies with no attribute AND [data-theme="dark"]. */
 :root,
 :root[data-theme='dark'] {
   color-scheme: dark;
 
-  --bg: #0a0f0d;
-  --surface: #0e1512;
-  --card: #111a15;
-  --card-2: #16211b;
-  --inset: #0b120e;
+  --bg: #0a0b10;
+  --surface: #0e1017;
+  --card: #14161f;
+  --card-2: #1c1f2b;
+  --inset: #0c0e15;
 
-  --border: rgba(255, 255, 255, 0.08);
-  --border-2: rgba(255, 255, 255, 0.13);
-  --border-accent: rgba(16, 185, 129, 0.3);
+  --border: rgba(255, 255, 255, 0.07);
+  --border-2: rgba(255, 255, 255, 0.12);
+  --border-accent: rgba(139, 92, 246, 0.32);
 
-  --text: #e9f1ec;
-  --text-body: #b7c6bd;
-  --text-secondary: #8fa39a;
-  --text-muted: #5f6f67;
+  --text: #eef0f6;
+  --text-body: #c3c8d6;
+  --text-secondary: #8b93a7;
+  --text-muted: #5b6377;
 
-  --accent: #10b981;
-  --accent-strong: #0d9488;
-  --accent-bright: #34d399;
-  --accent-text: #34d399;
-  --accent-soft: rgba(16, 185, 129, 0.13);
+  --accent: #8b5cf6;
+  --accent-strong: #6366f1;
+  --accent-bright: #a78bfa;
+  --accent-text: #a78bfa;
+  --accent-soft: rgba(139, 92, 246, 0.14);
 
-  --danger: #ef4444;
-  --danger-text: #f4a3a3;
-  --danger-soft: rgba(239, 68, 68, 0.12);
+  /* Fuchsia — the 2% accent: LIVE, active transcription, AI activity. */
+  --live: #e879f9;
+  --live-bright: #f0abfc;
+  --live-soft: rgba(217, 70, 239, 0.14);
+  --live-border: rgba(217, 70, 239, 0.34);
+
+  --danger: #f43f5e;
+  --danger-text: #fda4af;
+  --danger-soft: rgba(244, 63, 94, 0.12);
   --warning: #f5b544;
   --warning-soft: rgba(245, 181, 68, 0.1);
 
-  --body-glow: radial-gradient(1200px 600px at 80% -10%, rgba(16, 185, 129, 0.06), transparent 60%);
-  --shadow: 0 2px 8px rgba(0, 0, 0, 0.3), 0 14px 34px rgba(0, 0, 0, 0.28);
+  --body-glow: radial-gradient(1200px 620px at 82% -12%, rgba(139, 92, 246, 0.08), transparent 60%);
+  --shadow: 0 1px 2px rgba(0, 0, 0, 0.28), 0 18px 44px -12px rgba(0, 0, 0, 0.5);
 }
 
-/* LIGHT — a separately designed palette (airy off-white bg, white surfaces,
-   slate text, subtle gray borders), emerald deepened for contrast on white. */
+/* LIGHT — a separately designed palette: airy violet-tinted off-white bg, white
+   surfaces layered with soft slate, violet deepened for AA contrast on white. */
 :root[data-theme='light'] {
   color-scheme: light;
 
-  --bg: #f5f8f6;
+  --bg: #f7f7fb;
   --surface: #ffffff;
   --card: #ffffff;
-  --card-2: #f2f6f4;
-  --inset: #edf1ef;
+  --card-2: #f4f4f9;
+  --inset: #eeeef5;
 
-  --border: rgba(15, 23, 42, 0.09);
-  --border-2: rgba(15, 23, 42, 0.14);
-  --border-accent: rgba(5, 150, 105, 0.32);
+  --border: rgba(17, 24, 39, 0.08);
+  --border-2: rgba(17, 24, 39, 0.13);
+  --border-accent: rgba(124, 58, 237, 0.3);
 
-  --text: #14231d;
-  --text-body: #33403a;
-  --text-secondary: #647a70;
-  --text-muted: #93a3ac;
+  --text: #1a1c2b;
+  --text-body: #3f4457;
+  --text-secondary: #6b7280;
+  --text-muted: #9aa1b0;
 
-  --accent: #059669;
-  --accent-strong: #0d9488;
-  --accent-bright: #10b981;
-  --accent-text: #047857;
-  --accent-soft: rgba(5, 150, 105, 0.1);
+  --accent: #7c3aed;
+  --accent-strong: #6366f1;
+  --accent-bright: #8b5cf6;
+  --accent-text: #6d28d9;
+  --accent-soft: rgba(124, 58, 237, 0.09);
 
-  --danger: #dc2626;
-  --danger-text: #b91c1c;
-  --danger-soft: rgba(220, 38, 38, 0.09);
+  /* Fuchsia — the 2% accent: LIVE, active transcription, AI activity. */
+  --live: #c026d3;
+  --live-bright: #a21caf;
+  --live-soft: rgba(192, 38, 211, 0.09);
+  --live-border: rgba(192, 38, 211, 0.3);
+
+  --danger: #e11d48;
+  --danger-text: #be123c;
+  --danger-soft: rgba(225, 29, 72, 0.09);
   --warning: #b45309;
   --warning-soft: rgba(180, 83, 9, 0.1);
 
-  --body-glow: radial-gradient(1100px 560px at 82% -14%, rgba(16, 185, 129, 0.09), transparent 62%);
-  --shadow: 0 1px 2px rgba(16, 24, 40, 0.05), 0 12px 32px rgba(16, 24, 40, 0.07);
+  --body-glow: radial-gradient(1100px 580px at 84% -14%, rgba(124, 58, 237, 0.1), transparent 62%);
+  --shadow: 0 1px 2px rgba(16, 24, 40, 0.04), 0 16px 40px -12px rgba(16, 24, 40, 0.12);
 }
 
 img,
@@ -246,10 +270,22 @@ body {
 }
 .side-nav a .nav-live {
   margin-left: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
   font-size: 0.58rem;
   font-weight: 700;
   letter-spacing: 0.08em;
-  color: var(--accent-bright);
+  color: var(--live);
+}
+.side-nav a .nav-live::before {
+  content: '';
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--live);
+  box-shadow: 0 0 0 0 var(--live-soft);
+  animation: coach-pulse 2s ease-in-out infinite;
 }
 
 .side-spacer {
@@ -388,9 +424,10 @@ button:disabled {
 }
 
 .live-dot {
-  color: var(--danger);
+  color: var(--live);
   font-size: 0.85rem;
   font-weight: 700;
+  letter-spacing: 0.04em;
   animation: pulse 1.4s infinite;
 }
 @keyframes pulse {
@@ -1437,12 +1474,12 @@ a.list-row:hover {
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  background: var(--accent-bright);
-  box-shadow: 0 0 0 0 var(--accent);
+  background: var(--live);
+  box-shadow: 0 0 0 0 var(--live);
   animation: coach-pulse 1.8s ease-in-out infinite;
 }
 @keyframes coach-pulse {
-  0% { box-shadow: 0 0 0 0 var(--accent-soft); }
+  0% { box-shadow: 0 0 0 0 var(--live-soft); }
   70% { box-shadow: 0 0 0 7px transparent; }
   100% { box-shadow: 0 0 0 0 transparent; }
 }

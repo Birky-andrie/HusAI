@@ -7,12 +7,12 @@ import { api } from '../lib/api.js';
  * dimension. Inline SVG per the dataviz method: 2px line, ≥8px markers with a
  * 2px surface ring, 10%-opacity area wash, hairline gridlines, endpoint-only
  * direct label, crosshair+tooltip hover, and a table view for accessibility.
- * Emerald line hue on the dark green-tinted surface, matching the brand theme.
+ * Violet line hue on the dark slate surface, matching the brand theme.
  */
 
-const LINE = '#10b981';
-const SURFACE = '#111a15';
-const GRID = 'rgba(255,255,255,0.09)';
+const LINE = '#8b5cf6';
+const SURFACE = '#14161f';
+const GRID = 'rgba(255,255,255,0.08)';
 
 const SCORE_LABELS = {
   overall: 'Overall',

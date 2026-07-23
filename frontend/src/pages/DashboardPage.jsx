@@ -19,6 +19,13 @@ const IArrow = () => (<svg {...s}><path d="M5 12h14M13 6l6 6-6 6" /></svg>);
 const DAY = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 const fmtDate = (iso) => new Date(iso).toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
 const fmtDur = (n) => `${Math.round(n / 60)} min`;
+const fmtToday = () => new Date().toLocaleDateString(undefined, { weekday: 'long', month: 'long', day: 'numeric' });
+const greeting = () => {
+  const h = new Date().getHours();
+  if (h < 12) return 'Good morning';
+  if (h < 18) return 'Good afternoon';
+  return 'Good evening';
+};
 
 export default function DashboardPage() {
   const { user } = useAuth();
@@ -77,8 +84,9 @@ export default function DashboardPage() {
     <div className="dashboard">
       <div className="dash-greeting">
         <div>
-          <h1>Welcome back, {firstName}</h1>
-          <p>Your communication is sharpening, one call at a time.</p>
+          <p className="dash-date">{fmtToday()}</p>
+          <h1>{greeting()}, {firstName}.</h1>
+          <p>Here's how your communication practice is going.</p>
         </div>
       </div>
 

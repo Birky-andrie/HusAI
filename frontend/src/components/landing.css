@@ -173,7 +173,7 @@
   margin-bottom: 14px;
 }
 .lp-eyebrow.light {
-  color: #34d399;
+  color: var(--accent-bright);
 }
 .lp-head h2 {
   font-size: clamp(1.8rem, 4vw, 2.6rem);
@@ -637,7 +637,7 @@
 /* Final CTA */
 .lp-final {
   padding: clamp(56px, 8vw, 96px) var(--page-pad-x);
-  background: linear-gradient(135deg, rgba(16, 185, 129, 0.14), rgba(13, 148, 136, 0.08));
+  background: linear-gradient(135deg, rgba(139, 92, 246, 0.15), rgba(217, 70, 239, 0.08));
   border-top: 1px solid var(--border);
 }
 .lp-final-inner {

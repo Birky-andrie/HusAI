@@ -10,3 +10,6 @@ desktop/out/
 # Local design reference images — kept on disk, not part of the app or repo
 ui/ux pics/
 
+# Figma Make export — visual reference only, not part of the app
+_figma-make/
+
