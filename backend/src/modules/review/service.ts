@@ -1,4 +1,5 @@
 import { geminiGenerateJson, geminiAvailable } from '../../providers/llm/gemini.js';
+import { groqChatJson, groqChatAvailable } from '../../providers/llm/groqChat.js';
 
 const REVIEW_SYSTEM_PROMPT = `You are a communication coach reviewing a call transcript from a Filipino virtual assistant (VA) speaking with an international client.
 
@@ -80,6 +81,8 @@ export interface ReviewResult {
   insights: ReviewInsight[];
   roleplayExercises: RoleplayExercise[];
   scores: ReviewScores;
+  /** Which provider produced this review — drives quota accounting upstream. */
+  provider?: 'gemini' | 'groq';
   mock?: boolean;
 }
 
@@ -123,28 +126,86 @@ const MOCK_REVIEW: ReviewResult = {
   ],
 };
 
+/**
+ * Field-by-field validation shared by both provider paths. Gemini's
+ * responseSchema makes bad shapes unlikely; Groq's json_object mode only
+ * guarantees valid JSON, not THIS shape — so nothing is trusted here.
+ */
+function validateReview(parsed: unknown): Omit<ReviewResult, 'provider' | 'mock'> {
+  const p = parsed as Partial<ReviewResult>;
+  if (!Array.isArray(p.insights) || !Array.isArray(p.roleplayExercises)) {
+    throw new Error('review response missing required arrays');
+  }
+  const insights = p.insights
+    .filter((i) => i && typeof i.pattern === 'string' && typeof i.evidence === 'string' && typeof i.explanation === 'string')
+    .slice(0, 6);
+  const roleplayExercises = p.roleplayExercises
+    .filter((e) => e && typeof e.title === 'string' && typeof e.scenario === 'string' && typeof e.targetSkill === 'string')
+    .slice(0, 5);
+  if (!insights.length || !roleplayExercises.length) {
+    throw new Error('review response has no valid insights or exercises');
+  }
+  const rawScores = (p.scores || {}) as unknown as Record<string, unknown>;
+  return {
+    insights,
+    roleplayExercises,
+    scores: {
+      confidence: clampScore(rawScores.confidence),
+      clarity: clampScore(rawScores.clarity),
+      conciseness: clampScore(rawScores.conciseness),
+      professionalism: clampScore(rawScores.professionalism),
+    },
+  };
+}
+
+// Groq has no responseSchema equivalent, so the shape rides in the prompt.
+const GROQ_SHAPE_NOTE = `
+
+Respond ONLY with JSON in exactly this shape:
+{"insights": [{"pattern": "...", "evidence": "...", "explanation": "..."}], "roleplayExercises": [{"title": "...", "scenario": "...", "targetSkill": "..."}], "scores": {"confidence": 0, "clarity": 0, "conciseness": 0, "professionalism": 0}}`;
+
+// Bigger than the Lifeline/Practice model — the review needs real reasoning.
+const GROQ_REVIEW_MODEL = 'llama-3.3-70b-versatile';
+
 export async function reviewTranscript(fullTranscript: string, callDurationSeconds?: number): Promise<ReviewResult> {
-  if (!geminiAvailable()) {
+  if (!geminiAvailable() && !groqChatAvailable()) {
     return { ...MOCK_REVIEW, mock: true };
   }
 
-  const text = await geminiGenerateJson({
-    system: REVIEW_SYSTEM_PROMPT,
-    user: `Call duration: ${Math.round((callDurationSeconds || 0) / 60)} minutes.\n\nTranscript:\n${fullTranscript}`,
-    schema: RESPONSE_SCHEMA,
-    temperature: 0.7,
-  });
+  const userPrompt = `Call duration: ${Math.round((callDurationSeconds || 0) / 60)} minutes.\n\nTranscript:\n${fullTranscript}`;
 
-  const parsed = JSON.parse(text) as ReviewResult; // schema-enforced, but JSON.parse failure still bubbles to the route's catch
-  if (!Array.isArray(parsed.insights) || !Array.isArray(parsed.roleplayExercises)) {
-    throw new Error('Gemini response missing required arrays');
+  // Primary: Gemini — API-enforced JSON schema, separate free quota.
+  if (geminiAvailable()) {
+    try {
+      const text = await geminiGenerateJson({
+        system: REVIEW_SYSTEM_PROMPT,
+        user: userPrompt,
+        schema: RESPONSE_SCHEMA,
+        temperature: 0.7,
+      });
+      return { ...validateReview(JSON.parse(text)), provider: 'gemini' };
+    } catch (err) {
+      if (!groqChatAvailable()) throw err;
+      console.warn('review: Gemini failed after retries, falling back to Groq:', (err as Error).message);
+    }
   }
-  const rawScores = (parsed.scores || {}) as unknown as Record<string, unknown>;
-  parsed.scores = {
-    confidence: clampScore(rawScores.confidence),
-    clarity: clampScore(rawScores.clarity),
-    conciseness: clampScore(rawScores.conciseness),
-    professionalism: clampScore(rawScores.professionalism),
-  };
-  return parsed;
+
+  // Fallback (or primary when only a Groq key is set). One re-ask on a bad
+  // shape, then give up to the route's existing "try again" handling.
+  let lastError: Error | null = null;
+  for (let attempt = 0; attempt < 2; attempt++) {
+    try {
+      const content = await groqChatJson({
+        system: REVIEW_SYSTEM_PROMPT + GROQ_SHAPE_NOTE,
+        user: userPrompt,
+        temperature: 0.7,
+        maxTokens: 1500,
+        model: GROQ_REVIEW_MODEL,
+      });
+      return { ...validateReview(JSON.parse(content || '{}')), provider: 'groq' };
+    } catch (err) {
+      lastError = err as Error;
+    }
+  }
+  throw lastError ?? new Error('review generation failed');
 }

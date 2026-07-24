@@ -8,6 +8,8 @@ export interface ChatJsonRequest {
   user: string;
   temperature?: number;
   maxTokens?: number;
+  /** Override for tasks needing more reasoning than the default low-latency model (e.g. review fallback). */
+  model?: string;
 }
 
 export function groqChatAvailable(): boolean {
@@ -15,7 +17,7 @@ export function groqChatAvailable(): boolean {
 }
 
 /** Low-latency JSON-mode chat completion (Lifeline path). Returns the raw content string; the caller parses. */
-export async function groqChatJson({ system, user, temperature = 0.6, maxTokens = 200 }: ChatJsonRequest): Promise<string> {
+export async function groqChatJson({ system, user, temperature = 0.6, maxTokens = 200, model = CHAT_MODEL }: ChatJsonRequest): Promise<string> {
   const resp = await fetch(`${GROQ_BASE}/chat/completions`, {
     method: 'POST',
     headers: {
@@ -23,7 +25,7 @@ export async function groqChatJson({ system, user, temperature = 0.6, maxTokens 
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
-      model: CHAT_MODEL,
+      model,
       temperature,
       max_tokens: maxTokens,
       response_format: { type: 'json_object' },

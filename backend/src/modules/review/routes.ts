@@ -16,8 +16,10 @@ router.post('/', quotaGuard('gemini'), async (req, res) => {
 
   try {
     const result = await reviewTranscript(fullTranscript, callDurationSeconds);
-    const { mock, ...payload } = result;
-    if (!mock) recordCall('gemini', { endpoint: '/api/review', platform, ok: true, transcriptChars: fullTranscript.length });
+    const { mock, provider, ...payload } = result;
+    if (!mock) {
+      recordCall(provider === 'groq' ? 'groqChat' : 'gemini', { endpoint: '/api/review', platform, ok: true, transcriptChars: fullTranscript.length });
+    }
     res.json(payload);
   } catch (err) {
     recordCall('gemini', { endpoint: '/api/review', platform, ok: false, error: (err as Error).message });

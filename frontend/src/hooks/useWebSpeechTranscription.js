@@ -40,7 +40,7 @@ export default function useWebSpeechTranscription({ onLine } = {}) {
       const rec = new SpeechRecognitionImpl();
       rec.continuous = true;
       rec.interimResults = true;
-      rec.lang = 'en-US';
+      rec.lang = 'en-PH'; // Philippine English — tuned for Filipino-accented speech and tolerates Tagalog code-switching better than en-US
 
       rec.onstart = () => {
         listeningRef.current = true;

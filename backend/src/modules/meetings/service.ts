@@ -46,7 +46,12 @@ export async function generateReviewForMeeting(
 ): Promise<StoredReview> {
   const result = await reviewTranscript(meeting.transcript, meeting.durationSeconds);
   if (!result.mock) {
-    recordCall('gemini', { endpoint: '/api/meetings', platform: meeting.platform, ok: true, transcriptChars: meeting.transcript.length });
+    recordCall(result.provider === 'groq' ? 'groqChat' : 'gemini', {
+      endpoint: '/api/meetings',
+      platform: meeting.platform,
+      ok: true,
+      transcriptChars: meeting.transcript.length,
+    });
   }
 
   const metrics = computeCallMetrics(meeting.transcript, avgResponseLatencySeconds);

@@ -78,7 +78,9 @@ export default function CallPage() {
 
   // VA transcription: streaming Web Speech on web; chunked Whisper on desktop.
   const webSpeech = useWebSpeechTranscription({ onLine: addVaLine });
-  const desktopMic = useSegmentTranscription(micStream, { speaker: 'va', onLine: addLine, chunkSeconds: 60 });
+  // 30s (not 60): Whisper mangles sentences that span a chunk boundary, so
+  // shorter segments trade a few extra requests for cleaner cuts.
+  const desktopMic = useSegmentTranscription(micStream, { speaker: 'va', onLine: addLine, chunkSeconds: 30 });
   // Client transcription: VAD-gated 10s Whisper chunks from the shared tab audio.
   const clientEars = useSegmentTranscription(clientStream, { speaker: 'client', onLine: addLine, chunkSeconds: 10 });
 
@@ -141,7 +143,11 @@ export default function CallPage() {
       }
     }
     try {
-      const mic = await navigator.mediaDevices.getUserMedia({ audio: true });
+      // Echo cancellation matters most: without it the client's voice (playing
+      // through speakers) bleeds into the mic and corrupts the VA channel.
+      const mic = await navigator.mediaDevices.getUserMedia({
+        audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true },
+      });
       setMicStream(mic);
       setCallActive(true);
       callStartedAtRef.current = Date.now();

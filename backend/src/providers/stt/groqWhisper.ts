@@ -29,6 +29,13 @@ export const groqWhisper: SttProvider = {
     form.append('model', WHISPER_MODEL);
     form.append('response_format', 'json');
     // No language pin: calls mix English and Filipino; Whisper handles code-switching better unpinned.
+    // Prompt biases decoding toward call-domain vocabulary and damps hallucinated
+    // words on quiet/noisy segments; temperature 0 keeps output deterministic.
+    form.append(
+      'prompt',
+      'A Filipino virtual assistant on a call with an international client, speaking English with occasional Tagalog. Client, deliverable, deadline, timeline, follow-up, invoice, schedule, task, update.'
+    );
+    form.append('temperature', '0');
 
     const resp = await fetch(`${GROQ_BASE}/audio/transcriptions`, {
       method: 'POST',
