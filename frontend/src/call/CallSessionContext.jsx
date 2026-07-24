@@ -333,6 +333,9 @@ export function CallSessionProvider({ children }) {
     },
     startCall,
     endCall,
+    // Start timestamp (ms) of the current call, for the Sidebar's live-call
+    // status timer — read-only, the actual timing logic is unchanged.
+    callStartedAt: callStartedAtRef.current,
     // Review state/actions are consumed by CallPage itself, not rendered here:
     // ReviewDashboard is an inline panel (not a fixed overlay), so it only
     // makes sense stacked under CallView on the /call route.

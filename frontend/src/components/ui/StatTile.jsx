@@ -2,7 +2,7 @@
  * Small metric tile (reuses the shared .stat-tile styles). `delta` colours by
  * direction; `downIsGood` flips it for rate metrics (fewer fillers = better).
  */
-export default function StatTile({ label, value, unit, delta, deltaSuffix = '', downIsGood = false }) {
+export default function StatTile({ icon, label, value, unit, delta, deltaSuffix = '', downIsGood = false }) {
   let cls = 'muted';
   let arrow = '';
   if (typeof delta === 'number' && delta !== 0) {
@@ -11,6 +11,7 @@ export default function StatTile({ label, value, unit, delta, deltaSuffix = '', 
   }
   return (
     <div className="stat-tile">
+      {icon && <span className="stat-icon">{icon}</span>}
       <span className="stat-label">{label}</span>
       <span className="stat-value">
         {value}

@@ -30,7 +30,7 @@
   --content-max: 1520px;
   --card-pad: clamp(18px, 2vw, 24px);
   --gap: clamp(12px, 1.4vw, 16px);
-  --sidebar-w: clamp(224px, 18vw, 264px);
+  --sidebar-w: clamp(232px, 17.5vw, 268px);
 }
 
 /* DARK — the default. Layered violet-tinted slate surfaces (never pure black),
@@ -184,18 +184,21 @@ body {
 }
 
 .sidebar {
-  flex: 0 0 var(--sidebar-w);
+  flex: 0 0 auto;
+  width: var(--sidebar-w);
   position: sticky;
   top: 0;
   align-self: flex-start;
   height: 100vh;
   background: var(--surface);
   border-right: 1px solid var(--border);
-  padding: 24px 16px;
+  padding: 18px 14px 16px;
   display: flex;
   flex-direction: column;
   gap: 4px;
   overflow-y: auto;
+  overflow-x: hidden;
+  transition: width 0.28s var(--ease), background-color 0.3s ease, border-color 0.3s ease;
 }
 
 /* Mobile top bar + drawer scrim (shown only at the mobile breakpoint) */
@@ -219,11 +222,45 @@ body {
   display: none;
 }
 
+/* Brand row: logo left, collapse chevron right */
+.side-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+  padding: 2px 2px 12px;
+}
 .side-brand {
   display: flex;
   align-items: center;
-  padding: 4px 8px 6px;
+  padding: 4px 8px;
   text-decoration: none;
+  min-width: 0;
+}
+.side-collapse {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--card);
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: color 0.2s ease, background 0.2s ease, border-color 0.2s ease;
+}
+.side-collapse svg {
+  width: 15px;
+  height: 15px;
+  transition: transform 0.28s var(--ease);
+}
+.side-collapse:hover {
+  color: var(--text);
+  background: var(--card-2);
+  border-color: var(--border-2);
 }
 .side-brand small {
   display: block;
@@ -233,21 +270,115 @@ body {
   margin-top: 2px;
 }
 
-.side-cta {
-  margin: 14px 0 18px;
+/* Prominent "+ Start a Call" — the single most important action in the app */
+.side-start-call {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin: 4px 2px 16px;
+  padding: 11px 14px;
+  border-radius: var(--radius-sm);
+  background: var(--grad);
+  color: #fff;
+  text-decoration: none;
+  font-size: 0.9rem;
+  font-weight: 600;
+  transition: transform 0.2s var(--ease), box-shadow 0.2s var(--ease), filter 0.2s var(--ease);
+}
+.side-start-call svg {
+  width: 16px;
+  height: 16px;
+  flex: 0 0 auto;
+}
+.side-start-call:hover {
+  transform: translateY(-1px);
+  filter: brightness(1.06);
+  box-shadow: var(--shadow);
+}
+.side-start-call:active {
+  transform: translateY(0);
+  filter: brightness(0.98);
+}
+
+/* Live-call status — calm, clickable, returns to /call from anywhere */
+.side-live {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
   width: 100%;
+  margin: 0 2px 14px;
+  padding: 11px 12px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--live-border);
+  background: var(--live-soft);
+  color: var(--text);
+  text-align: left;
+  cursor: pointer;
+  transition: background 0.2s ease, border-color 0.2s ease;
+}
+.side-live:hover {
+  background: var(--accent-soft);
+}
+.side-live-head {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+.side-live-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--live);
+  box-shadow: 0 0 0 0 var(--live-soft);
+  animation: coach-pulse 2s ease-in-out infinite;
+  flex: 0 0 auto;
+}
+.side-live-label {
+  flex: 1;
+  min-width: 0;
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.side-live-time {
+  font-size: 0.78rem;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  color: var(--text-secondary);
+  flex: 0 0 auto;
+}
+.side-live-sub {
+  font-size: 0.74rem;
+  color: var(--text-muted);
+}
+
+/* Section labels inside the nav (Workspace / Improve) */
+.side-section-label {
+  padding: 14px 12px 6px;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+.side-section-label:first-child {
+  padding-top: 2px;
 }
 
 .side-nav {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 4px;
 }
 .side-nav a {
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 9px 12px;
+  padding: 10px 12px;
   border-radius: var(--radius-sm);
   color: var(--text-secondary);
   text-decoration: none;
@@ -267,6 +398,7 @@ body {
 .side-nav a.active {
   background: var(--accent-soft);
   color: var(--accent-text);
+  font-weight: 600;
 }
 .side-nav a .nav-live {
   margin-left: auto;
@@ -290,6 +422,195 @@ body {
 
 .side-spacer {
   flex: 1;
+  min-height: 12px;
+}
+
+/* Upgrade-to-Pro promo — fills the rail's lower space (reference: Nexus Pro card) */
+.side-pro {
+  position: relative;
+  overflow: hidden;
+  margin: 10px 2px 12px;
+  padding: 16px;
+  border-radius: var(--radius);
+  background: var(--grad);
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.side-pro::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(180px 130px at 88% 110%, rgba(255, 255, 255, 0.22), transparent 65%);
+  pointer-events: none;
+}
+.side-pro-title {
+  position: relative;
+  font-size: 0.94rem;
+  font-weight: 700;
+  line-height: 1.35;
+  letter-spacing: -0.01em;
+}
+.side-pro-sub {
+  position: relative;
+  font-size: 0.76rem;
+  line-height: 1.5;
+  color: rgba(255, 255, 255, 0.82);
+}
+.side-pro-btn {
+  position: relative;
+  align-self: flex-start;
+  margin-top: 6px;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 9px 14px;
+  border: none;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.16);
+  color: #fff;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s var(--ease), transform 0.2s var(--ease);
+}
+.side-pro-btn svg {
+  width: 14px;
+  height: 14px;
+}
+.side-pro-btn:hover {
+  background: rgba(255, 255, 255, 0.26);
+  transform: translateX(2px);
+}
+
+/* Sidebar info flyouts (Upgrade, Help & Support) — anchored to the RIGHT of
+   the rail so they read correctly whether the sidebar is expanded or the
+   78px collapsed strip. */
+.side-popover-root {
+  position: relative;
+  width: 100%; /* fills its row in .side-foot's flex column */
+}
+/* Inside .side-pro (a flex column) the trigger should hug its own content,
+   like the plain button did before it was wrapped for the popover. */
+.side-pro-popover {
+  width: auto;
+  align-self: flex-start;
+}
+.side-popover-panel {
+  position: fixed;
+  z-index: 70;
+  width: 240px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow);
+  padding: 14px;
+  animation: notif-in 0.2s var(--ease-out);
+}
+.side-popover-title {
+  font-size: 0.86rem;
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+.side-popover-body {
+  font-size: 0.8rem;
+  line-height: 1.55;
+  color: var(--text-secondary);
+}
+@media (prefers-reduced-motion: reduce) {
+  .side-popover-panel {
+    animation: none;
+  }
+}
+
+/* Collapsed rail — desktop only; the ≤900px drawer never collapses */
+@media (min-width: 901px) {
+  .sidebar.collapsed {
+    width: 78px;
+    padding: 18px 10px 16px;
+  }
+  .sidebar.collapsed .side-top {
+    flex-direction: column-reverse;
+    align-items: center;
+    gap: 12px;
+    padding: 2px 0 12px;
+  }
+  .sidebar.collapsed .side-brand {
+    padding: 0;
+  }
+  .sidebar.collapsed .side-collapse svg {
+    transform: rotate(180deg);
+  }
+  .sidebar.collapsed .logo-word,
+  .sidebar.collapsed .side-nav a span,
+  .sidebar.collapsed .side-foot .nav-item span,
+  .sidebar.collapsed .side-theme span,
+  .sidebar.collapsed .side-pro,
+  .sidebar.collapsed .side-section-label,
+  .sidebar.collapsed .side-start-call span,
+  .sidebar.collapsed .side-live-label,
+  .sidebar.collapsed .side-live-time,
+  .sidebar.collapsed .side-live-sub,
+  .sidebar.collapsed .side-profile-meta,
+  .sidebar.collapsed .side-signout {
+    display: none;
+  }
+  .sidebar.collapsed .side-nav a,
+  .sidebar.collapsed .side-foot .nav-item,
+  .sidebar.collapsed .side-theme {
+    justify-content: center;
+    padding: 11px 0;
+  }
+  .sidebar.collapsed .side-start-call {
+    width: 40px;
+    height: 40px;
+    padding: 0;
+    margin: 4px auto 16px;
+  }
+  /* Collapsed: the live indicator shrinks to just its pulse dot, centered */
+  .sidebar.collapsed .side-live {
+    width: 40px;
+    height: 40px;
+    margin: 0 auto 14px;
+    padding: 0;
+    align-items: center;
+    justify-content: center;
+  }
+  .sidebar.collapsed .side-live-head {
+    gap: 0;
+  }
+  .sidebar.collapsed .side-profile-row {
+    justify-content: center;
+  }
+  .sidebar.collapsed .side-profile {
+    flex: 0 0 auto;
+    padding: 6px;
+    justify-content: center;
+  }
+}
+
+/* Route transitions — pages settle in with a soft fade-rise */
+.route-fade {
+  animation: route-in 0.3s var(--ease-out);
+}
+@keyframes route-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .route-fade {
+    animation: none;
+  }
+  .sidebar {
+    transition: background-color 0.3s ease, border-color 0.3s ease;
+  }
 }
 
 .side-foot {
@@ -306,7 +627,7 @@ body {
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 9px 12px;
+  padding: 10px 12px;
   border-radius: var(--radius-sm);
   color: var(--text-secondary);
   text-decoration: none;
@@ -1596,6 +1917,10 @@ a.list-row:hover {
     transform: translateX(-100%);
     transition: transform 0.28s ease;
     z-index: 60;
+  }
+  /* The drawer never collapses — the chevron only makes sense on the desktop rail */
+  .side-collapse {
+    display: none;
   }
   .sidebar.open {
     transform: translateX(0);
