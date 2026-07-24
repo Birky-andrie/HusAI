@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Routes, Route, NavLink, Link, useNavigate, useLocation } from 'react-router-dom';
+import { Routes, Route, NavLink, Link, Navigate, useNavigate, useLocation } from 'react-router-dom';
 import usePlatform from './hooks/usePlatform.js';
 import { useAuth } from './auth/AuthContext.jsx';
 import RequireAuth from './auth/RequireAuth.jsx';
@@ -43,7 +43,10 @@ const NAV = [
 function Landing() {
   const navigate = useNavigate();
   const { user } = useAuth();
-  return <LandingPage onStart={() => navigate(user ? '/dashboard' : '/register')} />;
+  // Signed-in users have no business on the marketing landing — send them to
+  // their dashboard. Covers both "/" and the catch-all "*" route.
+  if (user) return <Navigate to="/dashboard" replace />;
+  return <LandingPage onStart={() => navigate('/register')} />;
 }
 
 function AppRoutes() {
