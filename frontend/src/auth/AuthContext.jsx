@@ -17,6 +17,13 @@ function toAppUser(sUser) {
   };
 }
 
+const PUBLIC_HASH_PATHS = new Set(['', '/', '/login', '/register', '/verify-email', '/forgot-password', '/oauth-complete']);
+/** True only on landing/auth-flow pages — never while already deep in the app (e.g. an active call). */
+function onPublicPath() {
+  const hash = window.location.hash.replace(/^#/, '').split('?')[0];
+  return PUBLIC_HASH_PATHS.has(hash);
+}
+
 /** Turn a Supabase auth error into a friendly Error (keeps `.code` for callers). */
 function friendly(error) {
   const code = error?.code || '';
@@ -76,8 +83,11 @@ export function AuthProvider({ children }) {
       setSession(next);
       if (event === 'PASSWORD_RECOVERY') {
         navigate('/reset-password', { replace: true });
-      } else if (event === 'SIGNED_IN' && arrivedViaAuthRedirect && !handledRedirect) {
+      } else if (event === 'SIGNED_IN' && arrivedViaAuthRedirect && !handledRedirect && onPublicPath()) {
         // Tail of an OAuth / email-confirmation redirect — land them in the app.
+        // Gated to public/pre-auth paths only: a backgrounded tab regaining
+        // visibility can make Supabase re-validate the session and re-emit
+        // SIGNED_IN, which must NOT yank the user out of e.g. an active call.
         handledRedirect = true;
         navigate('/dashboard', { replace: true });
       }

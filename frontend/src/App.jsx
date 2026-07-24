@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Routes, Route, NavLink, Link, Navigate, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from './auth/AuthContext.jsx';
 import RequireAuth from './auth/RequireAuth.jsx';
+import { CallSessionProvider } from './call/CallSessionContext.jsx';
 import Logo from './components/Logo.jsx';
 import Avatar from './components/ui/Avatar.jsx';
 import { useTheme } from './theme/ThemeProvider.jsx';
@@ -149,7 +150,9 @@ export default function App() {
         </aside>
 
         <main className="sidebar-main">
-          <AppRoutes />
+          <CallSessionProvider>
+            <AppRoutes />
+          </CallSessionProvider>
         </main>
       </div>
     );
