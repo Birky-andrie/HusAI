@@ -46,17 +46,19 @@ export function AuthProvider({ children }) {
 
   const user = useMemo(() => toAppUser(session?.user), [session]);
 
-  // Pull the app-side profile (settings + linked identities) for the signed-in user.
+  // Pull the app-side profile (settings + avatar + linked identities) for the user.
   const loadAccount = useCallback(async (sUser) => {
     let settings = null;
+    let avatarUrl = null;
     try {
       const data = await api.get('/api/me');
       settings = data.settings;
+      avatarUrl = data.user?.avatarUrl ?? null;
     } catch {
       /* backend unreachable — leave settings null, the UI degrades gracefully */
     }
     const identities = sUser.identities || [];
-    setAccount({ settings, identities, hasPassword: identities.some((i) => i.provider === 'email') });
+    setAccount({ settings, avatarUrl, identities, hasPassword: identities.some((i) => i.provider === 'email') });
   }, []);
 
   // Restore the session and subscribe to auth changes.

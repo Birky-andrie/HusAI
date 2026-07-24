@@ -23,6 +23,7 @@ model User {
   id              String   @id // = Supabase auth uid (uuid)
   email           String   @unique
   displayName     String?
+  avatarUrl       String? // small base64 data URL (resized client-side) or a hosted image URL
   emailVerifiedAt DateTime?
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt

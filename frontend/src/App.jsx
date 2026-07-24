@@ -1,9 +1,10 @@
 import { useState } from 'react';
 import { Routes, Route, NavLink, Link, Navigate, useNavigate, useLocation } from 'react-router-dom';
-import usePlatform from './hooks/usePlatform.js';
 import { useAuth } from './auth/AuthContext.jsx';
 import RequireAuth from './auth/RequireAuth.jsx';
 import Logo from './components/Logo.jsx';
+import Avatar from './components/ui/Avatar.jsx';
+import { useTheme } from './theme/ThemeProvider.jsx';
 import LandingPage from './components/LandingPage.jsx';
 import LandingNav from './components/LandingNav.jsx';
 import LandingFooter from './components/LandingFooter.jsx';
@@ -30,14 +31,16 @@ const IconSessions = () => (<svg {...svg}><path d="M3 3v18h18" /><rect x="7" y="
 const IconPractice = () => (<svg {...svg}><path d="M4 5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2zM19 17H6a2 2 0 0 0-2 2" /></svg>);
 const IconProgress = () => (<svg {...svg}><path d="M3 17l6-6 4 4 8-8M17 7h4v4" /></svg>);
 const IconSettings = () => (<svg {...svg}><circle cx="12" cy="12" r="3" /><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" /></svg>);
+const IconMoon = () => (<svg {...svg}><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z" /></svg>);
+const IconSun = () => (<svg {...svg}><circle cx="12" cy="12" r="4" /><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4" /></svg>);
+const IconLogout = () => (<svg {...svg}><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9" /></svg>);
 
 const NAV = [
   { to: '/dashboard', label: 'Dashboard', Icon: IconDash },
   { to: '/call', label: 'Live Coach', Icon: IconMic, live: true },
-  { to: '/history', label: 'Sessions', Icon: IconSessions },
+  { to: '/history', label: 'Review', Icon: IconSessions },
   { to: '/practice', label: 'Practice', Icon: IconPractice },
   { to: '/progress', label: 'Progress', Icon: IconProgress },
-  { to: '/settings', label: 'Settings', Icon: IconSettings },
 ];
 
 function Landing() {
@@ -73,9 +76,8 @@ function AppRoutes() {
 }
 
 export default function App() {
-  const platform = usePlatform();
-  const isDesktop = platform === 'desktop';
-  const { user, logout } = useAuth();
+  const { user, account, logout } = useAuth();
+  const { theme, setTheme } = useTheme();
   const navigate = useNavigate();
   const { pathname } = useLocation();
   const [menuOpen, setMenuOpen] = useState(false);
@@ -87,10 +89,7 @@ export default function App() {
     navigate('/');
   };
 
-  const startSession = () => {
-    closeMenu();
-    navigate('/call');
-  };
+  const toggleTheme = () => setTheme(theme === 'dark' ? 'light' : 'dark');
 
   // Authed → sidebar shell (off-canvas drawer on mobile); public → centered layout.
   if (user) {
@@ -111,9 +110,6 @@ export default function App() {
           <Link to="/dashboard" className="side-brand" onClick={closeMenu}>
             <Logo size={30} />
           </Link>
-          <button className="primary side-cta" onClick={startSession}>
-            Start New Session
-          </button>
           <nav className="side-nav">
             {NAV.map(({ to, label, Icon, live }) => (
               <NavLink key={to} to={to} onClick={closeMenu}>
@@ -125,8 +121,30 @@ export default function App() {
           </nav>
           <div className="side-spacer" />
           <div className="side-foot">
-            <span className="side-badge">{isDesktop ? 'Desktop app' : 'Web app'}</span>
-            <button className="secondary" onClick={signOut}>Sign out</button>
+            <NavLink to="/settings" className="nav-item" onClick={closeMenu}>
+              <IconSettings />
+              <span>Settings</span>
+            </NavLink>
+            <button className="side-theme" onClick={toggleTheme} aria-label="Toggle color theme">
+              {theme === 'dark' ? <IconSun /> : <IconMoon />}
+              <span>{theme === 'dark' ? 'Light Mode' : 'Dark Mode'}</span>
+            </button>
+            <div className="side-profile-row">
+              <button
+                className="side-profile"
+                onClick={() => { closeMenu(); navigate('/settings'); }}
+                title="Profile & settings"
+              >
+                <Avatar src={account?.avatarUrl} name={user.displayName || user.email} size={38} />
+                <span className="side-profile-meta">
+                  <span className="side-profile-name">{user.displayName || user.email?.split('@')[0]}</span>
+                  <span className="side-profile-role">Virtual Assistant</span>
+                </span>
+              </button>
+              <button className="side-signout" onClick={signOut} title="Sign out" aria-label="Sign out">
+                <IconLogout />
+              </button>
+            </div>
           </div>
         </aside>
 

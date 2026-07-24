@@ -5,19 +5,31 @@ import { authRequired } from '../../middleware/auth.js';
 
 const router = Router();
 
-type DbUser = { id: string; email: string; displayName: string | null; emailVerifiedAt: Date | null; createdAt: Date };
+type DbUser = {
+  id: string;
+  email: string;
+  displayName: string | null;
+  avatarUrl: string | null;
+  emailVerifiedAt: Date | null;
+  createdAt: Date;
+};
 
 // The app's public view of a user. Supabase owns credentials/verification; we
-// keep displayName + settings as the app's own profile data.
+// keep displayName + avatar + settings as the app's own profile data.
 function toPublicUser(user: DbUser) {
   return {
     id: user.id,
     email: user.email,
     displayName: user.displayName,
+    avatarUrl: user.avatarUrl,
     emailVerified: Boolean(user.emailVerifiedAt),
     createdAt: user.createdAt,
   };
 }
+
+// ~400 KB cap on the stored data URL — a 128px avatar is well under this; the
+// guard just stops an oversized payload from bloating the row / responses.
+const MAX_AVATAR_CHARS = 400_000;
 
 // Everything under /api/me is the authenticated user's own data — never keyed
 // by a client-supplied user id.
@@ -43,14 +55,29 @@ router.get('/me', async (req, res) => {
 });
 
 router.patch('/me', async (req, res) => {
-  const { displayName } = (req.body || {}) as { displayName?: unknown };
-  if (displayName !== undefined && typeof displayName !== 'string') {
-    return res.status(400).json({ error: 'invalid-request', message: 'displayName must be a string.' });
+  const { displayName, avatarUrl } = (req.body || {}) as { displayName?: unknown; avatarUrl?: unknown };
+
+  const data: Record<string, unknown> = {};
+  if (displayName !== undefined) {
+    if (typeof displayName !== 'string') {
+      return res.status(400).json({ error: 'invalid-request', message: 'displayName must be a string.' });
+    }
+    data.displayName = displayName.trim() || null;
   }
-  const user = await prisma.user.update({
-    where: { id: req.user!.id },
-    data: { displayName: typeof displayName === 'string' ? displayName.trim() || null : undefined },
-  });
+  if (avatarUrl !== undefined) {
+    // null / empty string → clear the avatar; otherwise require a small image data URL.
+    if (avatarUrl === null || avatarUrl === '') {
+      data.avatarUrl = null;
+    } else if (typeof avatarUrl !== 'string' || !avatarUrl.startsWith('data:image/')) {
+      return res.status(400).json({ error: 'invalid-request', message: 'avatarUrl must be an image data URL.' });
+    } else if (avatarUrl.length > MAX_AVATAR_CHARS) {
+      return res.status(413).json({ error: 'too-large', message: 'That image is too large. Please choose a smaller one.' });
+    } else {
+      data.avatarUrl = avatarUrl;
+    }
+  }
+
+  const user = await prisma.user.update({ where: { id: req.user!.id }, data });
   res.json({ user: toPublicUser(user) });
 });
 

@@ -4,6 +4,33 @@ import { useAuth } from '../auth/AuthContext.jsx';
 import { useTheme } from '../theme/ThemeProvider.jsx';
 import { api } from '../lib/api.js';
 import { supabase } from '../lib/supabase.js';
+import Avatar from '../components/ui/Avatar.jsx';
+
+// Resize + center-crop an image file to a small square JPEG data URL so the
+// stored avatar stays tiny (a 128px JPEG is ~5–12 KB).
+function resizeToDataUrl(file, size = 128) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    const img = new Image();
+    reader.onload = () => {
+      img.src = String(reader.result);
+    };
+    reader.onerror = () => reject(new Error('Could not read that file.'));
+    img.onload = () => {
+      const canvas = document.createElement('canvas');
+      canvas.width = size;
+      canvas.height = size;
+      const ctx = canvas.getContext('2d');
+      const scale = Math.max(size / img.width, size / img.height);
+      const w = img.width * scale;
+      const h = img.height * scale;
+      ctx.drawImage(img, (size - w) / 2, (size - h) / 2, w, h);
+      resolve(canvas.toDataURL('image/jpeg', 0.85));
+    };
+    img.onerror = () => reject(new Error('That image could not be loaded.'));
+    reader.readAsDataURL(file);
+  });
+}
 
 function Section({ title, children }) {
   return (
@@ -63,6 +90,9 @@ export default function SettingsPage() {
   const [deleteMsg, setDeleteMsg] = useState('');
   const prefs = account?.settings?.notificationPrefs || {};
 
+  const [avatarMsg, setAvatarMsg] = useState('');
+  const [avatarBusy, setAvatarBusy] = useState(false);
+
   const saveProfile = async (e) => {
     e.preventDefault();
     setProfileMsg('');
@@ -72,6 +102,42 @@ export default function SettingsPage() {
       setProfileMsg('Saved.');
     } catch (err) {
       setProfileMsg(err.message);
+    }
+  };
+
+  const onAvatarChange = async (e) => {
+    const file = e.target.files?.[0];
+    e.target.value = ''; // let the same file be re-selected later
+    if (!file) return;
+    if (!file.type.startsWith('image/')) {
+      setAvatarMsg('Please choose an image file.');
+      return;
+    }
+    setAvatarMsg('');
+    setAvatarBusy(true);
+    try {
+      const dataUrl = await resizeToDataUrl(file, 128);
+      await api.patch('/api/me', { avatarUrl: dataUrl });
+      await refreshMe();
+      setAvatarMsg('Photo updated.');
+    } catch (err) {
+      setAvatarMsg(err.message || 'Could not update photo.');
+    } finally {
+      setAvatarBusy(false);
+    }
+  };
+
+  const removeAvatar = async () => {
+    setAvatarBusy(true);
+    setAvatarMsg('');
+    try {
+      await api.patch('/api/me', { avatarUrl: null });
+      await refreshMe();
+      setAvatarMsg('Photo removed.');
+    } catch (err) {
+      setAvatarMsg(err.message);
+    } finally {
+      setAvatarBusy(false);
     }
   };
 
@@ -173,6 +239,23 @@ export default function SettingsPage() {
       </div>
 
       <Section title="Profile">
+        <div className="avatar-edit">
+          <Avatar src={account?.avatarUrl} name={user.displayName || user.email} size={72} />
+          <div className="avatar-edit-actions">
+            <label className={`btn-file${avatarBusy ? ' busy' : ''}`}>
+              {avatarBusy ? 'Uploading…' : account?.avatarUrl ? 'Change photo' : 'Upload photo'}
+              <input type="file" accept="image/*" onChange={onAvatarChange} disabled={avatarBusy} hidden />
+            </label>
+            {account?.avatarUrl && (
+              <button type="button" className="link-inline" onClick={removeAvatar} disabled={avatarBusy}>
+                Remove
+              </button>
+            )}
+            {avatarMsg && <span className="list-sub avatar-msg">{avatarMsg}</span>}
+            <p className="list-sub">JPG or PNG. It'll be resized to a small square.</p>
+          </div>
+        </div>
+
         <form onSubmit={saveProfile} className="settings-form">
           <label>
             Display name
