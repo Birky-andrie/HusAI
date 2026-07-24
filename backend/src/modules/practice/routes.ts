@@ -2,6 +2,7 @@ import { Router } from 'express';
 import { prisma } from '../../db.js';
 import { authRequired } from '../../middleware/auth.js';
 import { quotaGuard, recordCall } from '../../middleware/quotaGuard.js';
+import { ownedOr404 } from '../../lib/ownership.js';
 import {
   generateScenario,
   playTurn,
@@ -61,11 +62,13 @@ router.get('/sessions', async (req, res) => {
 });
 
 router.get('/sessions/:id', async (req, res) => {
-  const session = await prisma.practiceSession.findFirst({
-    where: { id: req.params.id, userId: req.user!.id },
-    include: { turns: { orderBy: { createdAt: 'asc' } } },
-  });
-  if (!session) return res.status(404).json({ error: 'not-found' });
+  const session = await ownedOr404(res, () =>
+    prisma.practiceSession.findFirst({
+      where: { id: req.params.id, userId: req.user!.id },
+      include: { turns: { orderBy: { createdAt: 'asc' } } },
+    })
+  );
+  if (!session) return;
   res.json({ session: sessionShape(session), turns: session.turns.map(turnShape) });
 });
 
@@ -120,11 +123,13 @@ router.post('/sessions/:id/turns', quotaGuard('groqChat'), async (req, res) => {
     return res.status(400).json({ error: 'text (string) is required' });
   }
 
-  const session = await prisma.practiceSession.findFirst({
-    where: { id: req.params.id, userId: req.user!.id },
-    include: { turns: { orderBy: { createdAt: 'asc' } } },
-  });
-  if (!session) return res.status(404).json({ error: 'not-found' });
+  const session = await ownedOr404(res, () =>
+    prisma.practiceSession.findFirst({
+      where: { id: req.params.id, userId: req.user!.id },
+      include: { turns: { orderBy: { createdAt: 'asc' } } },
+    })
+  );
+  if (!session) return;
   if (session.status !== 'active') return res.status(400).json({ error: 'session-completed' });
 
   const vaTurnNumber = session.turns.filter((t) => t.role === 'va').length + 1;
@@ -159,11 +164,13 @@ router.post('/sessions/:id/turns', quotaGuard('groqChat'), async (req, res) => {
 
 /** End the session: summary + scores, recorded into progress. */
 router.post('/sessions/:id/end', quotaGuard('groqChat'), async (req, res) => {
-  const session = await prisma.practiceSession.findFirst({
-    where: { id: req.params.id, userId: req.user!.id },
-    include: { turns: { orderBy: { createdAt: 'asc' } } },
-  });
-  if (!session) return res.status(404).json({ error: 'not-found' });
+  const session = await ownedOr404(res, () =>
+    prisma.practiceSession.findFirst({
+      where: { id: req.params.id, userId: req.user!.id },
+      include: { turns: { orderBy: { createdAt: 'asc' } } },
+    })
+  );
+  if (!session) return;
   if (session.status !== 'active') return res.json({ session: sessionShape(session) }); // idempotent
 
   try {

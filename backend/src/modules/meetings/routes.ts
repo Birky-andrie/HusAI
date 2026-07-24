@@ -2,6 +2,7 @@ import { Router } from 'express';
 import { prisma } from '../../db.js';
 import { authRequired } from '../../middleware/auth.js';
 import { quotaGuard, recordCall } from '../../middleware/quotaGuard.js';
+import { ownedOr404 } from '../../lib/ownership.js';
 import { generateReviewForMeeting, parseReviewRow } from './service.js';
 
 const router = Router();
@@ -50,11 +51,13 @@ router.post('/', quotaGuard('gemini'), async (req, res) => {
 
 /** Retry review generation for a saved meeting (e.g. after a Gemini 503). */
 router.post('/:id/review', quotaGuard('gemini'), async (req, res) => {
-  const meeting = await prisma.meeting.findFirst({
-    where: { id: req.params.id, userId: req.user!.id },
-    include: { review: true },
-  });
-  if (!meeting) return res.status(404).json({ error: 'not-found' });
+  const meeting = await ownedOr404(res, () =>
+    prisma.meeting.findFirst({
+      where: { id: req.params.id, userId: req.user!.id },
+      include: { review: true },
+    })
+  );
+  if (!meeting) return;
   if (meeting.review) return res.json({ review: parseReviewRow(meeting.review) });
 
   const { avgResponseLatencySeconds } = (req.body || {}) as { avgResponseLatencySeconds?: unknown };
@@ -90,11 +93,13 @@ router.get('/', async (req, res) => {
 });
 
 router.get('/:id', async (req, res) => {
-  const meeting = await prisma.meeting.findFirst({
-    where: { id: req.params.id, userId: req.user!.id },
-    include: { review: true },
-  });
-  if (!meeting) return res.status(404).json({ error: 'not-found' });
+  const meeting = await ownedOr404(res, () =>
+    prisma.meeting.findFirst({
+      where: { id: req.params.id, userId: req.user!.id },
+      include: { review: true },
+    })
+  );
+  if (!meeting) return;
   res.json({
     meeting: {
       id: meeting.id,
