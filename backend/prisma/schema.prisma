@@ -28,10 +28,47 @@ model User {
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
   settings        UserSettings?
+  subscription    Subscription?
   meetings        Meeting[]
   reviews         Review[]
   practiceSessions PracticeSession[]
   progressMetrics ProgressMetric[]
+}
+
+// Billing state mirrored from the payment provider. Provider-agnostic on
+// purpose: `provider` + generic customerId/subscriptionId mean adding PayMongo
+// or GCash for PH users is a new service module, not a schema change.
+//
+// The provider is the source of truth; this row is a cache kept current by
+// webhooks so the app can answer "what plan is this user on?" without a network
+// call. Never write prices here — amounts live in the provider's dashboard.
+model Subscription {
+  id     String @id @default(cuid())
+  userId String @unique
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  provider String @default("stripe") // 'stripe' | 'paymongo' (future)
+
+  // Provider-side ids. customerId outlives any single subscription, so it is
+  // kept even after a cancellation — re-subscribing reuses the same customer.
+  customerId     String?
+  subscriptionId String? @unique
+
+  // Raw provider status, e.g. Stripe's 'trialing' | 'active' | 'past_due' |
+  // 'canceled' | 'unpaid' | 'incomplete'. Interpreted in lib/entitlements.ts —
+  // never compared to string literals elsewhere in the app.
+  status String @default("free")
+
+  priceId          String? // which configured price they bought (not the amount)
+  interval         String? // 'month' | 'year'
+  currentPeriodEnd DateTime?
+  cancelAtPeriodEnd Boolean  @default(false)
+  trialEndsAt      DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([customerId])
 }
 
 model Meeting {

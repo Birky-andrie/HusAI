@@ -41,4 +41,18 @@ export const config = {
   googleClientSecret: process.env.GOOGLE_CLIENT_SECRET || '',
   msClientId: process.env.MS_CLIENT_ID || '',
   msClientSecret: process.env.MS_CLIENT_SECRET || '',
+
+  // Billing (Stripe). Every value is optional: with no secret key the billing
+  // routes report "not configured" and the rest of the app is untouched.
+  //
+  // NOTE: prices are deliberately NOT defined here. Only Price *IDs* are
+  // configured; the actual amount/currency/interval is read from Stripe at
+  // request time, so final pricing is set in the Stripe dashboard with no code
+  // change. Add more tiers by adding more price-id vars + entries in plans.ts.
+  stripeSecretKey: process.env.STRIPE_SECRET_KEY || '',
+  stripeWebhookSecret: process.env.STRIPE_WEBHOOK_SECRET || '',
+  stripePriceProMonthly: process.env.STRIPE_PRICE_PRO_MONTHLY || '',
+  stripePriceProYearly: process.env.STRIPE_PRICE_PRO_YEARLY || '',
+  // 0 / unset = no free trial. Applied to new subscriptions only.
+  stripeTrialDays: Number(process.env.STRIPE_TRIAL_DAYS || 0),
 };

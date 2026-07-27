@@ -1135,6 +1135,62 @@ button:disabled {
   flex-wrap: wrap;
   margin-bottom: 14px;
 }
+/* Conversation Mode — opt-in coaching for joining an ongoing client-side
+   discussion (rather than only filling the VA's own silences). */
+.convo-mode {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 10px;
+}
+.convo-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 14px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: var(--card-2);
+  color: var(--text-secondary);
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: color 0.2s var(--ease), border-color 0.2s var(--ease), background 0.2s var(--ease);
+}
+.convo-toggle:hover {
+  color: var(--text);
+  border-color: var(--border-2);
+}
+.convo-toggle.on {
+  color: var(--live);
+  border-color: var(--live-border);
+  background: var(--live-soft);
+}
+.convo-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--text-muted);
+  flex: 0 0 auto;
+  transition: background 0.2s var(--ease);
+}
+.convo-toggle.on .convo-dot {
+  background: var(--live);
+  animation: coach-pulse 2s ease-in-out infinite;
+}
+.convo-hint {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+}
+/* Floating-coach variant: full width, tighter, inside the narrow PiP window. */
+.convo-toggle.compact {
+  width: 100%;
+  justify-content: center;
+  padding: 7px 10px;
+  font-size: 0.76rem;
+}
+
 /* Quiet caveat under the capture chips / stored transcript — the client channel
    has no speaker separation, so the VA shouldn't read it as one person. */
 .capture-note {
@@ -1833,6 +1889,167 @@ a.list-row:hover {
   align-items: center;
   gap: 12px;
   flex-wrap: wrap;
+}
+
+/* ============================================================================
+   Billing — Settings subscription row + Plans page
+   ========================================================================== */
+
+.billing-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 14px;
+}
+.billing-status {
+  margin: 0;
+}
+
+/* Monthly / yearly switch — mirrors the existing .theme-switch treatment. */
+.plan-interval {
+  display: inline-flex;
+  gap: 4px;
+  padding: 4px;
+  margin-bottom: clamp(18px, 2vw, 24px);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--card-2);
+}
+.plan-interval-option {
+  padding: 8px 18px;
+  border: none;
+  border-radius: 999px;
+  background: none;
+  color: var(--text-secondary);
+  font-size: 0.86rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s var(--ease), color 0.2s var(--ease);
+}
+.plan-interval-option.selected {
+  background: var(--card);
+  color: var(--text);
+  box-shadow: var(--shadow);
+}
+
+.plan-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: var(--gap);
+  align-items: start;
+}
+.plan-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: clamp(20px, 2.4vw, 28px);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--card);
+  transition: border-color 0.25s var(--ease), box-shadow 0.25s var(--ease), transform 0.25s var(--ease);
+}
+.plan-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow);
+}
+.plan-card.featured {
+  border-color: var(--border-accent);
+}
+.plan-badge {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: var(--accent-soft);
+  color: var(--accent-text);
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+.plan-name {
+  font-size: 1.15rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+.plan-tagline {
+  font-size: 0.86rem;
+  line-height: 1.55;
+  color: var(--text-secondary);
+}
+.plan-price {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  flex-wrap: wrap;
+  padding: 8px 0 4px;
+}
+.plan-amount {
+  font-size: clamp(1.9rem, 3vw, 2.3rem);
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  font-variant-numeric: tabular-nums;
+}
+/* Shown until pricing is configured in the provider dashboard. */
+.plan-amount-tbd {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+.plan-interval-label {
+  font-size: 0.88rem;
+  color: var(--text-muted);
+}
+.plan-features {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  flex: 1;
+}
+.plan-features li {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  font-size: 0.88rem;
+  line-height: 1.5;
+  color: var(--text-body);
+}
+.plan-check {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  margin-top: 1px;
+  border-radius: 50%;
+  background: var(--accent-soft);
+  color: var(--accent-text);
+  flex: 0 0 auto;
+}
+.plan-check svg {
+  width: 11px;
+  height: 11px;
+}
+.plan-cta {
+  margin-top: 6px;
+}
+.plan-cta button {
+  width: 100%;
+  justify-content: center;
+}
+.plans-foot {
+  margin-top: clamp(20px, 2.5vw, 28px);
+}
+
+/* Sidebar "Manage Plan" link shown to subscribers in place of the promo card. */
+.side-plan-link {
+  margin: 4px 0 10px;
 }
 .toggle-row {
   display: flex;

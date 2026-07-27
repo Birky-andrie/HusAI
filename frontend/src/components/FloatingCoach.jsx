@@ -43,6 +43,8 @@ export default function FloatingCoach({
   micStream,
   clientAudioActive,
   callStartedAt,
+  conversationMode,
+  onToggleConversationMode,
 }) {
   const [showTranscript, setShowTranscript] = useState(true);
   const [showSuggestions, setShowSuggestions] = useState(true);
@@ -70,6 +72,20 @@ export default function FloatingCoach({
         <span className="coach-status-live" aria-hidden="true" />
         {clientAudioActive ? 'Coaching both sides of the call' : 'Listening to your microphone'}
       </div>
+
+      {/* Reachable from the floating window too — the VA is usually here, not
+          in the tab, while the client side is talking. */}
+      {clientAudioActive && onToggleConversationMode && (
+        <button
+          className={`convo-toggle compact${conversationMode ? ' on' : ''}`}
+          onClick={onToggleConversationMode}
+          aria-pressed={Boolean(conversationMode)}
+          title="Suggest ways to join the client-side discussion"
+        >
+          <span className="convo-dot" aria-hidden="true" />
+          Conversation Mode {conversationMode ? 'on' : 'off'}
+        </button>
+      )}
 
       {showTranscript && (
         <TranscriptPanel lines={lines} interim={interim} isDesktop={isDesktop} showHeading={false} />

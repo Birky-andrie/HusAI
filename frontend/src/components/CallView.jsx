@@ -9,6 +9,8 @@ export default function CallView({
   interim,
   clientShare, // { available, active, hint, onStart, onStop }
   floatingCoach, // { supported, active, onPopOut, onBringBack }
+  conversationMode,
+  onToggleConversationMode,
   onStartCall,
   onEndCall,
   onBack,
@@ -76,6 +78,27 @@ export default function CallView({
         </div>
       )}
       {callActive && clientShare.hint && <div className="banner warning">{clientShare.hint}</div>}
+
+      {/* Only meaningful once client audio is shared — there is no discussion to
+          join without it. */}
+      {callActive && clientShare.active && (
+        <div className="convo-mode">
+          <button
+            className={`convo-toggle${conversationMode ? ' on' : ''}`}
+            onClick={onToggleConversationMode}
+            aria-pressed={Boolean(conversationMode)}
+          >
+            <span className="convo-dot" aria-hidden="true" />
+            Conversation Mode {conversationMode ? 'on' : 'off'}
+          </button>
+          <span className="convo-hint">
+            {conversationMode
+              ? 'Suggesting ways to join in while the client side talks.'
+              : 'Turn on to get suggestions for joining the client-side discussion.'}
+          </span>
+        </div>
+      )}
+
       {callActive && clientShare.active && (
         <p className="capture-note">
           Shared audio is captured as one channel, so everyone on the client&apos;s end is transcribed

@@ -24,6 +24,8 @@ export default function CallPage() {
         interim={call.interim}
         clientShare={call.clientShare}
         floatingCoach={call.floatingCoach}
+        conversationMode={call.conversationMode}
+        onToggleConversationMode={call.toggleConversationMode}
         onStartCall={call.startCall}
         onEndCall={call.endCall}
         onBack={() => navigate('/')}

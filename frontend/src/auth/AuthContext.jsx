@@ -57,15 +57,24 @@ export function AuthProvider({ children }) {
   const loadAccount = useCallback(async (sUser) => {
     let settings = null;
     let avatarUrl = null;
+    let subscription = null;
     try {
       const data = await api.get('/api/me');
       settings = data.settings;
       avatarUrl = data.user?.avatarUrl ?? null;
+      // Server-derived plan state. Display only — never an access decision.
+      subscription = data.subscription ?? null;
     } catch {
       /* backend unreachable — leave settings null, the UI degrades gracefully */
     }
     const identities = sUser.identities || [];
-    setAccount({ settings, avatarUrl, identities, hasPassword: identities.some((i) => i.provider === 'email') });
+    setAccount({
+      settings,
+      avatarUrl,
+      subscription,
+      identities,
+      hasPassword: identities.some((i) => i.provider === 'email'),
+    });
   }, []);
 
   // Restore the session and subscribe to auth changes.

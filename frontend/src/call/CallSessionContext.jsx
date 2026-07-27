@@ -10,6 +10,29 @@ import LifelineCard from '../components/LifelineCard.jsx';
 import { postJSON, api } from '../lib/api.js';
 
 const LIFELINE_CONTEXT_LINES = 6;
+// Banter mode leans on more context: the client side is mid-discussion, so the
+// last couple of lines rarely carry the whole thread.
+const BANTER_CONTEXT_LINES = 8;
+
+// How often banter mode re-checks whether it should refresh suggestions. It
+// only actually fires when the client side is talking AND new transcript has
+// landed, so this is a poll interval, not a request rate — see the effect below.
+const BANTER_TICK_MS = 4000;
+
+// Persisted so a VA who works this way doesn't re-enable it every call.
+const BANTER_PREF_KEY = 'husai.conversationMode';
+
+/** Longest gap still counted as "responding". Was 60s — see computeAvgResponseLatency. */
+const MAX_RESPONSE_LATENCY_S = 20;
+
+// --- Mic-bleed detection tuning -------------------------------------------
+// A VA "line" is treated as echo ONLY if the client channel was audibly live at
+// the moment it was captured AND its wording overlaps what they just said.
+// Either signal alone produces false positives (see the guard for why).
+const BLEED_SPEAKING_WINDOW_MS = 1500; // how close in time counts as "at the same moment"
+const BLEED_LOOKBACK_MS = 20_000; // how far back to compare client wording
+const BLEED_OVERLAP_RATIO = 0.75; // share of the VA line's words also in client speech
+const BLEED_MIN_WORDS = 4; // shorter utterances are backchannel ("yes", "okay"), never suppressed
 
 // "Client side" (not "Client"): the shared tab/system audio is ONE channel with
 // no speaker separation, so these lines may be several participants. The label
@@ -25,18 +48,51 @@ function toLabeledTranscript(lines) {
     .join('\n');
 }
 
-/** Average seconds from a client line to the VA's next line — the review's response-speed metric. */
+/**
+ * Average seconds from a client line to the VA's next line — the review's
+ * response-speed metric.
+ *
+ * Two exclusions keep this from punishing correct behaviour. When several
+ * people on the client side talk amongst themselves, staying quiet is the
+ * professional move, but naively every second of their exchange counts as the
+ * VA "being slow to respond". So a gap is only measured when:
+ *
+ *  1. Exactly ONE client-side line precedes the VA's reply. Consecutive
+ *     client lines mean an extended discussion on their end, not a question
+ *     left hanging.
+ *  2. That client line was not captured while Conversation Mode was on — the
+ *     VA explicitly told us that stretch was banter, not a prompt to answer.
+ */
 function computeAvgResponseLatency(lines) {
   const sorted = [...lines].sort((a, b) => a.t - b.t);
   const deltas = [];
   for (let i = 1; i < sorted.length; i++) {
-    if (sorted[i].speaker === 'va' && sorted[i - 1].speaker === 'client') {
-      const delta = (sorted[i].t - sorted[i - 1].t) / 1000;
-      if (delta > 0 && delta < 60) deltas.push(delta);
-    }
+    const prev = sorted[i - 1];
+    if (sorted[i].speaker !== 'va' || prev.speaker !== 'client') continue;
+    if (prev.banter) continue; // (2) explicit banter stretch
+    if (sorted[i - 2]?.speaker === 'client') continue; // (1) multi-turn client exchange
+
+    const delta = (sorted[i].t - prev.t) / 1000;
+    if (delta > 0 && delta < MAX_RESPONSE_LATENCY_S) deltas.push(delta);
   }
   if (!deltas.length) return undefined;
   return deltas.reduce((s, d) => s + d, 0) / deltas.length;
+}
+
+/** Words only, lowercased — punctuation and casing must not affect overlap. */
+const wordsOf = (s) =>
+  String(s || '')
+    .toLowerCase()
+    .replace(/[^\p{L}\p{N}\s]/gu, ' ')
+    .split(/\s+/)
+    .filter(Boolean);
+
+/** Share of `candidate`'s words that also appear in `corpus`. */
+function overlapRatio(candidate, corpus) {
+  const words = wordsOf(candidate);
+  if (!words.length) return 0;
+  const bag = new Set(wordsOf(corpus));
+  return words.filter((w) => bag.has(w)).length / words.length;
 }
 
 const CallSessionContext = createContext(null);
@@ -69,17 +125,88 @@ export function CallSessionProvider({ children }) {
   const [reviewError, setReviewError] = useState('');
   const [savedMeetingId, setSavedMeetingId] = useState(null);
 
+  // Conversation Mode: keep coaching the VA on how to JOIN an ongoing
+  // client-side discussion, instead of only filling silences. Opt-in because it
+  // asks the model for suggestions far more often than turn-based coaching.
+  const [conversationMode, setConversationMode] = useState(
+    () => localStorage.getItem(BANTER_PREF_KEY) === '1'
+  );
+  const conversationModeRef = useRef(conversationMode);
+  conversationModeRef.current = conversationMode;
+  const toggleConversationMode = useCallback(() => {
+    setConversationMode((on) => {
+      try {
+        localStorage.setItem(BANTER_PREF_KEY, on ? '0' : '1');
+      } catch { /* private mode — preference just won't persist */ }
+      return !on;
+    });
+  }, []);
+
+  const clientSpeakingRef = useRef(false);
+  // Rolling log of when the client channel was audibly live. Sampled on a timer
+  // rather than read at delivery time because desktop Whisper lines arrive
+  // seconds after the audio they describe — the log lets us ask "was the client
+  // talking *when this was recorded*" on both platforms.
+  const clientSpeechLogRef = useRef([]);
+  const clientWasSpeakingAt = useCallback(
+    (t) => clientSpeechLogRef.current.some((ts) => Math.abs(ts - t) <= BLEED_SPEAKING_WINDOW_MS),
+    []
+  );
+
   // Merged dual-channel transcript. Channel = speaker: the mic is the VA by
   // definition; tab/system audio is the client — deterministic diarization.
   // linesRef is updated synchronously in addLine (not at render time) so lines
   // flushed DURING endCall/requestLifeline are visible before the next render.
   const [lines, setLines] = useState([]);
   const linesRef = useRef([]);
-  const addLine = useCallback((line) => {
-    if (!line.text) return;
-    linesRef.current = [...linesRef.current, line];
-    setLines(linesRef.current);
-  }, []);
+
+  /**
+   * Echo guard. On speakers (not headphones) the client's voice plays out loud
+   * and can leak into the VA's mic, landing in the transcript as words the VA
+   * never said — which then pollutes their filler/apology metrics and the
+   * coaching review.
+   *
+   * Suppression requires BOTH signals, deliberately:
+   *  - the client channel was live at the moment this was captured, and
+   *  - the wording substantially repeats what they just said.
+   *
+   * Text similarity alone would misfire on the confirm-and-summarise technique
+   * the Lifeline actively coaches ("To summarize: I will send the report…"),
+   * which legitimately echoes the client's words — but happens AFTER they stop
+   * talking, so the timing signal clears it. Short utterances are never
+   * suppressed: "yes"/"right" while listening is real backchannel.
+   */
+  const looksLikeMicBleed = useCallback(
+    (text, t) => {
+      if (wordsOf(text).length < BLEED_MIN_WORDS) return false;
+      if (!clientWasSpeakingAt(t)) return false;
+      const recentClientText = linesRef.current
+        .filter((l) => l.speaker === 'client' && t - l.t <= BLEED_LOOKBACK_MS && l.t <= t + BLEED_SPEAKING_WINDOW_MS)
+        .map((l) => l.text)
+        .join(' ');
+      if (!recentClientText) return false;
+      return overlapRatio(text, recentClientText) >= BLEED_OVERLAP_RATIO;
+    },
+    [clientWasSpeakingAt]
+  );
+
+  const addLine = useCallback(
+    (line) => {
+      if (!line.text) return;
+      if (line.speaker === 'va' && looksLikeMicBleed(line.text, line.t)) {
+        // Dropping is lossless: an echo means the client channel already
+        // captured the real utterance, so the words are still in the transcript
+        // under the correct speaker.
+        console.warn('dropped suspected mic bleed from VA channel:', line.text);
+        return;
+      }
+      // Tag banter so the post-call latency metric can exclude these stretches.
+      linesRef.current = [...linesRef.current, { ...line, banter: conversationModeRef.current || undefined }];
+      setLines(linesRef.current);
+    },
+    [looksLikeMicBleed]
+  );
+
   const resetLines = useCallback(() => {
     linesRef.current = [];
     setLines([]);
@@ -88,7 +215,6 @@ export function CallSessionProvider({ children }) {
 
   const callStartedAtRef = useRef(null);
   const durationSecondsRef = useRef(0);
-  const clientSpeakingRef = useRef(false);
 
   // VA transcription: streaming Web Speech on web; chunked Whisper on desktop.
   const webSpeech = useWebSpeechTranscription({ onLine: addVaLine });
@@ -104,23 +230,46 @@ export function CallSessionProvider({ children }) {
 
   const transcriptionUnavailable = !isDesktop && !webSpeech.supported;
 
-  const requestLifeline = useCallback(async () => {
-    try {
-      // Flush in-progress Whisper segments first so the snippet includes what
-      // was said in the seconds before the pause — especially the client's
-      // last sentence, which is usually what the VA is stuck on.
-      if (isDesktop) await desktopMic.flushNow();
-      await clientEars.flushNow();
-      const recent = [...linesRef.current].sort((a, b) => a.t - b.t).slice(-LIFELINE_CONTEXT_LINES);
-      if (!recent.length) return;
-      const snippet = recent.map((l) => `${speakerLabel(l)}: ${l.text}`).join('\n');
-      const { bullets: result } = await postJSON('/api/lifeline', { transcriptSnippet: snippet, platform });
-      setBullets(result);
-    } catch (err) {
-      // Never surface lifeline failures mid-call — skip this trigger.
-      console.warn('lifeline skipped:', err.message);
-    }
-  }, [isDesktop, platform, desktopMic.flushNow, clientEars.flushNow]);
+  const requestLifeline = useCallback(
+    async (mode = 'turn') => {
+      const banter = mode === 'banter';
+      try {
+        // Turn mode flushes in-progress Whisper segments first so the snippet
+        // includes what was said in the seconds before the pause — especially
+        // the client's last sentence, which is usually what the VA is stuck on.
+        // Banter mode deliberately does NOT flush: the client channel is
+        // already producing a line every ~10s while they talk, and forcing
+        // extra segment rotations would burn Whisper quota for a few seconds
+        // of freshness that a running discussion doesn't need.
+        if (!banter) {
+          if (isDesktop) await desktopMic.flushNow();
+          await clientEars.flushNow();
+        }
+        const recent = [...linesRef.current]
+          .sort((a, b) => a.t - b.t)
+          .slice(-(banter ? BANTER_CONTEXT_LINES : LIFELINE_CONTEXT_LINES));
+        if (!recent.length) return;
+        const snippet = recent.map((l) => `${speakerLabel(l)}: ${l.text}`).join('\n');
+        const { bullets: result } = await postJSON('/api/lifeline', { transcriptSnippet: snippet, platform, mode });
+        setBullets(result);
+      } catch (err) {
+        // Never surface lifeline failures mid-call — skip this trigger.
+        console.warn('lifeline skipped:', err.message);
+      }
+    },
+    [isDesktop, platform, desktopMic.flushNow, clientEars.flushNow]
+  );
+
+  /**
+   * Manual "new suggestions" button. Must NOT be wired directly to
+   * requestLifeline — it's an onClick handler, so React would pass the click
+   * event as the `mode` argument and serialize it into the request body.
+   * Reads the mode from a ref so the identity stays stable across toggles.
+   */
+  const refreshLifeline = useCallback(
+    () => requestLifeline(conversationModeRef.current ? 'banter' : 'turn'),
+    [requestLifeline]
+  );
 
   // Lifeline trigger: VA silent ≥4s — but client speech resets the clock
   // (suppressRef), so it fires when it's genuinely the VA's turn, never while
@@ -140,6 +289,45 @@ export function CallSessionProvider({ children }) {
     speakingRef: clientSpeakingRef,
   });
 
+  // Sample the client-speaking probe into a rolling log, so the mic-bleed guard
+  // can ask "was the client audible at time T" even for desktop lines that
+  // arrive well after the audio they transcribe.
+  useEffect(() => {
+    if (!callActive || !clientStream) return undefined;
+    const id = setInterval(() => {
+      if (!clientSpeakingRef.current) return;
+      const log = clientSpeechLogRef.current;
+      log.push(Date.now());
+      // Keep roughly the last 10 minutes; older entries can't match any line
+      // still inside BLEED_LOOKBACK_MS.
+      if (log.length > 3000) log.splice(0, log.length - 3000);
+    }, 200);
+    return () => clearInterval(id);
+  }, [callActive, clientStream]);
+
+  /**
+   * Conversation Mode trigger. The turn-based Lifeline above stays exactly as
+   * it was (it fires on VA silence and is suppressed while the client talks);
+   * this is the inverse case — the client side is mid-discussion and the VA
+   * wants a way in.
+   *
+   * Gated on NEW transcript rather than the clock, so a long stretch of client
+   * chatter costs one request per new client line (~1 per 10s chunk) instead of
+   * one per tick, and suggestions never regenerate from unchanged context.
+   */
+  const lastBanterLineCountRef = useRef(0);
+  useEffect(() => {
+    if (!callActive || !conversationMode || !clientStream) return undefined;
+    lastBanterLineCountRef.current = linesRef.current.length;
+    const id = setInterval(() => {
+      if (!clientSpeakingRef.current) return; // only while they're actually talking
+      if (linesRef.current.length === lastBanterLineCountRef.current) return; // nothing new to react to
+      lastBanterLineCountRef.current = linesRef.current.length;
+      requestLifeline('banter');
+    }, BANTER_TICK_MS);
+    return () => clearInterval(id);
+  }, [callActive, conversationMode, clientStream, requestLifeline]);
+
   const startCall = useCallback(async () => {
     setMicError('');
     setClientHint('');
@@ -147,6 +335,8 @@ export function CallSessionProvider({ children }) {
     setShowReview(false);
     setSavedMeetingId(null);
     resetLines();
+    clientSpeechLogRef.current = []; // stale timestamps would mis-trigger the bleed guard
+    lastBanterLineCountRef.current = 0;
     // Open the floating coach FIRST: requestWindow needs the click's user
     // activation, which the getUserMedia await below would outlive.
     if (!isDesktop && pip.supported) {
@@ -337,6 +527,10 @@ export function CallSessionProvider({ children }) {
     },
     startCall,
     endCall,
+    // Conversation Mode: keep suggesting ways to JOIN an ongoing client-side
+    // discussion, instead of only coaching the VA's own silences.
+    conversationMode,
+    toggleConversationMode,
     // Start timestamp (ms) of the current call, for the Sidebar's live-call
     // status timer — read-only, the actual timing logic is unchanged.
     callStartedAt: callStartedAtRef.current,
@@ -362,7 +556,7 @@ export function CallSessionProvider({ children }) {
       <LifelineCard
         bullets={bullets}
         onDismiss={() => setBullets(null)}
-        onRefresh={requestLifeline}
+        onRefresh={refreshLifeline}
         micStream={callActive ? micStream : undefined}
         active={callActive}
       />
@@ -375,10 +569,12 @@ export function CallSessionProvider({ children }) {
             isDesktop={isDesktop}
             bullets={bullets}
             onDismissBullets={() => setBullets(null)}
-            onRefreshBullets={requestLifeline}
+            onRefreshBullets={refreshLifeline}
             micStream={micStream}
             callStartedAt={callActive ? callStartedAtRef.current : null}
             clientAudioActive={Boolean(clientStream)}
+            conversationMode={conversationMode}
+            onToggleConversationMode={toggleConversationMode}
           />,
           pip.pipWindow.document.body
         )}

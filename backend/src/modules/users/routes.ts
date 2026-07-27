@@ -2,6 +2,9 @@ import { Router } from 'express';
 import { prisma } from '../../db.js';
 import { config } from '../../config.js';
 import { authRequired } from '../../middleware/auth.js';
+import { resolveEntitlements } from '../../lib/entitlements.js';
+import { cancelSubscriptionForUser } from '../billing/service.js';
+import { stripeEnabled } from '../billing/stripe.js';
 
 const router = Router();
 
@@ -38,7 +41,7 @@ router.use('/me', authRequired);
 router.get('/me', async (req, res) => {
   const user = await prisma.user.findUnique({
     where: { id: req.user!.id },
-    include: { settings: true },
+    include: { settings: true, subscription: true },
   });
   if (!user) {
     // Valid token but the user row is gone (deleted account).
@@ -51,6 +54,8 @@ router.get('/me', async (req, res) => {
       lifelinePauseSeconds: user.settings.lifelinePauseSeconds,
       notificationPrefs: user.settings.notificationPrefsJson ? JSON.parse(user.settings.notificationPrefsJson) : {},
     },
+    // Always server-derived — the client never decides its own plan.
+    subscription: resolveEntitlements(user.subscription),
   });
 });
 
@@ -141,8 +146,14 @@ async function deleteSupabaseUser(id: string): Promise<void> {
 }
 
 router.delete('/me', async (req, res) => {
-  // Cascades wipe settings, meetings, reviews, practice sessions/turns, and
-  // progress metrics with the user row; then remove the Supabase auth identity.
+  // Cancel billing FIRST — deleting the row would otherwise orphan a live
+  // subscription and keep charging someone who no longer has an account.
+  // Best-effort by design: a Stripe outage must not block account deletion.
+  if (stripeEnabled()) await cancelSubscriptionForUser(req.user!.id);
+
+  // Cascades wipe settings, subscription, meetings, reviews, practice
+  // sessions/turns, and progress metrics with the user row; then remove the
+  // Supabase auth identity.
   await prisma.user.delete({ where: { id: req.user!.id } });
   await deleteSupabaseUser(req.user!.id);
   res.json({ ok: true });

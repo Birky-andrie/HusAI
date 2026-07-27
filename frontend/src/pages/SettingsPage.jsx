@@ -1,10 +1,11 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../auth/AuthContext.jsx';
 import { useTheme } from '../theme/ThemeProvider.jsx';
 import { api } from '../lib/api.js';
 import { supabase } from '../lib/supabase.js';
 import Avatar from '../components/ui/Avatar.jsx';
+import { isPro, planLabel, statusNote } from '../billing/plan.js';
 
 // Resize + center-crop an image file to a small square JPEG data URL so the
 // stored avatar stays tiny (a 128px JPEG is ~5–12 KB).
@@ -77,6 +78,7 @@ function AppearanceControl() {
 export default function SettingsPage() {
   const { user, account, refreshMe, logout, updatePassword, resendConfirmation } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
   const isDesktop = Boolean(window.electronAPI?.isDesktop);
 
   const [displayName, setDisplayName] = useState(user?.displayName || '');
@@ -92,6 +94,30 @@ export default function SettingsPage() {
 
   const [avatarMsg, setAvatarMsg] = useState('');
   const [avatarBusy, setAvatarBusy] = useState(false);
+
+  const subscription = account?.subscription;
+  const subscribed = isPro(subscription);
+  const [portalBusy, setPortalBusy] = useState(false);
+  const [billingMsg, setBillingMsg] = useState('');
+  const checkoutResult = new URLSearchParams(location.search).get('checkout');
+
+  // Returning from Stripe: the webhook may land a moment after the redirect, so
+  // re-pull the account once to reflect the new plan without a manual refresh.
+  useEffect(() => {
+    if (checkoutResult === 'success') refreshMe();
+  }, [checkoutResult, refreshMe]);
+
+  const openPortal = async () => {
+    setBillingMsg('');
+    setPortalBusy(true);
+    try {
+      const { url } = await api.post('/api/billing/portal', {});
+      window.location.href = url;
+    } catch (err) {
+      setBillingMsg(err.message || 'Could not open the billing portal.');
+      setPortalBusy(false);
+    }
+  };
 
   const saveProfile = async (e) => {
     e.preventDefault();
@@ -369,9 +395,33 @@ export default function SettingsPage() {
       </Section>
 
       <Section title="Subscription">
-        <p className="list-sub">
-          <span className="chip on">Alpha</span> &nbsp;All features are free during the alpha. Plans arrive later.
-        </p>
+        {checkoutResult === 'success' && (
+          <div className="banner info">Thank you — your subscription is active. It may take a moment to appear.</div>
+        )}
+        {billingMsg && <div className="banner error">{billingMsg}</div>}
+
+        <div className="billing-row">
+          <span className={`chip${subscribed ? ' on' : ''}`}>{planLabel(subscription)}</span>
+          <p className="list-sub billing-status">{statusNote(subscription)}</p>
+        </div>
+
+        {subscription?.pastDue && (
+          <div className="banner warning">
+            Your last payment didn&apos;t go through. Update your payment method to keep Pro access.
+          </div>
+        )}
+
+        <div className="settings-actions">
+          {subscribed ? (
+            <button className="secondary" onClick={openPortal} disabled={portalBusy}>
+              {portalBusy ? 'Opening…' : 'Manage Plan'}
+            </button>
+          ) : (
+            <Link className="link-button" to="/plans">
+              View Plans
+            </Link>
+          )}
+        </div>
       </Section>
 
       <Section title="Danger zone">

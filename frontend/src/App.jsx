@@ -25,6 +25,8 @@ import PracticePage from './pages/PracticePage.jsx';
 import PracticeSessionPage from './pages/PracticeSessionPage.jsx';
 import ProgressPage from './pages/ProgressPage.jsx';
 import SettingsPage from './pages/SettingsPage.jsx';
+import PlansPage from './pages/PlansPage.jsx';
+import { isPro, planLabel } from './billing/plan.js';
 
 // Minimal inline nav icons (stroke, currentColor) — visual only.
 const svg = { width: 18, height: 18, viewBox: '0 0 24 24', fill: 'none', stroke: 'currentColor', strokeWidth: 1.8, strokeLinecap: 'round', strokeLinejoin: 'round' };
@@ -41,6 +43,7 @@ const IconSun = () => (<svg {...svg}><circle cx="12" cy="12" r="4" /><path d="M1
 const IconLogout = () => (<svg {...svg}><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9" /></svg>);
 const IconPlus = () => (<svg {...svg}><path d="M12 5v14M5 12h14" /></svg>);
 const IconHelp = () => (<svg {...svg}><circle cx="12" cy="12" r="9" /><path d="M9.5 9a2.6 2.6 0 1 1 3.5 2.4c-.9.4-1.5 1.1-1.5 2v.3M12 17h.01" /></svg>);
+const IconSparkle = () => (<svg {...svg}><path d="M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9zM18 16l.8 2.2L21 19l-2.2.8L18 22l-.8-2.2L15 19l2.2-.8z" /></svg>);
 
 // The user's improvement journey drives the two sections: WORKSPACE is where
 // a call happens, IMPROVE is everything that comes after it.
@@ -95,6 +98,7 @@ function AppRoutes() {
       <Route path="/practice/:id" element={<RequireAuth><PracticeSessionPage /></RequireAuth>} />
       <Route path="/progress" element={<RequireAuth><ProgressPage /></RequireAuth>} />
       <Route path="/settings" element={<RequireAuth><SettingsPage /></RequireAuth>} />
+      <Route path="/plans" element={<RequireAuth><PlansPage /></RequireAuth>} />
       <Route path="*" element={<Landing />} />
     </Routes>
   );
@@ -125,6 +129,9 @@ export default function App() {
   };
 
   const toggleTheme = () => setTheme(theme === 'dark' ? 'light' : 'dark');
+
+  // Display only — the backend decides what a plan actually unlocks.
+  const subscribed = isPro(account?.subscription);
 
   // Authed → sidebar shell (off-canvas drawer on mobile); public → centered layout.
   // CallSessionProvider wraps the WHOLE shell (not just <main>) so the Sidebar's
@@ -187,23 +194,21 @@ export default function App() {
 
             <div className="side-spacer" />
 
-            <div className="side-pro">
-              <p className="side-pro-title">Unlock more with HusAI Pro</p>
-              <p className="side-pro-sub">Advanced analytics, unlimited coaching and smarter AI.</p>
-              <SidebarPopover
-                className="side-pro-popover"
-                title="HusAI Pro"
-                trigger={(toggle) => (
-                  <button className="side-pro-btn" onClick={toggle}>
-                    Upgrade Now <IconArrowR />
-                  </button>
-                )}
-              >
-                <p className="side-popover-body">
-                  Plans and billing aren't live yet — we're putting the finishing touches on HusAI Pro. Check back soon.
-                </p>
-              </SidebarPopover>
-            </div>
+            {/* Subscribers get a quiet "manage" link instead of an upsell card. */}
+            {subscribed ? (
+              <NavLink to="/plans" className="nav-item side-plan-link" onClick={closeMenu} title="Manage plan">
+                <IconSparkle />
+                <span>Manage Plan</span>
+              </NavLink>
+            ) : (
+              <div className="side-pro">
+                <p className="side-pro-title">Unlock more with HusAI Pro</p>
+                <p className="side-pro-sub">Advanced analytics, unlimited coaching and smarter AI.</p>
+                <button className="side-pro-btn" onClick={() => { closeMenu(); navigate('/plans'); }}>
+                  Upgrade Now <IconArrowR />
+                </button>
+              </div>
+            )}
 
             <div className="side-foot">
               <NavLink to="/settings" className="nav-item" onClick={closeMenu} title="Settings">
@@ -234,7 +239,7 @@ export default function App() {
                   <Avatar src={account?.avatarUrl} name={user.displayName || user.email} size={38} />
                   <span className="side-profile-meta">
                     <span className="side-profile-name">{user.displayName || user.email?.split('@')[0]}</span>
-                    <span className="side-profile-role">Free Plan</span>
+                    <span className="side-profile-role">{planLabel(account?.subscription)}</span>
                   </span>
                 </button>
                 <button className="side-signout" onClick={signOut} title="Sign out" aria-label="Sign out">

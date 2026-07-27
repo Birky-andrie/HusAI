@@ -21,6 +21,7 @@
     "express-rate-limit": "8.6.0",
     "jose": "^6.2.4",
     "pg": "^8.13.1",
+    "stripe": "^22.3.2",
     "ws": "8.21.0"
   },
   "devDependencies": {

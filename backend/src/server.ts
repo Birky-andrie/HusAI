@@ -9,6 +9,8 @@ import usersRouter from './modules/users/routes.js';
 import meetingsRouter from './modules/meetings/routes.js';
 import practiceRouter from './modules/practice/routes.js';
 import progressRouter from './modules/progress/routes.js';
+import billingRouter from './modules/billing/routes.js';
+import billingWebhookRouter from './modules/billing/webhook.js';
 import { quotaStatus } from './middleware/quotaGuard.js';
 import { apiLimiter, aiLimiter } from './middleware/rateLimit.js';
 import { attachWsHub, connectedClientCount } from './ws/hub.js';
@@ -20,6 +22,13 @@ const app = express();
 app.set('trust proxy', 1);
 
 app.use(cors({ origin: config.frontendOrigin || true }));
+
+// MUST precede express.json(): Stripe signs the raw request bytes, so the
+// webhook needs an unparsed body (the router applies express.raw itself).
+// Mounted above the rate limiter too, so Stripe's retry bursts are never
+// throttled — same reasoning as the /api/health exemption below.
+app.use('/api/billing/webhook', billingWebhookRouter);
+
 // Desktop audio chunks arrive as base64 inside JSON — a 60s opus chunk is ~1MB raw, ~1.4MB encoded.
 app.use(express.json({ limit: '25mb' }));
 
@@ -48,6 +57,7 @@ app.use('/api', usersRouter); // /api/me + settings
 app.use('/api/meetings', meetingsRouter);
 app.use('/api/practice', practiceRouter);
 app.use('/api/progress', progressRouter);
+app.use('/api/billing', billingRouter); // webhook is mounted separately, above
 
 const server = http.createServer(app);
 attachWsHub(server);
