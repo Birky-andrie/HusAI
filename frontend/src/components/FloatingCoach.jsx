@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import TranscriptPanel from './TranscriptPanel.jsx';
 import LifelineCard from './LifelineCard.jsx';
 import Logo from './Logo.jsx';
@@ -16,13 +16,22 @@ const BulbIcon = () => (
   </svg>
 );
 
+function fmtElapsed(ms) {
+  const total = Math.max(0, Math.floor(ms / 1000));
+  const m = String(Math.floor(total / 60)).padStart(2, '0');
+  const sec = String(total % 60).padStart(2, '0');
+  return `${m}:${sec}`;
+}
+
 /**
  * The floating "HusAI Live Coach" window (portaled into the Document PiP window,
- * so the whole thing floats). Layout follows the reference: a titled header with
- * live status + mic visualizer, a status strip, the running transcript (chat
- * bubbles), the persistent Smart Replies, and a footer to toggle each section in
- * the compact window. Suggestions never clear on speech (see the silence
- * detector) — the footer toggle only hides/shows the panel.
+ * so the whole thing floats — including outside the browser, above Zoom/Meet).
+ * That's a real OS-level window with native dragging, so there's no manual
+ * drag state here — Chrome already handles repositioning. Header: live badge +
+ * elapsed timer + a gradient, audio-reactive mic waveform (real levels, not
+ * decorative). Below: the running transcript, then the persistent Smart
+ * Replies — suggestions never clear on speech (see the silence detector) —
+ * with a footer to toggle each section in the compact window.
  */
 export default function FloatingCoach({
   lines,
@@ -33,19 +42,28 @@ export default function FloatingCoach({
   onRefreshBullets,
   micStream,
   clientAudioActive,
+  callStartedAt,
 }) {
   const [showTranscript, setShowTranscript] = useState(true);
   const [showSuggestions, setShowSuggestions] = useState(true);
+  const [, forceTick] = useState(0);
+
+  useEffect(() => {
+    if (!callStartedAt) return undefined;
+    const id = setInterval(() => forceTick((t) => t + 1), 1000);
+    return () => clearInterval(id);
+  }, [callStartedAt]);
 
   return (
     <div className="floating-coach">
       <header className="coach-header">
         <span className="coach-title">
           <span className="coach-dot" aria-hidden="true" />
-          <Logo size={20} withWordmark={false} />
+          <Logo size={18} withWordmark={false} />
           <span>HusAI Live Coach</span>
         </span>
-        <MicVisualizer stream={micStream} bars={5} label="Microphone active" />
+        {callStartedAt && <span className="coach-time">{fmtElapsed(Date.now() - callStartedAt)}</span>}
+        <MicVisualizer stream={micStream} variant="hero" bars={5} label="Microphone active" />
       </header>
 
       <div className="coach-status">

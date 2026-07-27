@@ -164,6 +164,33 @@
   width: 4px;
 }
 
+/* ---- Mic visualizer: "hero" variant (FloatingCoach header) ---- */
+.mic-viz-hero {
+  gap: 12px;
+}
+.mic-viz-hero .mic-glyph svg {
+  width: 18px;
+  height: 18px;
+}
+.mic-viz-hero .mic-bars,
+.mic-viz-hero .aw {
+  height: 26px;
+  gap: 4px;
+}
+.mic-viz-hero .mic-bars i,
+.mic-viz-hero .aw i {
+  width: 5px;
+  border-radius: 999px;
+  background: linear-gradient(180deg, var(--live-bright), var(--accent-strong));
+}
+.mic-viz-hero.speaking {
+  border-color: var(--live-border);
+  box-shadow: 0 0 0 5px var(--live-soft);
+}
+.mic-viz-hero.speaking .mic-glyph {
+  color: var(--live);
+}
+
 /* ---- Scroll reveal ---- */
 .reveal {
   opacity: 0;

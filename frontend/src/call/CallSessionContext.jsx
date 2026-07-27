@@ -373,6 +373,7 @@ export function CallSessionProvider({ children }) {
             onDismissBullets={() => setBullets(null)}
             onRefreshBullets={requestLifeline}
             micStream={micStream}
+            callStartedAt={callActive ? callStartedAtRef.current : null}
             clientAudioActive={Boolean(clientStream)}
           />,
           pip.pipWindow.document.body

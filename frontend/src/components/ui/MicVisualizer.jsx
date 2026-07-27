@@ -15,7 +15,7 @@ const MicGlyph = () => (
  * stream — or when the user prefers reduced motion — it falls back to the calm
  * decorative AudioWaveform, so the same component works everywhere.
  */
-export default function MicVisualizer({ stream, active = true, bars = 5, label }) {
+export default function MicVisualizer({ stream, active = true, bars = 5, label, variant = '' }) {
   const barRefs = useRef([]);
   const [speaking, setSpeaking] = useState(false);
   const reduced = typeof window !== 'undefined' && window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
@@ -62,7 +62,10 @@ export default function MicVisualizer({ stream, active = true, bars = 5, label }
   }, [live, stream, bars]);
 
   return (
-    <span className={`mic-viz${speaking ? ' speaking' : ''}`} aria-label={label || 'Microphone activity'}>
+    <span
+      className={`mic-viz${variant ? ` mic-viz-${variant}` : ''}${speaking ? ' speaking' : ''}`}
+      aria-label={label || 'Microphone activity'}
+    >
       <span className="mic-glyph" aria-hidden="true">
         <MicGlyph />
       </span>

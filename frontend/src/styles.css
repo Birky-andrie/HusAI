@@ -2013,8 +2013,22 @@ a.list-row:hover {
   display: flex;
   align-items: center;
   gap: 8px;
+  flex: 1;
+  min-width: 0;
   font-size: 0.9rem;
   font-weight: 600;
+}
+.coach-title span:last-child {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.coach-time {
+  flex: 0 0 auto;
+  font-size: 0.76rem;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  color: var(--text-muted);
 }
 .coach-dot {
   width: 8px;
