@@ -76,6 +76,12 @@ export default function CallView({
         </div>
       )}
       {callActive && clientShare.hint && <div className="banner warning">{clientShare.hint}</div>}
+      {callActive && clientShare.active && (
+        <p className="capture-note">
+          Shared audio is captured as one channel, so everyone on the client&apos;s end is transcribed
+          together as “Client side” — HusAI can&apos;t tell individual participants apart yet.
+        </p>
+      )}
 
       {callActive && <TranscriptPanel lines={lines} interim={interim} isDesktop={isDesktop} />}
 

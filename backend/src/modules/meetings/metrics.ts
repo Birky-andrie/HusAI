@@ -28,7 +28,11 @@ const per100 = (count: number, words: number): number => (words > 0 ? Math.round
 
 export function computeCallMetrics(transcript: string, avgResponseLatencySeconds?: number): CallMetrics {
   const lines = transcript.split('\n').filter((l) => l.trim());
-  const labeled = lines.some((l) => /^(VA|Client):/i.test(l));
+  // "Client side:" is current; "Client:" is the legacy prefix (transcripts stored
+  // before multi-participant labeling). Both must count as "labeled" — otherwise a
+  // client-only transcript falls through to the unlabeled branch below and the
+  // client's words get counted as the VA's.
+  const labeled = lines.some((l) => /^(VA|Client side|Client):/i.test(l));
   // Unlabeled transcripts (mic-only calls) are all VA speech by construction.
   const vaLines = labeled ? lines.filter((l) => /^VA:/i.test(l)).map((l) => l.replace(/^VA:\s*/i, '')) : lines;
 

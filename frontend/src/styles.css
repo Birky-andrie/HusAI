@@ -1135,6 +1135,15 @@ button:disabled {
   flex-wrap: wrap;
   margin-bottom: 14px;
 }
+/* Quiet caveat under the capture chips / stored transcript — the client channel
+   has no speaker separation, so the VA shouldn't read it as one person. */
+.capture-note {
+  margin: -6px 0 14px;
+  font-size: 0.78rem;
+  line-height: 1.55;
+  color: var(--text-muted);
+  max-width: 68ch;
+}
 .chip {
   display: inline-flex;
   align-items: center;

@@ -72,10 +72,17 @@ export default function HistoryDetailPage() {
             {showTranscript ? 'hide' : 'show'}
           </button>
         </h3>
+        {showTranscript && data.meeting.transcript.includes('Client') && (
+          <p className="capture-note">
+            Everyone on the client&apos;s end shares one audio channel, so “Client side” lines may be
+            more than one participant.
+          </p>
+        )}
         {showTranscript && (
           <div className="transcript-lines">
+            {/* startsWith('Client') matches both "Client side:" and the legacy "Client:" prefix. */}
             {data.meeting.transcript.split('\n').map((line, i) => (
-              <p key={i} className={`line ${line.startsWith('Client:') ? 'client' : 'va'}`}>
+              <p key={i} className={`line ${line.startsWith('Client') ? 'client' : 'va'}`}>
                 {line}
               </p>
             ))}

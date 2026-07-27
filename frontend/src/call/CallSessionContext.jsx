@@ -11,7 +11,11 @@ import { postJSON, api } from '../lib/api.js';
 
 const LIFELINE_CONTEXT_LINES = 6;
 
-const speakerLabel = (line) => (line.speaker === 'va' ? 'VA' : 'Client');
+// "Client side" (not "Client"): the shared tab/system audio is ONE channel with
+// no speaker separation, so these lines may be several participants. The label
+// keeps the AI prompts honest about that. Parsers accept the legacy "Client:"
+// prefix too — transcripts recorded before this change are stored that way.
+const speakerLabel = (line) => (line.speaker === 'va' ? 'VA' : 'Client side');
 
 /** Chronological, speaker-labeled transcript — the shape both AI endpoints consume. */
 function toLabeledTranscript(lines) {
