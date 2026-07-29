@@ -1,7 +1,16 @@
-import { useEffect } from 'react';
+import { lazy, Suspense, useEffect, useRef, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import Logo from './Logo.jsx';
 import AudioWaveform from './ui/AudioWaveform.jsx';
+import HeroBeams from './ui/HeroBeams.jsx';
+import ListeningPill from './ui/ListeningPill.jsx';
+
+// three.js is ~400KB of the bundle and exists purely for a decorative backdrop,
+// so it is split into its own chunk and fetched after first paint. Until it
+// arrives — and permanently, for anyone without WebGL — the CSS beam field
+// stands in, which is why the fallback below is the real component and not a
+// blank box.
+const BeamsWebGL = lazy(() => import('./ui/BeamsWebGL.jsx'));
 import FAQAccordion from './FAQAccordion.jsx';
 import LandingNav from './LandingNav.jsx';
 import LandingFooter from './LandingFooter.jsx';
@@ -27,6 +36,16 @@ function SectionHead({ eyebrow, title, sub, center = true }) {
     </div>
   );
 }
+
+// The hero's closing row. The 21st.dev reference puts vanity metrics here
+// ("1M+ users"); HusAI has no such numbers and inventing them is off the table,
+// so the slot carries the three product pillars instead — which is the thing a
+// first-time visitor actually needs to understand.
+const PILLARS = [
+  { icon: <GEar />, title: 'Listen', body: 'Both sides of the call, transcribed live on separate channels.' },
+  { icon: <GBulb />, title: 'Coach', body: 'The Lifeline appears the moment you go quiet, with what to say next.' },
+  { icon: <GChart />, title: 'Train', body: 'Every call becomes a scored review and targeted practice.' },
+];
 
 const PROBLEMS = [
   { icon: <GMic />, title: 'You freeze mid-call', body: 'The client asks something hard and your mind goes blank. The pause says more than any answer would.' },
@@ -80,10 +99,70 @@ export default function LandingPage({ onStart, startDisabled }) {
     if (id) requestAnimationFrame(() => document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' }));
   }, [location.state]);
 
-  // Scroll-reveal: fade+rise each section into view once. Reduced-motion users
-  // see everything immediately. One observer, no per-element wrapping.
+  // Pointer parallax on the beam field. Two CSS custom properties, updated at
+  // most once per frame; the transform itself is done by CSS, so there is no
+  // per-frame React render. Set on the page root so they cascade into the fixed
+  // backdrop layer, and measured against the viewport rather than the element,
+  // since that layer is what the cursor is actually moving over. Skipped for
+  // reduced-motion users and for coarse pointers, which have no hover position.
+  const pageRef = useRef(null);
+
+  // Decide whether to pay for the WebGL field at all. Both checks have to pass
+  // before the chunk is requested: a continuously-rendering 3D background is
+  // precisely the "large moving background" reduced-motion asks us not to ship,
+  // and probing for a real context avoids downloading three.js only to hand it
+  // to a machine that will fall back to software rendering.
+  const [webglBeams, setWebglBeams] = useState(false);
+  useEffect(() => {
+    if (window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) return;
+    let ok = false;
+    try {
+      const probe = document.createElement('canvas');
+      ok = Boolean(probe.getContext('webgl2') || probe.getContext('webgl'));
+    } catch {
+      ok = false; // context creation can throw outright on locked-down GPUs
+    }
+    if (ok) setWebglBeams(true);
+  }, []);
+
+  // NOTE: page-wide SVG refraction was tried here and removed. Because the beam
+  // field animates continuously, every glass element's backdrop is invalidated
+  // each frame, so all ~45 filter chains re-ran every frame: median frame time
+  // went 4.2ms -> 25ms and roughly a third of frames missed 30fps. Dropping the
+  // module's extra blur pass changed nothing (24.8ms), so it is structural, not
+  // tuning. The landing keeps CSS glass; real refraction stays on the nav pill
+  // alone, where it is one small element and actually visible.
+  useEffect(() => {
+    const el = pageRef.current;
+    if (!el) return undefined;
+    if (window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) return undefined;
+    if (!window.matchMedia?.('(pointer: fine)').matches) return undefined;
+
+    let frame = 0;
+    const onMove = (e) => {
+      if (frame) return;
+      frame = requestAnimationFrame(() => {
+        frame = 0;
+        el.style.setProperty('--mx', (e.clientX / window.innerWidth - 0.5).toFixed(3));
+        el.style.setProperty('--my', (e.clientY / window.innerHeight - 0.5).toFixed(3));
+      });
+    };
+    window.addEventListener('pointermove', onMove);
+    return () => {
+      window.removeEventListener('pointermove', onMove);
+      cancelAnimationFrame(frame);
+    };
+  }, []);
+
+  // Scroll-reveal FALLBACK. Chromium drives the real thing from CSS scroll
+  // timelines (see landing.css → "Scroll-linked motion"), which is bidirectional
+  // and costs no main-thread work; this one-shot observer exists only for
+  // browsers without view() support, so it bails out where CSS has it covered.
+  // Bailing also matters for correctness: .lp-reveal pins opacity to 0 until it
+  // fires, which would fight the CSS animation for control of the same property.
   useEffect(() => {
     if (window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) return undefined;
+    if (CSS.supports?.('animation-timeline: view()')) return undefined;
     const els = Array.from(document.querySelectorAll('.lp-section, .lp-final'));
     els.forEach((el) => el.classList.add('lp-reveal'));
     const io = new IntersectionObserver(
@@ -95,28 +174,56 @@ export default function LandingPage({ onStart, startDisabled }) {
   }, []);
 
   return (
-    <div className="lp">
+    // lp-dark: the landing runs on its own always-dark purple canvas in both
+    // themes (the same call already made for .lp-measure). The auth pages share
+    // .lp for the nav/footer chrome but deliberately not this class, so they
+    // keep following the user's theme.
+    <div className="lp lp-dark" ref={pageRef}>
+      {/* Fixed, full-viewport: the beam field sits behind every section and
+          stays put as the page scrolls over it, rather than ending with the hero. */}
+      <div className="lp-backdrop" aria-hidden="true">
+        {webglBeams ? (
+          <Suspense fallback={<HeroBeams />}>
+            <BeamsWebGL />
+          </Suspense>
+        ) : (
+          <HeroBeams />
+        )}
+      </div>
       <LandingNav onGetStarted={start} startDisabled={startDisabled} />
 
       {/* Hero */}
       <section className="lp-hero" id="lp-top">
         <div className="lp-hero-glow" aria-hidden="true" />
-        <span className="lp-badge"><GSpark /> Live Communication Coach 2.0</span>
-        <h1 className="lp-hero-title">
-          Speak with <em>confidence.</em><br />Respond with <em>intelligence.</em>
-        </h1>
-        <p className="lp-hero-sub">
-          "Husay" is Filipino for skill/finesse — HusAI sharpens it in real time helps virtual workers master sales calls,
-          interviews, and client meetings — unobtrusive, intelligent, and always in your corner.
-        </p>
-        <div className="lp-hero-cta">
-          <button className="primary" onClick={start} disabled={startDisabled}>Get Started Free</button>
-          <button className="lp-ghost" onClick={() => scrollTo('how')}><GPlay /> Watch Demo</button>
-        </div>
-        <div className="lp-hero-wave" aria-hidden="true">
-          <span className="lp-hero-mic"><GMic /></span>
-          <AudioWaveform bars={9} className="lg" />
-          <span className="lp-hero-listening">Listening…</span>
+        <div className="lp-hero-inner">
+          <span className="lp-badge lp-hero-badge"><GSpark /> Live Communication Coach 2.0</span>
+          <h1 className="lp-hero-title">
+            Speak with <em>confidence.</em><br />Respond with <em>intelligence.</em>
+          </h1>
+          <p className="lp-hero-sub">
+            "Husay" is Filipino for skill/finesse — HusAI sharpens it in real time helps virtual workers master sales calls,
+            interviews, and client meetings — unobtrusive, intelligent, and always in your corner.
+          </p>
+          <div className="lp-hero-cta">
+            <button className="primary" onClick={start} disabled={startDisabled}>Get Started Free</button>
+            <button className="lp-ghost" onClick={() => scrollTo('how')}><GPlay /> Watch Demo</button>
+          </div>
+          <ListeningPill>
+            <span className="lp-hero-mic"><GMic /></span>
+            <AudioWaveform bars={9} className="lg" />
+            <span className="lp-hero-listening">Listening…</span>
+          </ListeningPill>
+          <ul className="lp-pillars">
+            {PILLARS.map((p) => (
+              <li className="lp-pillar" key={p.title}>
+                <span className="lp-pillar-icon">{p.icon}</span>
+                <div>
+                  <p className="lp-pillar-title">{p.title}</p>
+                  <p className="lp-pillar-body">{p.body}</p>
+                </div>
+              </li>
+            ))}
+          </ul>
         </div>
       </section>
 

@@ -137,24 +137,31 @@
   gap: 3px;
   height: 20px;
 }
+/* Fixed height + transform: scaleY, not animated height — animating `height`
+   forces a layout recalc every frame (the detector's layout-thrash finding);
+   transform is compositor-only. Center-origin scaling matches the previous
+   look exactly, since these bars already sit in an align-items: center flex
+   row. JS sets `transform: scaleY(...)` per frame instead of `style.height`. */
 .mic-bars i {
   width: 3px;
-  height: 20%;
+  height: 100%;
+  transform: scaleY(0.2);
   border-radius: 2px;
   background: var(--accent);
-  transition: height 0.08s linear;
+  transition: transform 0.08s linear;
 }
 /* Idle/decorative waveform */
 .aw i {
   width: 3px;
-  height: 30%;
+  height: 100%;
+  transform: scaleY(0.3);
   border-radius: 2px;
   background: var(--accent);
   animation: aw-bounce 1.1s ease-in-out infinite;
 }
 @keyframes aw-bounce {
-  0%, 100% { height: 26%; opacity: 0.6; }
-  50% { height: 90%; opacity: 1; }
+  0%, 100% { transform: scaleY(0.26); opacity: 0.6; }
+  50% { transform: scaleY(0.9); opacity: 1; }
 }
 .aw.lg {
   height: 42px;
@@ -210,7 +217,7 @@
   }
   .aw i {
     animation: none;
-    height: 45%;
+    transform: scaleY(0.45);
   }
 }
 
@@ -247,13 +254,15 @@
   align-items: center;
   gap: 10px;
 }
+/* Flat accent, not gradient — the dashboard hero banner below is the one
+   full-strength gradient surface per view (Once-Per-Page Rule). */
 .dash-new-btn {
   display: inline-flex;
   align-items: center;
   gap: 8px;
   padding: 11px 18px;
   border-radius: 999px;
-  background: var(--grad);
+  background: var(--accent);
   color: #fff;
   font-size: 0.9rem;
   font-weight: 600;
@@ -460,9 +469,12 @@
   border-color: var(--border-accent);
   box-shadow: var(--shadow);
 }
-.quick-action.accent {
-  background: var(--grad);
-  border-color: transparent;
+/* Emphasis via a solid-accent icon chip, not a full gradient fill — the
+   dashboard hero banner is the one full-strength gradient surface per view
+   (Once-Per-Page Rule). This tile now matches its siblings' card treatment,
+   distinguished only by its icon color. */
+.quick-action.accent .qa-icon {
+  background: var(--accent);
   color: #fff;
 }
 .quick-action .qa-icon {
@@ -475,10 +487,6 @@
   background: var(--accent-soft);
   color: var(--accent-text);
   flex: 0 0 auto;
-}
-.quick-action.accent .qa-icon {
-  background: rgba(255, 255, 255, 0.18);
-  color: #fff;
 }
 .quick-action .qa-icon svg {
   width: 19px;
@@ -502,10 +510,6 @@
   text-overflow: ellipsis;
   white-space: nowrap;
 }
-.quick-action.accent .qa-sub {
-  color: rgba(255, 255, 255, 0.85);
-}
-
 /* ---- Recent list rows ---- */
 .dash-list {
   display: flex;
@@ -638,6 +642,9 @@
   height: 18px;
 }
 /* Quiet brand-colored unread dot — deliberately not a red badge */
+/* Violet, not fuchsia: per DESIGN.md's Two-Signal Rule, fuchsia means "the AI
+   is live right now" specifically — an unread notification isn't that, so it
+   falls back to the brand color instead. */
 .notif-dot {
   position: absolute;
   top: 9px;
@@ -645,7 +652,7 @@
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  background: var(--live);
+  background: var(--accent);
   box-shadow: 0 0 0 2px var(--card);
 }
 
@@ -791,7 +798,7 @@
   width: 7px;
   height: 7px;
   border-radius: 50%;
-  background: var(--live);
+  background: var(--accent);
   flex: 0 0 auto;
   margin-top: 6px;
 }

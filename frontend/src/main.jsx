@@ -7,6 +7,7 @@ import { ThemeProvider } from './theme/ThemeProvider.jsx';
 import './styles.css';
 import './components/ui/ui.css';
 import './components/landing.css';
+import './components/auth.css';
 
 // HashRouter (not BrowserRouter): the same build must route correctly under
 // Electron's file:// origin, where path-based routing has no server to rewrite.

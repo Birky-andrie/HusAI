@@ -1,0 +1,25 @@
+{
+  "detector": {
+    "ignoreRules": [],
+    "ignoreFiles": [],
+    "ignoreValues": [
+      {
+        "rule": "layout-transition",
+        "value": "*",
+        "files": [
+          "frontend/src/styles.css"
+        ],
+        "createdAt": "2026-07-27T08:33:11.327Z",
+        "reason": "User confirmed the sidebar's width transition is intentional: the collapse needs real reflow (text hiding, icon re-centering), which a transform-only approach can't replicate; the transition is user-triggered and infrequent, so the perf cost is negligible in practice"
+      },
+      {
+        "rule": "layout-transition",
+        "value": "*",
+        "files": [
+          "src/styles.css"
+        ],
+        "createdAt": "2026-07-27T12:20:51.066Z"
+      }
+    ]
+  }
+}

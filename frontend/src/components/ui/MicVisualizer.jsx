@@ -42,7 +42,11 @@ export default function MicVisualizer({ stream, active = true, bars = 5, label, 
           v /= step;
           sum += v;
           const el = barRefs.current[b];
-          if (el) el.style.height = `${Math.min(100, (v / 255) * 150 + 12)}%`;
+          // transform, not height: animating height forces a layout recalc
+          // every frame at 60fps; scaleY is compositor-only. Bars have a
+          // fixed 100% CSS height and sit in an align-items: center row, so
+          // center-origin scaling reproduces the old grow-from-middle look.
+          if (el) el.style.transform = `scaleY(${Math.min(100, (v / 255) * 150 + 12) / 100})`;
         }
         const isSpeaking = sum / bars > 16;
         if (isSpeaking !== speakingNow) {

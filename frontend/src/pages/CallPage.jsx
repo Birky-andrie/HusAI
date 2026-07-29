@@ -17,6 +17,7 @@ export default function CallPage() {
     <>
       <CallView
         callActive={call.callActive}
+        starting={call.starting}
         isDesktop={call.isDesktop}
         micError={call.micError}
         transcriptionUnavailable={call.transcriptionUnavailable}

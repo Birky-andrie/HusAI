@@ -2,11 +2,10 @@ import { useState } from 'react';
 import { Routes, Route, NavLink, Link, Navigate, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from './auth/AuthContext.jsx';
 import RequireAuth from './auth/RequireAuth.jsx';
-import { CallSessionProvider } from './call/CallSessionContext.jsx';
+import { CallSessionProvider, useCallSession } from './call/CallSessionContext.jsx';
 import Logo from './components/Logo.jsx';
 import Avatar from './components/ui/Avatar.jsx';
 import SidebarCallStatus from './components/SidebarCallStatus.jsx';
-import SidebarPopover from './components/ui/SidebarPopover.jsx';
 import { useTheme } from './theme/ThemeProvider.jsx';
 import LandingPage from './components/LandingPage.jsx';
 import LandingNav from './components/LandingNav.jsx';
@@ -26,6 +25,7 @@ import PracticeSessionPage from './pages/PracticeSessionPage.jsx';
 import ProgressPage from './pages/ProgressPage.jsx';
 import SettingsPage from './pages/SettingsPage.jsx';
 import PlansPage from './pages/PlansPage.jsx';
+import HelpPage from './pages/HelpPage.jsx';
 import { isPro, planLabel } from './billing/plan.js';
 
 // Minimal inline nav icons (stroke, currentColor) — visual only.
@@ -56,6 +56,19 @@ const IMPROVE_NAV = [
   { to: '/practice', label: 'Practice', Icon: IconPractice },
   { to: '/progress', label: 'Progress', Icon: IconProgress },
 ];
+
+/**
+ * The Live Coach nav item's "LIVE" badge — only when a call is actually
+ * active. Was previously a static, always-on label; per DESIGN.md's
+ * Two-Signal Rule, fuchsia means "the AI is live right now" specifically, so
+ * a permanently-on badge was quietly undermining the one signal the app's
+ * core mechanism depends on being trustworthy.
+ */
+function NavLiveBadge() {
+  const call = useCallSession();
+  if (!call.callActive) return null;
+  return <span className="nav-live">LIVE</span>;
+}
 
 function Landing() {
   const navigate = useNavigate();
@@ -99,6 +112,7 @@ function AppRoutes() {
       <Route path="/progress" element={<RequireAuth><ProgressPage /></RequireAuth>} />
       <Route path="/settings" element={<RequireAuth><SettingsPage /></RequireAuth>} />
       <Route path="/plans" element={<RequireAuth><PlansPage /></RequireAuth>} />
+      <Route path="/help" element={<RequireAuth><HelpPage /></RequireAuth>} />
       <Route path="*" element={<Landing />} />
     </Routes>
   );
@@ -180,7 +194,7 @@ export default function App() {
                 <NavLink key={to} to={to} onClick={closeMenu} title={label}>
                   <Icon />
                   <span>{label}</span>
-                  {live && <span className="nav-live">LIVE</span>}
+                  {live && <NavLiveBadge />}
                 </NavLink>
               ))}
               <p className="side-section-label">Improve</p>
@@ -215,17 +229,10 @@ export default function App() {
                 <IconSettings />
                 <span>Settings</span>
               </NavLink>
-              <SidebarPopover
-                title="Help & Support"
-                trigger={(toggle) => (
-                  <button className="nav-item" onClick={toggle} title="Help & Support">
-                    <IconHelp />
-                    <span>Help &amp; Support</span>
-                  </button>
-                )}
-              >
-                <p className="side-popover-body">A dedicated help center is on the way. In the meantime, everything account-related lives in Settings.</p>
-              </SidebarPopover>
+              <NavLink to="/help" className="nav-item" onClick={closeMenu} title="Help & Support">
+                <IconHelp />
+                <span>Help &amp; Support</span>
+              </NavLink>
               <button className="side-theme" onClick={toggleTheme} aria-label="Toggle color theme" title="Toggle theme">
                 {theme === 'dark' ? <IconSun /> : <IconMoon />}
                 <span>{theme === 'dark' ? 'Light Mode' : 'Dark Mode'}</span>
@@ -259,10 +266,22 @@ export default function App() {
     );
   }
 
-  // Auth pages share the landing header + footer so the chrome stays consistent;
-  // the auth card centres between them. The landing (and catch-all) renders its
-  // own nav/footer, so it just renders full-bleed here.
-  const AUTH_PATHS = ['/login', '/register', '/verify-email', '/forgot-password', '/reset-password', '/oauth-complete'];
+  // Sign-in and sign-up are full-bleed: each owns the whole viewport, carries
+  // its own brand mark, and its gradient field only reads edge to edge. Leaving
+  // them in the shared shell below would inset the surface behind a light
+  // margin and put a second HusAI logo in the nav above their own.
+  const GLASS_AUTH_PATHS = ['/login', '/register'];
+  if (GLASS_AUTH_PATHS.includes(pathname)) {
+    return (
+      <RouteFade>
+        <AppRoutes />
+      </RouteFade>
+    );
+  }
+
+  // The remaining auth pages share the landing header + footer so the chrome
+  // stays consistent; their card centres between them.
+  const AUTH_PATHS = ['/verify-email', '/forgot-password', '/reset-password', '/oauth-complete'];
   if (AUTH_PATHS.includes(pathname)) {
     return (
       <div className="lp auth-shell">

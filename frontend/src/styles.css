@@ -16,6 +16,11 @@
   --radius-lg: 24px;
   --radius: 18px;
   --radius-sm: 12px;
+  /* Compact icon-sized controls (coach-toggle, side-collapse) already used
+     8px consistently before this was a named step — formalizing the existing
+     pattern rather than forcing them to --radius-sm's 12px, which would look
+     oversized on an element that small. */
+  --radius-xs: 8px;
   --font: -apple-system, 'SF Pro Display', 'SF Pro Text', 'Inter', system-ui, 'Segoe UI', sans-serif;
   --font-mono: 'SF Mono', 'JetBrains Mono', ui-monospace, 'Cascadia Code', 'Segoe UI Mono', monospace;
 
@@ -35,11 +40,21 @@
 
 /* DARK — the default. Layered violet-tinted slate surfaces (never pure black),
    slate text, hairline white borders, violet accent brightened for legibility,
-   fuchsia held back for LIVE/AI. Applies with no attribute AND [data-theme="dark"]. */
+   fuchsia held back for LIVE/AI. Applies with no attribute AND [data-theme="dark"].
+   ============================================================================
+   CLOSED PALETTE — every saturated/semantic color in the app is declared here,
+   grouped by meaning, per DESIGN.md's Two-Signal Rule and Colors section.
+   Nothing outside this list: a new saturated color requires a category (or a
+   documented, deliberate exception — see DESIGN.md "Known Exceptions") before
+   it's added, not silent drift. Pure #fff/#000 are always available as the
+   extremes of the neutral scale (e.g. white text on a solid accent fill) and
+   aren't tokenized separately for that reason alone.
+   ============================================================================ */
 :root,
 :root[data-theme='dark'] {
   color-scheme: dark;
 
+  /* ---- Neutral: surfaces, text, borders — the default for almost everything ---- */
   --bg: #0a0b10;
   --surface: #0e1017;
   --card: #14161f;
@@ -48,40 +63,63 @@
 
   --border: rgba(255, 255, 255, 0.07);
   --border-2: rgba(255, 255, 255, 0.12);
-  --border-accent: rgba(139, 92, 246, 0.32);
 
   --text: #eef0f6;
   --text-body: #c3c8d6;
   --text-secondary: #8b93a7;
-  --text-muted: #5b6377;
+  /* Brightened from #5b6377 (was 3.00:1 on --card, failing WCAG AA's 4.5:1
+     for normal text) to 4.63:1 — computed via HSL lightness step, same hue. */
+  --text-muted: #788198;
 
+  /* ---- Brand (violet/indigo) — the brand acting: buttons, active nav states,
+     links, focus rings. Per the Once-Per-Page Rule, a full-strength gradient
+     fill is reserved for one hero surface per view; elsewhere this shows up
+     as flat --accent or the low-alpha -soft wash. ---- */
+  --grad: linear-gradient(135deg, #8b5cf6, #6366f1);
   --accent: #8b5cf6;
   --accent-strong: #6366f1;
   --accent-bright: #a78bfa;
   --accent-text: #a78bfa;
   --accent-soft: rgba(139, 92, 246, 0.14);
+  --border-accent: rgba(139, 92, 246, 0.32); /* violet-tinted border for hover/focus emphasis */
+  /* Ambient page-level wash, not a foreground signal — exempt from Once-Per-Page. */
+  --body-glow: radial-gradient(1200px 620px at 82% -12%, rgba(139, 92, 246, 0.08), transparent 60%);
 
-  /* Fuchsia — the 2% accent: LIVE, active transcription, AI activity. */
+  /* ---- AI/Live (fuchsia) — means ONE thing: the AI is live, right now.
+     Never reused for decoration, unread badges, or anything else — see the
+     Two-Signal Rule. ---- */
+  --grad-accent: linear-gradient(135deg, #d946ef, #8b5cf6);
   --live: #e879f9;
   --live-bright: #f0abfc;
   --live-soft: rgba(217, 70, 239, 0.14);
   --live-border: rgba(217, 70, 239, 0.34);
 
+  /* ---- Semantic status — ONLY danger and warning exist as colors. There is
+     deliberately no "success" color: a positive/improved state is conveyed
+     with neutral text plus a directional glyph (see DESIGN.md Do/Don't) so
+     brand violet is never reused for "this got better". ---- */
   --danger: #f43f5e;
   --danger-text: #fda4af;
   --danger-soft: rgba(244, 63, 94, 0.12);
+  --danger-border: rgba(244, 63, 94, 0.35);
   --warning: #f5b544;
+  --warning-text: #f0d48a;
   --warning-soft: rgba(245, 181, 68, 0.1);
+  --warning-border: rgba(245, 181, 68, 0.35);
 
-  --body-glow: radial-gradient(1200px 620px at 82% -12%, rgba(139, 92, 246, 0.08), transparent 60%);
   --shadow: 0 1px 2px rgba(0, 0, 0, 0.28), 0 18px 44px -12px rgba(0, 0, 0, 0.5);
+  /* Glass material (Lifeline card): bright top edge reads as light catching
+     a translucent surface — Apple's own recipe for frosted panels. */
+  --glass-border-top: rgba(255, 255, 255, 0.14);
 }
 
 /* LIGHT — a separately designed palette: airy violet-tinted off-white bg, white
-   surfaces layered with soft slate, violet deepened for AA contrast on white. */
+   surfaces layered with soft slate, violet deepened for AA contrast on white.
+   Same closed-palette structure and rules as dark — see the header comment above. */
 :root[data-theme='light'] {
   color-scheme: light;
 
+  /* ---- Neutral ---- */
   --bg: #f7f7fb;
   --surface: #ffffff;
   --card: #ffffff;
@@ -90,33 +128,50 @@
 
   --border: rgba(17, 24, 39, 0.08);
   --border-2: rgba(17, 24, 39, 0.13);
-  --border-accent: rgba(124, 58, 237, 0.3);
 
   --text: #1a1c2b;
   --text-body: #3f4457;
   --text-secondary: #6b7280;
-  --text-muted: #9aa1b0;
+  /* Darkened from #9aa1b0 (was ~2.6:1 on white, failing WCAG AA) to 4.68:1.
+     Note: light mode has little headroom above the 4.5:1 floor before
+     colliding with --text-secondary's own 4.83:1 — the two steps are closer
+     together here than in dark mode. Accepted as the accessibility-correct
+     tradeoff; revisit --text-secondary too if more separation is wanted. */
+  --text-muted: #6b7489;
 
+  /* ---- Brand (violet/indigo) ---- */
+  --grad: linear-gradient(135deg, #8b5cf6, #6366f1);
   --accent: #7c3aed;
   --accent-strong: #6366f1;
   --accent-bright: #8b5cf6;
   --accent-text: #6d28d9;
   --accent-soft: rgba(124, 58, 237, 0.09);
+  --border-accent: rgba(124, 58, 237, 0.3);
+  --body-glow: radial-gradient(1100px 580px at 84% -14%, rgba(124, 58, 237, 0.1), transparent 62%);
 
-  /* Fuchsia — the 2% accent: LIVE, active transcription, AI activity. */
+  /* ---- AI/Live (fuchsia) ---- */
+  --grad-accent: linear-gradient(135deg, #d946ef, #8b5cf6);
   --live: #c026d3;
   --live-bright: #a21caf;
   --live-soft: rgba(192, 38, 211, 0.09);
   --live-border: rgba(192, 38, 211, 0.3);
 
+  /* ---- Semantic status — no success color; see the dark-theme comment. ---- */
   --danger: #e11d48;
   --danger-text: #be123c;
   --danger-soft: rgba(225, 29, 72, 0.09);
+  --danger-border: rgba(225, 29, 72, 0.3);
   --warning: #b45309;
+  /* Unlike dark mode, the base --warning is already dark/saturated enough to
+     use directly as text on a light background (5.02:1 on white) — no
+     separate lighter variant needed here. */
+  --warning-text: #b45309;
   --warning-soft: rgba(180, 83, 9, 0.1);
+  --warning-border: rgba(180, 83, 9, 0.3);
 
-  --body-glow: radial-gradient(1100px 580px at 84% -14%, rgba(124, 58, 237, 0.1), transparent 62%);
   --shadow: 0 1px 2px rgba(16, 24, 40, 0.04), 0 16px 40px -12px rgba(16, 24, 40, 0.12);
+  /* Glass material (Lifeline card) — Apple's own light-mode value for this exact effect. */
+  --glass-border-top: rgba(255, 255, 255, 0.7);
 }
 
 img,
@@ -270,7 +325,11 @@ body {
   margin-top: 2px;
 }
 
-/* Prominent "+ Start a Call" — the single most important action in the app */
+/* Prominent "+ Start a Call" — the single most important action in the app.
+   Flat accent, not the gradient: per DESIGN.md's Once-Per-Page Rule, the
+   dashboard hero banner is the one full-strength gradient surface per view —
+   this stays visually important via solid color and weight, not by competing
+   with the hero for the same saturated-gradient signal. */
 .side-start-call {
   display: flex;
   align-items: center;
@@ -279,7 +338,7 @@ body {
   margin: 4px 2px 16px;
   padding: 11px 14px;
   border-radius: var(--radius-sm);
-  background: var(--grad);
+  background: var(--accent);
   color: #fff;
   text-decoration: none;
   font-size: 0.9rem;
@@ -425,25 +484,21 @@ body {
   min-height: 12px;
 }
 
-/* Upgrade-to-Pro promo — fills the rail's lower space (reference: Nexus Pro card) */
+/* Upgrade-to-Pro promo — fills the rail's lower space (reference: Nexus Pro card).
+   Neutral card, not gradient: per the Once-Per-Page Rule, the dashboard hero
+   banner is the app's one full-strength gradient surface. */
 .side-pro {
   position: relative;
   overflow: hidden;
   margin: 10px 2px 12px;
   padding: 16px;
   border-radius: var(--radius);
-  background: var(--grad);
-  color: #fff;
+  background: var(--card-2);
+  border: 1px solid var(--border);
+  color: var(--text);
   display: flex;
   flex-direction: column;
   gap: 6px;
-}
-.side-pro::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: radial-gradient(180px 130px at 88% 110%, rgba(255, 255, 255, 0.22), transparent 65%);
-  pointer-events: none;
 }
 .side-pro-title {
   position: relative;
@@ -451,12 +506,13 @@ body {
   font-weight: 700;
   line-height: 1.35;
   letter-spacing: -0.01em;
+  color: var(--text);
 }
 .side-pro-sub {
   position: relative;
   font-size: 0.76rem;
   line-height: 1.5;
-  color: rgba(255, 255, 255, 0.82);
+  color: var(--text-secondary);
 }
 .side-pro-btn {
   position: relative;
@@ -468,8 +524,8 @@ body {
   padding: 9px 14px;
   border: none;
   border-radius: 999px;
-  background: rgba(255, 255, 255, 0.16);
-  color: #fff;
+  background: var(--accent-soft);
+  color: var(--accent-text);
   font-size: 0.8rem;
   font-weight: 600;
   cursor: pointer;
@@ -480,7 +536,8 @@ body {
   height: 14px;
 }
 .side-pro-btn:hover {
-  background: rgba(255, 255, 255, 0.26);
+  background: var(--accent-soft);
+  filter: brightness(1.15);
   transform: translateX(2px);
 }
 
@@ -798,18 +855,18 @@ header h1 {
 }
 .banner.warning {
   background: var(--warning-soft);
-  border: 1px solid rgba(245, 181, 68, 0.35);
-  color: #f0d48a;
+  border: 1px solid var(--warning-border);
+  color: var(--warning-text);
 }
 .banner.error {
   background: var(--danger-soft);
-  border: 1px solid rgba(239, 68, 68, 0.35);
+  border: 1px solid var(--danger-border);
   color: var(--danger-text);
 }
 .banner.info {
   background: var(--accent-soft);
   border: 1px solid var(--border-accent);
-  color: var(--accent-bright);
+  color: var(--accent-text);
 }
 
 /* ============================================================================
@@ -998,22 +1055,48 @@ button:disabled {
    Lifeline card
    ========================================================================== */
 
+/* Liquid-glass material (Apple's frosted-panel recipe: blur + saturation +
+   a bright top edge for "light catching the material"). Scoped to the
+   FLOATING card only — it sits over real page content, which is what makes
+   translucency legible; the .docked variant below (embedded inline in the
+   PiP coach) stays opaque since there's nothing behind it worth blurring. */
 .lifeline-card {
   position: fixed;
   right: 20px;
   bottom: 20px;
   width: min(360px, calc(100vw - 40px));
-  background: var(--card-2);
+  background: color-mix(in srgb, var(--card-2) 72%, transparent);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
   border: 1px solid var(--border-accent);
+  border-top-color: var(--glass-border-top);
   border-radius: var(--radius);
   padding: 16px 18px;
   box-shadow: var(--shadow);
-  animation: slide-up 0.25s ease-out;
+  animation: materialize 0.28s var(--ease-out);
 }
-@keyframes slide-up {
+/* "Materialize, don't just fade": blur/scale animate in together so the panel
+   reads as a real material arriving, not a flat opacity fade. */
+@keyframes materialize {
   from {
-    transform: translateY(12px);
+    transform: translateY(12px) scale(0.96);
     opacity: 0;
+    backdrop-filter: blur(0px) saturate(100%);
+    -webkit-backdrop-filter: blur(0px) saturate(100%);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .lifeline-card {
+    animation: none;
+  }
+}
+/* Two independent accessibility signals, not one: reduced motion softens the
+   entrance, reduced transparency softens the material itself. */
+@media (prefers-reduced-transparency: reduce) {
+  .lifeline-card {
+    background: var(--card-2);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
   }
 }
 .lifeline-header {
@@ -1029,15 +1112,6 @@ button:disabled {
   text-transform: uppercase;
   letter-spacing: 0.06em;
 }
-.lifeline-card ul {
-  padding-left: 18px;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  font-size: 0.94rem;
-  line-height: 1.5;
-}
-
 /* ============================================================================
    Review
    ========================================================================== */
@@ -1082,7 +1156,7 @@ button:disabled {
   margin-bottom: 6px;
 }
 .insight-card blockquote {
-  border-left: 3px solid var(--accent);
+  border-left: 2px solid var(--border-accent);
   padding-left: 12px;
   color: var(--text-body);
   font-style: italic;
@@ -1404,6 +1478,7 @@ button:disabled {
 }
 .auth-card input,
 .settings-form input,
+.help-search input,
 .chat-input textarea,
 .chart-controls select {
   font: inherit;
@@ -1415,6 +1490,7 @@ button:disabled {
 }
 .auth-card input:focus,
 .settings-form input:focus,
+.help-search input:focus,
 .chat-input textarea:focus {
   outline: none;
   border-color: var(--accent);
@@ -1664,7 +1740,7 @@ a.list-row:hover {
   color: var(--text-body);
 }
 .feedback-body blockquote {
-  border-left: 3px solid var(--accent);
+  border-left: 2px solid var(--border-accent);
   padding-left: 10px;
   color: var(--text-body);
   margin: 0;
@@ -1730,8 +1806,11 @@ a.list-row:hover {
   font-size: 0.78rem;
   font-weight: 600;
 }
+/* Neutral, not brand violet: DESIGN.md's Don't list is explicit that
+   semantic meaning (here, "this improved") always wins over reusing the
+   brand color — the directional arrow glyph already carries the meaning. */
 .delta.good {
-  color: var(--accent-bright);
+  color: var(--text-body);
 }
 .delta.bad {
   color: var(--danger-text);
@@ -2104,6 +2183,203 @@ a.list-row:hover {
 }
 
 /* ============================================================================
+   Help & Support
+   A Read surface, not an Operate one: the page is capped to a measured column
+   so the prose stays readable instead of stretching to the 1520px shell width
+   every other page wants.
+   ========================================================================== */
+
+.help-page {
+  max-width: 920px;
+}
+
+/* Numbered rows rather than a 3-up grid — the steps are sequential, and a
+   vertical list keeps that order unambiguous inside a narrow column. */
+.help-steps {
+  list-style: none;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 4px clamp(16px, 2vw, 22px);
+}
+.help-step {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 16px 0;
+}
+.help-step + .help-step {
+  border-top: 1px solid var(--border);
+}
+.help-step-num {
+  flex: none;
+  width: 24px;
+  height: 24px;
+  display: grid;
+  place-items: center;
+  border-radius: 999px;
+  background: var(--accent-soft);
+  border: 1px solid var(--border-accent);
+  color: var(--accent-text);
+  font-size: 0.76rem;
+  font-weight: 700;
+}
+.help-step-title {
+  font-weight: 600;
+  margin-bottom: 3px;
+}
+.help-start-cta {
+  margin-top: 16px;
+}
+
+/* The heading's own vertical margins move to the container: as flex items they
+   would otherwise centre the title's margin box against the search field and
+   knock the two out of alignment. */
+.help-topics-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px 14px;
+  margin: 28px 0 12px;
+}
+.help-topics-head .section-title {
+  margin: 0;
+}
+/* Grows to fill its line once the header wraps on narrow viewports, rather
+   than sitting at a fixed width with dead space beside it. */
+.help-search {
+  position: relative;
+  display: flex;
+  align-items: center;
+  flex: 1 1 240px;
+  max-width: 340px;
+}
+.help-search-icon {
+  position: absolute;
+  left: 12px;
+  display: flex;
+  color: var(--text-muted);
+  pointer-events: none;
+}
+.help-search input {
+  width: 100%;
+  padding-left: 36px;
+}
+
+.help-group + .help-group {
+  margin-top: 22px;
+}
+.help-group-title {
+  font-size: 0.95rem;
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+.help-items {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.help-item {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+}
+/* Native <details>: the disclosure arrow is replaced by our own chevron, so
+   the browser's default marker has to go in both engines' spellings. */
+.help-q {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 14px 16px;
+  font-size: 0.93rem;
+  font-weight: 600;
+  cursor: pointer;
+  list-style: none;
+  transition: background 0.2s var(--ease);
+}
+.help-q::-webkit-details-marker {
+  display: none;
+}
+.help-q:hover {
+  background: var(--card-2);
+}
+.help-q:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: -2px;
+}
+.help-chev {
+  flex: none;
+  display: flex;
+  color: var(--text-muted);
+  transition: transform 0.2s var(--ease);
+}
+.help-item[open] .help-chev {
+  transform: rotate(180deg);
+}
+.help-a {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 0 16px 16px;
+}
+.help-a p {
+  margin: 0;
+  font-size: 0.9rem;
+  line-height: 1.6;
+  color: var(--text-body);
+}
+
+.help-check {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.help-check-row {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 4px 10px;
+}
+/* Neutral when everything is fine, warning amber only when something actually
+   needs attention — there is no success color in this system, and the note
+   text beside it carries the same meaning for anyone who can't see the hue. */
+.help-check-dot {
+  flex: none;
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  background: var(--text-muted);
+}
+.help-check-dot.warn {
+  background: var(--warning);
+}
+.help-check-label {
+  font-size: 0.9rem;
+  font-weight: 600;
+  min-width: 132px;
+}
+.help-check-actions {
+  margin-top: 4px;
+}
+
+.help-contact {
+  margin-top: 22px;
+}
+.help-contact + .help-contact {
+  margin-top: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .help-chev {
+    transition: none;
+  }
+}
+
+/* ============================================================================
    Responsive breakpoints
    Desktop-first. The sidebar becomes an off-canvas drawer (nothing hidden —
    every nav item, the CTA, and Sign out stay reachable via the drawer).
@@ -2277,12 +2553,15 @@ a.list-row:hover {
   color: var(--text-secondary);
   padding: 0 2px;
 }
+/* Fuchsia, not violet: this dot is inside the floating coach — the one
+   component that IS actively coaching a live call — so it should claim the
+   "AI is live right now" signal the Two-Signal Rule reserves for it. */
 .coach-status-live {
   width: 6px;
   height: 6px;
   border-radius: 50%;
-  background: var(--accent-bright);
-  box-shadow: 0 0 6px var(--accent);
+  background: var(--live);
+  box-shadow: 0 0 6px var(--live);
 }
 
 .coach-footer {
@@ -2298,7 +2577,7 @@ a.list-row:hover {
   align-items: center;
   gap: 6px;
   padding: 6px 11px;
-  border-radius: 8px;
+  border-radius: var(--radius-xs);
   border: 1px solid var(--border);
   background: var(--card-2);
   color: var(--text-secondary);
@@ -2340,9 +2619,12 @@ a.list-row:hover {
   width: 28px;
   height: 28px;
   padding: 0;
-  border-radius: 8px;
+  border-radius: var(--radius-xs);
   background: transparent;
-  color: var(--text-secondary);
+  /* text-body, not text-secondary: sitting on translucent glass now, a flat
+     mid-gray reads muddy — Apple's vibrancy guidance wants higher contrast
+     here, not lower. */
+  color: var(--text-body);
   border: none;
   cursor: pointer;
   transition: background 0.2s ease, color 0.2s ease;
@@ -2387,7 +2669,7 @@ a.list-row:hover {
   width: 28px;
   height: 28px;
   padding: 0;
-  border-radius: 8px;
+  border-radius: var(--radius-xs);
   border: none;
   background: transparent;
   color: var(--text-muted);

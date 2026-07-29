@@ -11,6 +11,155 @@
   font-family: inherit;
 }
 
+/* ============================================================================
+   Landing canvas (.lp-dark) — always-dark purple, in BOTH themes.
+   The marketing page is a Persuade surface with its own committed look, the
+   same call already made for .lp-measure. It re-declares the dark token set
+   locally rather than relying on the root theme, so a light-mode visitor still
+   gets the cinematic canvas — and every child component (nav, cards, buttons,
+   borders) follows automatically without being restyled one by one.
+   Deliberately NOT applied to .auth-shell, which shares .lp for chrome only and
+   must keep following the user's theme.
+   ========================================================================== */
+.lp-dark {
+  color-scheme: dark;
+  position: relative;
+  isolation: isolate;
+
+  /* Pointer parallax, written here by LandingPage.jsx. These fallbacks are
+     load-bearing, not tidiness: the beams' transform is a calc() over them, and
+     an undefined custom property invalidates the whole declaration — which
+     silently drops the 43° rotation, not just the parallax offset. */
+  --mx: 0;
+  --my: 0;
+
+  /* Neutral ramp, shifted off HusAI's near-black onto a deep violet-black.
+     Same four-step surface ladder, same relationships — just hue-shifted. */
+  --bg: #0a0714;
+  --surface: #100b20;
+  --card: #16102b;
+  --card-2: #1f1740;
+  --inset: #0c0819;
+
+  --border: rgba(196, 168, 255, 0.1);
+  --border-2: rgba(196, 168, 255, 0.16);
+
+  --text: #f2eefb;
+  --text-body: #cbc4e0;
+  --text-secondary: #9a92b5;
+  --text-muted: #837aa0;
+
+  --shadow: 0 1px 2px rgba(0, 0, 0, 0.4), 0 18px 44px -12px rgba(0, 0, 0, 0.65);
+  --glass-border-top: rgba(255, 255, 255, 0.16);
+
+  /* The accent and status tokens have to be pinned too, not just the neutrals.
+     Light mode tunes these to sit on white — measured against this canvas, a
+     light-theme visitor was getting --accent-text at 2.81:1 (eyebrows, the mic
+     glyph, mock insight lines, nav links, plan tags), --danger-text at 3.17:1
+     in error banners, and --warning-text at 3.97:1. Dark values clear AA on
+     every one of them: 7.33, 10.54 and 13.75 respectively. */
+  --accent: #8b5cf6;
+  --accent-strong: #6366f1;
+  --accent-bright: #a78bfa;
+  --accent-text: #a78bfa;
+  --accent-soft: rgba(139, 92, 246, 0.14);
+  --border-accent: rgba(139, 92, 246, 0.32);
+  --grad: linear-gradient(135deg, #8b5cf6, #6366f1);
+  --live: #e879f9;
+  --live-bright: #f0abfc;
+  --live-soft: rgba(217, 70, 239, 0.14);
+  --live-border: rgba(217, 70, 239, 0.34);
+  --danger: #f43f5e;
+  --danger-text: #fda4af;
+  --danger-soft: rgba(244, 63, 94, 0.12);
+  --danger-border: rgba(244, 63, 94, 0.35);
+  --warning: #f5b544;
+  --warning-text: #f0d48a;
+  --warning-soft: rgba(245, 181, 68, 0.1);
+  --warning-border: rgba(245, 181, 68, 0.35);
+
+  color: var(--text);
+  background: var(--bg);
+}
+/* The purple gradience itself: two wide, very low-alpha washes that never fully
+   resolve, so the canvas reads as lit rather than flat-filled. Fixed alongside
+   the beams so it does not scroll away from them. */
+.lp-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+  background:
+    radial-gradient(120% 80% at 78% -10%, rgba(139, 92, 246, 0.22), transparent 60%),
+    radial-gradient(90% 70% at 12% 8%, rgba(99, 102, 241, 0.16), transparent 62%),
+    linear-gradient(180deg, #100a22 0%, #0a0714 55%, #080511 100%);
+}
+/* Readability scrim. The reference component carries one of these too
+   (`bg-gradient-to-t from-black/50 … to-black/30`) — a lit 3D backdrop simply
+   cannot guarantee what passes behind a paragraph, and measured against the
+   rendered frame the hero's secondary text hit 1.18:1 where a bright fold
+   crossed it.
+
+   Weighted rather than flat: heaviest through the centre column where the copy
+   actually sits, falling away to almost nothing at the edges, so the beams keep
+   their full range everywhere the eye is not reading.
+
+   Built from --bg rather than a literal: the scrim only works if it is the
+   canvas colour, so if the landing's base ever shifts this has to shift with it.
+   Percentages here are measured, not chosen — 80% at centre is what lifts the
+   hero's secondary text from 1.18:1 to 5.03:1 against a peak-lit fold. */
+.lp-backdrop::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background:
+    radial-gradient(
+      110% 78% at 50% 47%,
+      color-mix(in srgb, var(--bg) 82%, transparent) 0%,
+      color-mix(in srgb, var(--bg) 70%, transparent) 44%,
+      color-mix(in srgb, var(--bg) 54%, transparent) 76%,
+      /* Never reaches zero. The field is animated, so the fold behind any given
+         paragraph changes frame to frame — a scrim that falls away at the edges
+         leaves content outside the centre with no guaranteed floor, which is
+         how the pillar row measured 6.14:1 on one frame and 4.37:1 on another.
+         This holds a minimum everywhere the copy can land. */
+      color-mix(in srgb, var(--bg) 48%, transparent) 100%
+    ),
+    linear-gradient(180deg, color-mix(in srgb, var(--bg) 40%, transparent) 0%, transparent 18%);
+}
+
+/* Film grain. The reference's shader carries a noise term, and it is doing more
+   work than it looks: without it, large smooth gradients band visibly on 8-bit
+   displays and read as flat CSS. An inline feTurbulence costs one static paint
+   — no animation, no image request. */
+.lp-backdrop::after {
+  z-index: 2;
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.5;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)' opacity='0.42'/%3E%3C/svg%3E");
+}
+/* Everything that is not the backdrop sits above it. */
+.lp-dark > *:not(.lp-backdrop) {
+  position: relative;
+  z-index: 1;
+}
+/* ...except the header, which must stay stuck to the top AND above every
+   section. The blanket rule above outranks `.lp-nav`'s own declarations on
+   specificity, so without this the nav silently scrolls away and — because it
+   would share z-index 1 with its later siblings — the open mobile menu renders
+   underneath the hero. */
+.lp-dark > .lp-nav {
+  position: sticky;
+  z-index: 40;
+}
+
 /* Auth pages share the landing header/footer; card centres between them */
 .auth-shell {
   display: flex;
@@ -25,52 +174,111 @@
   padding-inline: var(--page-pad-x);
 }
 
-/* Nav */
+/* Nav — brand outside left, links in a floating glass pill, actions outside
+   right. The bar carries no surface of its own until content scrolls under it. */
 .lp-nav {
+  /* Neutralizes the legacy global `header { display: flex; margin-bottom: 24px }`
+     in styles.css, which otherwise makes .lp-nav-inner a flex item that
+     shrink-wraps — visible as the brand drifting off the left edge once the
+     pill and actions are hidden on mobile. */
+  display: block;
+  margin-bottom: 0;
   position: sticky;
   top: 0;
   z-index: 40;
-  background: color-mix(in srgb, var(--bg) 82%, transparent);
-  backdrop-filter: blur(14px);
-  border-bottom: 1px solid var(--border);
+  background: transparent;
+  border-bottom: 1px solid transparent;
+  transition: background 0.3s var(--ease), border-color 0.3s var(--ease),
+    backdrop-filter 0.3s var(--ease);
 }
+.lp-nav.scrolled {
+  background: color-mix(in srgb, var(--bg) 72%, transparent);
+  backdrop-filter: blur(16px) saturate(150%);
+  -webkit-backdrop-filter: blur(16px) saturate(150%);
+  border-bottom-color: var(--border);
+}
+/* Three tracks, not flex: the pill has to sit on the page's true centre line,
+   and with flex it would drift left because the actions group is far wider
+   than the logo. */
 .lp-nav-inner {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 12px var(--page-pad-x);
-  display: flex;
+  padding: 14px var(--page-pad-x);
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
   align-items: center;
   gap: 20px;
 }
 .lp-brand {
+  justify-self: start;
   background: none;
   border: none;
   padding: 0;
   cursor: pointer;
 }
+
+/* The glass pill. The blur lives here rather than being set inline by
+   liquidGlass(): refraction was removed from this element once the WebGL field
+   went in behind it (see LandingNav for the measurements), so the backdrop
+   filter has to be declared or the pill loses its glass entirely. */
 .lp-nav-links {
+  justify-self: center;
   display: flex;
-  gap: 6px;
-  margin: 0 auto;
+  align-items: center;
+  gap: 2px;
+  padding: 5px;
+  border-radius: 999px;
+  backdrop-filter: blur(16px) saturate(160%);
+  -webkit-backdrop-filter: blur(16px) saturate(160%);
+  background: color-mix(in srgb, var(--card) 52%, transparent);
+  box-shadow:
+    inset 0 0 0 1px var(--border-2),
+    0 8px 24px rgba(0, 0, 0, 0.16);
+}
+/* Over the dark beam canvas the specular treatment can be explicit: a bright
+   top edge where light catches the rim, and a deeper drop so the pill reads as
+   floating above the field rather than printed on it. */
+.lp-dark .lp-nav-links {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.09), rgba(255, 255, 255, 0.035));
+  box-shadow:
+    inset 0 1px 1px rgba(255, 255, 255, 0.3),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.1),
+    0 10px 30px rgba(0, 0, 0, 0.38);
 }
 .lp-nav-links button {
   background: none;
   border: none;
-  color: var(--text-secondary);
-  font-size: 0.9rem;
+  color: var(--text-body);
+  font-size: 0.875rem;
   font-weight: 500;
-  padding: 8px 12px;
-  border-radius: 8px;
+  padding: 8px 16px;
+  border-radius: 999px;
   cursor: pointer;
+  white-space: nowrap;
+  transition: color 0.18s var(--ease), background 0.18s var(--ease);
 }
 .lp-nav-links button:hover {
   color: var(--text);
-  background: var(--card-2);
+  background: color-mix(in srgb, var(--text) 12%, transparent);
 }
+.lp-nav-links button:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
+}
+
 .lp-nav-actions {
+  justify-self: end;
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 14px;
+}
+/* Pill-shaped to match the reference's outside-right pairing. This is a
+   deliberate local exception to the 12px button radius in DESIGN.md — the
+   brief's own composition rhymes the CTA with the links pill. */
+.lp-nav-actions .primary {
+  border-radius: 999px;
+  padding: 10px 20px;
+  font-size: 0.875rem;
 }
 .lp-link {
   background: none;
@@ -133,8 +341,12 @@
 .lp-mobile-menu button:hover {
   background: var(--card-2);
 }
+/* The `background: none` above outranks `button.primary`, so the fill has to be
+   restored here or the mobile CTA renders as bare white text and stops reading
+   as the primary action. */
 .lp-mobile-menu button.primary {
   text-align: center;
+  background: var(--grad);
   color: #fff;
   margin-top: 4px;
 }
@@ -144,14 +356,179 @@
   margin: 6px 0;
 }
 
+/* ============================================================================
+   Glass surfaces — one material across the whole landing page
+   The nav pill established the language; this applies it to every other shape
+   so it reads as a system rather than a one-off. The rule is always the same:
+   an element keeps its own colour token and only its MATERIAL changes — the
+   opaque fill becomes a translucent mix of that same token, plus a backdrop
+   blur, a specular top edge, and a hairline rim.
+
+   Two constraints decide what is on this list:
+   1. Only the OUTERMOST shape of a group gets glass. Stacking a translucent
+      surface on another collapses legibility, so nested content (.lp-icon,
+      .lp-mock-line, .lp-mock-reply, .lp-plan-tag, .lp-step-n) keeps its solid
+      fill and sits ON the glass instead of being more of it.
+   2. Blur scales with size — chips and buttons read thin, panels read thick.
+
+   Scoped to .lp-dark: the auth pages share .lp for chrome but have no beam
+   field behind them, and translucency with nothing to reveal is just haze.
+   ========================================================================== */
+.lp-dark {
+  --glass-rim: inset 0 1px 0 rgba(255, 255, 255, 0.13),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.06);
+  --glass-drop: 0 10px 30px rgba(0, 0, 0, 0.28);
+  /* Lifted variant, for the one surface on the page you can pick up. A brighter
+     specular and a deeper drop are what make it read as sitting above the glass
+     that cannot be moved — named rather than inlined so the distinction stays a
+     decision instead of four loose numbers. */
+  --glass-lift: inset 0 1px 1px rgba(255, 255, 255, 0.26),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.08), 0 10px 30px rgba(0, 0, 0, 0.34);
+  --glass-lift-hover: inset 0 1px 1px rgba(255, 255, 255, 0.32),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.12), 0 14px 38px rgba(0, 0, 0, 0.4);
+}
+
+/* Thin material — small controls */
+.lp-dark .lp-ghost,
+.lp-dark .lp-chip,
+.lp-dark .lp-menu-btn {
+  background: color-mix(in srgb, var(--card) 46%, transparent);
+  backdrop-filter: blur(12px) saturate(150%);
+  -webkit-backdrop-filter: blur(12px) saturate(150%);
+  box-shadow: var(--glass-rim);
+}
+
+/* Medium material — cards, plans, accordion rows.
+   68% is a measured floor, not a taste call: these carry --text-secondary body
+   copy, which drops to 3.55:1 against a bright beam at 44% fill. 68% restores
+   4.67:1 and still reads clearly as glass. Don't thin these without re-checking
+   that text. */
+.lp-dark .lp-card,
+.lp-dark .lp-plan,
+.lp-dark .faq-item {
+  background: color-mix(in srgb, var(--card) 68%, transparent);
+  backdrop-filter: blur(16px) saturate(155%);
+  -webkit-backdrop-filter: blur(16px) saturate(155%);
+  box-shadow: var(--glass-rim);
+}
+/* Hover keeps the rim — a bare var(--shadow) here would wipe the specular
+   edge and the card would flatten the moment you pointed at it. */
+.lp-dark .lp-card:hover {
+  box-shadow: var(--glass-rim), var(--shadow);
+}
+.lp-dark .lp-plan.popular {
+  box-shadow: var(--glass-rim), var(--shadow);
+}
+
+/* Thick material — the large panels */
+.lp-dark .lp-mock,
+.lp-dark .lp-mobile-menu {
+  background: color-mix(in srgb, var(--card) 66%, transparent);
+  backdrop-filter: blur(20px) saturate(160%);
+  -webkit-backdrop-filter: blur(20px) saturate(160%);
+  box-shadow: var(--glass-rim), var(--glass-drop);
+}
+/* Keeps its deliberate green-black cast (see DESIGN.md → Known Exceptions);
+   only the opacity and blur change. */
+.lp-dark .lp-measure {
+  background: color-mix(in srgb, #0c1310 72%, transparent);
+  backdrop-filter: blur(20px) saturate(150%);
+  -webkit-backdrop-filter: blur(20px) saturate(150%);
+  box-shadow: var(--glass-rim);
+}
+
+/* Primary CTAs stay unmistakably violet — the gradient is rebuilt from the
+   same two brand tokens at reduced alpha rather than swapped for a neutral
+   glass, so the button still reads as the brand acting. Held at 76% so white
+   label text keeps its contrast over whatever passes behind it. */
+.lp-dark .lp-hero-cta .primary,
+.lp-dark .lp-plan .primary,
+.lp-dark .lp-final-inner .primary,
+.lp-dark .lp-nav-actions .primary {
+  background: linear-gradient(
+    135deg,
+    color-mix(in srgb, var(--accent) 76%, transparent),
+    color-mix(in srgb, var(--accent-strong) 76%, transparent)
+  );
+  backdrop-filter: blur(12px) saturate(150%);
+  -webkit-backdrop-filter: blur(12px) saturate(150%);
+  box-shadow: var(--glass-rim), 0 6px 20px -6px var(--accent);
+}
+/* The secondary plan button is a surface, not a signal — plain thin glass. */
+.lp-dark .lp-plan .secondary {
+  background: color-mix(in srgb, var(--card-2) 50%, transparent);
+  backdrop-filter: blur(12px) saturate(150%);
+  -webkit-backdrop-filter: blur(12px) saturate(150%);
+  box-shadow: var(--glass-rim);
+}
+
+/* Someone who asked for less transparency gets the original opaque surfaces
+   back, not a thinner version of the same problem. */
+@media (prefers-reduced-transparency: reduce) {
+  .lp-dark .lp-ghost,
+  .lp-dark .lp-chip,
+  .lp-dark .lp-menu-btn,
+  .lp-dark .lp-card,
+  .lp-dark .lp-plan,
+  .lp-dark .faq-item,
+  .lp-dark .lp-mock,
+  .lp-dark .lp-mobile-menu,
+  .lp-dark .lp-measure,
+  .lp-dark .lp-plan .secondary,
+  .lp-dark .lp-nav-links {
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+  .lp-dark .lp-ghost,
+  .lp-dark .lp-chip,
+  .lp-dark .lp-menu-btn,
+  .lp-dark .lp-card,
+  .lp-dark .lp-plan,
+  .lp-dark .faq-item,
+  .lp-dark .lp-mock,
+  .lp-dark .lp-mobile-menu {
+    background: var(--card);
+  }
+  .lp-dark .lp-mobile-menu {
+    background: var(--surface);
+  }
+  .lp-dark .lp-measure {
+    background: #0c1310;
+  }
+  .lp-dark .lp-hero-cta .primary,
+  .lp-dark .lp-plan .primary,
+  .lp-dark .lp-final-inner .primary,
+  .lp-dark .lp-nav-actions .primary {
+    background: var(--grad);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+}
+
 /* Section scaffold — full-bleed background, centred content */
 .lp-section {
   padding-block: clamp(56px, 8vw, 108px);
   padding-inline: max(var(--page-pad-x), calc((100% - 1200px) / 2));
 }
+/* Translucent, not opaque: alternating sections still read as a distinct band,
+   but the beam field stays visible through them instead of being covered from
+   the hero down. */
 .lp-alt {
-  background: var(--surface);
+  background: color-mix(in srgb, var(--surface) 72%, transparent);
   border-block: 1px solid var(--border);
+}
+/* On the dark canvas the band is barely-there and loses its rules entirely: at
+   full strength the hairlines read as hard horizontal seams cutting the beams
+   into slices, which is the opposite of scrolling through one continuous field.
+   Enough tint to separate sections, not enough to interrupt the light. */
+/* Fully transparent on the dark canvas. Even a light tint left a visible
+   horizontal step where the band started, which is precisely the seam the
+   full-page backdrop exists to avoid — and with the beams providing the
+   variation, alternating section fills have nothing left to do. Sections are
+   still delimited by their headings and vertical rhythm. */
+.lp-dark .lp-alt {
+  background: transparent;
+  border-block: none;
 }
 
 .lp-head {
@@ -194,12 +571,30 @@
   margin-bottom: 20px;
 }
 
-/* Hero */
+/* Hero
+   Composition: an ambient beam field behind a single centred column. The hero
+   claims most of the first viewport so it reads as a deliberate opening rather
+   than a banner the page happens to start with — capped at 860px so it never
+   turns into dead space on a tall monitor. */
 .lp-hero {
   position: relative;
   text-align: center;
-  padding: clamp(64px, 10vw, 128px) var(--page-pad-x) clamp(56px, 8vw, 104px);
+  padding: clamp(56px, 8vw, 104px) var(--page-pad-x) clamp(56px, 8vw, 104px);
   overflow: hidden;
+  min-height: 86vh;
+  min-height: min(86svh, 860px);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+/* Plain block, not a flex child that stretches: the badge and listening pill
+   are inline-flex and centre themselves off the inherited text-align. */
+.lp-hero-inner {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 940px;
+  margin: 0 auto;
 }
 .lp-hero-glow {
   position: absolute;
@@ -229,6 +624,22 @@
 .lp-badge svg {
   width: 15px;
   height: 15px;
+}
+/* Glass, but only here: the badge floats directly over the moving beam field,
+   which is the condition that makes translucency legible rather than decorative
+   (see DESIGN.md → Elevation & Depth → Glass Material). */
+/* Denser than the usual glass mix and on brighter text: a beam passing directly
+   behind the pill was washing the label out, and a badge that is only legible
+   between beams is not legible. */
+.lp-hero-badge {
+  background: color-mix(in srgb, var(--card) 86%, transparent);
+  backdrop-filter: blur(18px) saturate(170%);
+  -webkit-backdrop-filter: blur(18px) saturate(170%);
+  border-top-color: var(--glass-border-top);
+  color: var(--text);
+}
+.lp-hero-badge svg {
+  color: var(--accent-text);
 }
 .lp-hero-title {
   position: relative;
@@ -284,6 +695,54 @@
   width: 16px;
   height: 16px;
   color: var(--accent-text);
+}
+
+/* Hero pillars — Listen → Coach → Train. Hairline dividers instead of three
+   cards: this is the quiet close of the hero, not a third competing surface. */
+.lp-pillars {
+  list-style: none;
+  position: relative;
+  margin: clamp(38px, 5vw, 58px) auto 0;
+  padding: 0;
+  max-width: 880px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: clamp(16px, 2.4vw, 30px);
+  text-align: left;
+}
+.lp-pillar {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding-left: clamp(16px, 2.4vw, 30px);
+  border-left: 1px solid var(--border);
+}
+.lp-pillar:first-child {
+  border-left: none;
+  padding-left: 0;
+}
+.lp-pillar-icon {
+  display: inline-flex;
+  flex: none;
+  color: var(--accent-text);
+  margin-top: 1px;
+}
+.lp-pillar-icon svg {
+  width: 18px;
+  height: 18px;
+}
+.lp-pillar-title {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text);
+  margin-bottom: 4px;
+}
+.lp-pillar-body {
+  font-size: 0.86rem;
+  line-height: 1.5;
+  color: var(--text-secondary);
 }
 
 /* Grids */
@@ -714,7 +1173,11 @@
   .lp-nav-actions {
     display: none;
   }
+  /* Back to flex once the pill and actions are gone — the three-track grid has
+     nothing left to centre, and its empty side columns would push the logo off
+     the left edge. */
   .lp-nav-inner {
+    display: flex;
     justify-content: space-between; /* logo left, menu button right */
   }
   .lp-menu-btn {
@@ -740,6 +1203,21 @@
     max-width: 460px;
     margin: 0 auto;
   }
+  /* Three pillars side by side stop being readable well before they stop
+     fitting — two columns keeps the line lengths sane, with the third centred
+     underneath rather than orphaned in a corner. */
+  .lp-pillars {
+    grid-template-columns: repeat(2, 1fr);
+    max-width: 560px;
+    gap: 22px;
+  }
+  .lp-pillar:nth-child(odd) {
+    border-left: none;
+    padding-left: 0;
+  }
+  .lp-pillar:last-child {
+    grid-column: 1 / -1;
+  }
 }
 
 @media (max-width: 640px) {
@@ -756,9 +1234,40 @@
     width: 100%;
     justify-content: center;
   }
+  /* Phones: let the hero size to its content. Holding 86svh with full-width
+     stacked buttons plus the pillars would push the fold past the CTA. */
+  .lp-hero {
+    min-height: 0;
+  }
+  .lp-hero-cta {
+    flex-direction: column;
+  }
+  .lp-pillars {
+    grid-template-columns: 1fr;
+    max-width: 380px;
+    gap: 18px;
+  }
+  .lp-pillar {
+    border-left: none;
+    padding-left: 0;
+  }
+  /* Half the facets, so each is wide enough to still read as a plane rather
+     than a sliver; the survivors expand to fill since they are flex-sized.
+     Gap stays 0 — reopening it here would break the creases the whole effect
+     depends on. The field steps back so the headline keeps its contrast. */
+  .lp-beams {
+    opacity: 0.78;
+  }
+  .lp-beams i:nth-child(even) {
+    display: none;
+  }
 }
 
-/* ---- Scroll reveal (section-level) ---- */
+/* ---- Scroll reveal ----
+   Fallback path only: a one-shot IntersectionObserver reveal, used where the
+   browser has no scroll-driven animation support (Safari, Firefox). The JS
+   skips adding .lp-reveal entirely when view() timelines are available, so
+   these two systems never both run on the same element. */
 .lp-reveal {
   opacity: 0;
   transform: translateY(18px);
@@ -769,6 +1278,269 @@
   transform: none;
 }
 
+/* ---- Scroll-linked motion (Chromium) ----
+   Every major block fades and lifts as it enters, holds while it is actually
+   being read, and releases as it leaves — driven by scroll POSITION rather than
+   by a timer, so it plays forward scrolling down and backward scrolling up
+   without any extra code. Runs on the compositor: no scroll listener, no
+   per-frame JavaScript, nothing added to the main thread.
+
+   The long 24%-76% plateau is the important part. It keeps each block at full
+   opacity for the whole stretch it occupies readable space, so the fade is
+   something you notice at the edges of the viewport, never something that dims
+   the sentence you are in the middle of reading. */
+@supports (animation-timeline: view()) {
+  .lp-dark .lp-head,
+  .lp-dark .lp-split-text,
+  .lp-dark .lp-card,
+  .lp-dark .lp-plan,
+  .lp-dark .lp-mock,
+  .lp-dark .lp-measure,
+  .lp-dark .lp-outcome,
+  .lp-dark .lp-chips,
+  .lp-dark .faq-item,
+  .lp-dark .lp-final-inner {
+    animation: lp-scroll-fade linear both;
+    animation-timeline: view();
+    animation-range: entry 0% exit 100%;
+  }
+
+  /* Grid rows would otherwise animate in perfect lockstep, since their items
+     share a top edge. Nudging each column's range start walks the cascade
+     across the row as it arrives. */
+  .lp-dark .lp-grid-2 > *:nth-child(2n),
+  .lp-dark .lp-grid-3 > *:nth-child(3n-1),
+  .lp-dark .lp-grid-4 > *:nth-child(4n-2) {
+    animation-range: entry 7% exit 100%;
+  }
+  .lp-dark .lp-grid-3 > *:nth-child(3n),
+  .lp-dark .lp-grid-4 > *:nth-child(4n-1) {
+    animation-range: entry 14% exit 100%;
+  }
+  .lp-dark .lp-grid-4 > *:nth-child(4n) {
+    animation-range: entry 21% exit 100%;
+  }
+
+  /* The hero owns its own entrance (lp-hero-in) and must not be handed a
+     second, competing one. */
+  .lp-dark .lp-hero .lp-head {
+    animation: none;
+  }
+
+  /* Anything materially taller than the viewport is excluded on purpose. Its
+     entry/exit ranges stretch across a whole screen of scrolling, so it sits
+     part-faded while its middle is still being read — measured at 0.68 opacity
+     on the FAQ list before this. Tall regions animate by their parts (the
+     individual .faq-item rows above), never as one block. */
+  .lp-dark .lp-faq-wrap {
+    animation: none;
+  }
+}
+
+/* Plateau bounds are derived, not eyeballed. Across the range `entry 0% exit
+   100%` an element travels viewport+own height, so it is fully on screen for
+   progress between h/(V+h) and V/(V+h). For the short blocks here (a heading is
+   ~10% of viewport height) that is roughly 9%-91%; 18%-86% sits inside it with
+   margin, so a block reaches full opacity shortly after clearing the bottom
+   edge and only starts releasing once it is genuinely leaving at the top.
+   A narrower 24%-76% left headings at 0.38 opacity while still fully visible. */
+@keyframes lp-scroll-fade {
+  0% {
+    opacity: 0;
+    transform: translateY(34px) scale(0.988);
+  }
+  18% {
+    opacity: 1;
+    transform: none;
+  }
+  86% {
+    opacity: 1;
+    transform: none;
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-18px) scale(0.994);
+  }
+}
+
+/* WebGL beam field. Fades up over the CSS field it replaces, so the handover
+   when the three.js chunk finishes loading reads as the light settling rather
+   than as a swap. */
+.lp-beams-gl {
+  position: absolute;
+  inset: 0;
+  animation: lp-gl-in 0.6s var(--ease-out) both;
+}
+.lp-beams-gl canvas {
+  display: block;
+}
+@keyframes lp-gl-in {
+  from {
+    opacity: 0;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .lp-beams-gl {
+    animation: none;
+  }
+}
+
+/* ---- Hero beam field ----
+   The CSS stand-in for the reference's WebGL beams (see ui/HeroBeams.jsx for
+   why). Beams stay inside the brand violet/indigo ramp: fuchsia is reserved
+   system-wide for "the AI is live right now" (DESIGN.md → Two-Signal Rule), and
+   an ambient background is not that. */
+.lp-beams {
+  position: absolute;
+  inset: -55%;
+  z-index: 0;
+  display: flex;
+  justify-content: center;
+  align-items: stretch;
+  /* No gaps. The beams butt against each other so their shared edges become
+     the creases that make the reference read as folded, lit material rather
+     than a row of glowing bars. */
+  gap: 0;
+  pointer-events: none;
+  opacity: 1;
+  /* Light adds. Over the dark canvas the beams read as emitted light rather
+     than violet paint laid on top — which is the whole difference between a
+     beam and a stripe. Light mode opts out below (screen would wash out). */
+  mix-blend-mode: screen;
+  /* Wide and mostly opaque: the field has to reach the very top of the
+     viewport, so this only feathers the far corners of the oversized rotated
+     box, never the visible area. */
+  -webkit-mask-image: radial-gradient(ellipse 86% 82% at 50% 50%, #000 58%, transparent 94%);
+  mask-image: radial-gradient(ellipse 86% 82% at 50% 50%, #000 58%, transparent 94%);
+  transform: rotate(43deg) translate3d(calc(var(--mx) * -26px), calc(var(--my) * -18px), 0);
+  /* Re-targeted every frame while the pointer moves, which reads as the field
+     lagging behind the cursor rather than snapping to it. */
+  transition: transform 0.5s var(--ease-out);
+}
+/* One lit facet. The gradient runs ACROSS the beam (not along it) so the beam
+   spans the whole frame at full strength, the way the reference's planes do,
+   with brightness varying side to side as though a light were raking across
+   folded material. Independent per-beam edge values mean neighbours rarely
+   match at their shared edge — that mismatch is the crease. */
+.lp-beams i {
+  position: relative;
+  overflow: hidden;
+  flex: var(--w) 1 0;
+  background: linear-gradient(
+    to right,
+    rgba(167, 139, 250, var(--a)),
+    rgba(216, 195, 255, calc((var(--a) + var(--b)) / 2 * 1.25)) 46%,
+    rgba(139, 92, 246, var(--b))
+  );
+  animation: lp-beam var(--d) var(--delay) ease-in-out infinite alternate;
+}
+/* The travelling shine. A bright band running down the inside of each shaft on
+   its own tempo, so the field always has light moving through it rather than
+   only breathing in place. Clipped to the beam by the parent's overflow, and
+   animated on transform alone. */
+.lp-beams i > span {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: -50%;
+  height: 50%;
+  background: linear-gradient(
+    to bottom,
+    transparent,
+    rgba(255, 255, 255, 0.16) 35%,
+    rgba(255, 255, 255, 0.55) 50%,
+    rgba(255, 255, 255, 0.16) 65%,
+    transparent
+  );
+  animation: lp-shine var(--sd) var(--sdelay) linear infinite;
+}
+@keyframes lp-shine {
+  to {
+    /* 100% of the beam + its own 50% height, expressed in the band's own box. */
+    transform: translateY(300%);
+  }
+}
+/* Brightness only — no more translate/scale. The facets have to stay butted
+   together to keep their creases, and moving them apart would open seams at the
+   frame edges. In the shader the planes undulate and the *lighting* changes;
+   varying opacity per facet is the readable part of that. */
+@keyframes lp-beam {
+  from {
+    opacity: 0.68;
+  }
+  to {
+    opacity: 1;
+  }
+}
+/* Light mode has far less headroom before the beams start competing with the
+   headline, so the whole field drops back rather than being re-coloured. */
+/* No light-mode variant: .lp-dark means the canvas behind these beams is the
+   same deep violet in either theme, so one calibration covers both. */
+
+/* ---- Hero entrance ----
+   One staggered rise for the whole column. `both` holds the from-state before
+   the delay elapses, so nothing flashes at full opacity on first paint. */
+.lp-hero-inner > * {
+  animation: lp-hero-in 0.72s var(--ease-out) both;
+}
+.lp-hero-inner > *:nth-child(1) { animation-delay: 0.04s; }
+.lp-hero-inner > *:nth-child(2) { animation-delay: 0.12s; }
+.lp-hero-inner > *:nth-child(3) { animation-delay: 0.2s; }
+.lp-hero-inner > *:nth-child(4) { animation-delay: 0.28s; }
+.lp-hero-inner > *:nth-child(5) { animation-delay: 0.36s; }
+.lp-hero-inner > *:nth-child(6) { animation-delay: 0.44s; }
+@keyframes lp-hero-in {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+}
+
+/* Slow drift across the gradient-clipped words, so the headline is subtly alive
+   without anything moving. Brand ramp only — no fuchsia, same reason as above. */
+.lp-hero-title em {
+  background: linear-gradient(100deg, var(--accent), var(--accent-strong), var(--accent-bright), var(--accent));
+  background-size: 300% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  animation: lp-title-drift 14s linear infinite;
+}
+@keyframes lp-title-drift {
+  to {
+    background-position: 300% 0;
+  }
+}
+
+/* Shimmer sweep on the primary CTA, adapted from the reference's shine button.
+   Runs once per hover rather than transitioning back and forth on exit. */
+.lp-hero-cta .primary {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+}
+.lp-hero-cta .primary::after {
+  content: '';
+  position: absolute;
+  top: -50%;
+  bottom: -50%;
+  left: 0;
+  width: 38%;
+  background: linear-gradient(100deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+  transform: translateX(-160%) skewX(-14deg);
+  pointer-events: none;
+}
+.lp-hero-cta .primary:hover:not(:disabled)::after {
+  animation: lp-sheen 0.85s var(--ease-out);
+}
+@keyframes lp-sheen {
+  from {
+    transform: translateX(-160%) skewX(-14deg);
+  }
+  to {
+    transform: translateX(420%) skewX(-14deg);
+  }
+}
+
 /* ---- Hero ambient waveform + drifting glow ---- */
 .lp-hero-glow {
   animation: lp-glow-drift 9s ease-in-out infinite alternate;
@@ -777,18 +1549,97 @@
   from { transform: translateX(-52%) translateY(0); opacity: 0.85; }
   to { transform: translateX(-48%) translateY(14px); opacity: 1; }
 }
+/* The slot owns the layout and the hero's staggered entrance; the pill inside
+   owns its drag transform, so neither overwrites the other's `transform`. */
+.lp-wave-slot {
+  margin-top: 38px;
+}
 .lp-hero-wave {
   position: relative;
-  margin-top: 38px;
   display: inline-flex;
   align-items: center;
   gap: 12px;
   padding: 10px 18px;
   border-radius: 999px;
   border: 1px solid var(--border);
-  background: var(--card);
-  color: var(--text-secondary);
+  border-top-color: var(--glass-border-top);
+  /* Purple gradience rather than the neutral card tint: this is the one piece
+     of hero furniture you can pick up, and the violet marks it as the brand's
+     own object. Thinned well below the other glass surfaces on purpose — this
+     paint layer sits ON TOP of the refracted backdrop (backdrop-filter only
+     filters what's behind an element), so anything much more opaque here
+     smothers the spectral fringe the refraction is producing underneath it.
+     liquidGlass() replaces backdrop-filter inline at runtime. */
+  background: linear-gradient(
+    135deg,
+    color-mix(in srgb, var(--accent) 16%, transparent),
+    color-mix(in srgb, var(--accent-strong) 10%, transparent) 55%,
+    color-mix(in srgb, var(--card) 26%, transparent)
+  );
+  backdrop-filter: blur(16px) saturate(170%);
+  -webkit-backdrop-filter: blur(16px) saturate(170%);
+  box-shadow: var(--glass-lift);
+  color: var(--text-body);
   font-size: 0.82rem;
+  cursor: grab;
+  /* Without this a touch drag scrolls the page instead of moving the pill. */
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+  will-change: transform;
+  /* Confines the roaming hover lens to the pill shape — without this it would
+     spill past the rounded ends as a visible square/circle instead of reading
+     as a highlight travelling under a fixed pane of glass. */
+  overflow: hidden;
+}
+.lp-hero-wave:hover {
+  box-shadow: var(--glass-lift-hover);
+}
+
+/* The roaming hover lens (see ui/ListeningPill.jsx → useHoverLens). Its own
+   backdrop-filter (real refraction, stronger than the pill's rim) is set
+   inline by liquidGlass() at runtime; everything here is what makes it read
+   as glass catching light rather than a plain blurred circle:
+     - the radial gradient is the specular glint — brighter near its own
+       upper-left, the way a curved surface catches a single light source
+     - screen blending makes that glint ADD light rather than paint a flat
+       white disc over the content beneath it
+     - it fades in on hover and never renders at all in Reduced Motion. */
+.lp-wave-lens {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  pointer-events: none;
+  opacity: 0;
+  transform: translate3d(-999px, -999px, 0); /* parked off-canvas until first hover positions it */
+  transition: opacity 0.22s var(--ease-out);
+  /* Screen-blend ADDS light rather than painting over content, which is what
+     makes it read as a glint rather than a sticker — but that also means it
+     was stacking with the refraction's own saturate to crush "Listening…" to
+     2.96:1 where the lens parks over it. Lowered until the measured worst
+     case cleared 4.5:1 (see ListeningPill.jsx). */
+  background: radial-gradient(
+    circle at 34% 28%,
+    rgba(255, 255, 255, 0.22),
+    rgba(255, 255, 255, 0.04) 46%,
+    transparent 70%
+  );
+  mix-blend-mode: screen;
+  will-change: transform, opacity;
+}
+.lp-hero-wave.lens-active .lp-wave-lens {
+  opacity: 1;
+}
+@media (prefers-reduced-motion: reduce) {
+  .lp-wave-lens {
+    display: none;
+  }
+}
+.lp-hero-wave.dragging {
+  cursor: grabbing;
 }
 .lp-hero-mic {
   display: inline-flex;
@@ -871,10 +1722,58 @@
     transform: none;
     transition: none;
   }
+  /* Scroll-linked motion is vestibular by nature — content moving against the
+     scroll is exactly what this preference is asking us to stop. Everything
+     resolves to its settled state and simply stays there. */
+  .lp-dark .lp-head,
+  .lp-dark .lp-split-text,
+  .lp-dark .lp-card,
+  .lp-dark .lp-plan,
+  .lp-dark .lp-mock,
+  .lp-dark .lp-measure,
+  .lp-dark .lp-outcome,
+  .lp-dark .lp-chips,
+  .lp-dark .faq-item,
+  .lp-dark .lp-final-inner {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
   .lp-hero-glow {
     animation: none;
   }
   .faq-a {
     animation: none;
+  }
+  /* The beam field stays as a static composition — the light is part of the
+     design, the drifting is not. The entrance resolves to its final state
+     rather than being replaced by a slide. */
+  .lp-beams {
+    transition: none;
+  }
+  .lp-beams i,
+  .lp-beams i > span,
+  .lp-hero-title em {
+    animation: none;
+  }
+  .lp-hero-inner > * {
+    animation: none;
+  }
+  .lp-hero-cta .primary:hover:not(:disabled)::after {
+    animation: none;
+  }
+}
+
+/* Independent of motion: someone who has asked for less transparency gets solid
+   surfaces, and the beams drop back further so contrast never depends on blur. */
+@media (prefers-reduced-transparency: reduce) {
+  .lp-hero-badge,
+  .lp-hero-wave {
+    background: var(--card);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+  .lp-beams {
+    opacity: 0.3;
   }
 }

@@ -2,6 +2,7 @@ import TranscriptPanel from './TranscriptPanel.jsx';
 
 export default function CallView({
   callActive,
+  starting,
   isDesktop,
   micError,
   transcriptionUnavailable,
@@ -30,8 +31,13 @@ export default function CallView({
             <button className="secondary" onClick={onBack}>
               ← Back
             </button>
-            <button className="primary" onClick={onStartCall} disabled={transcriptionUnavailable}>
-              Start Call
+            <button
+              className="primary"
+              onClick={onStartCall}
+              disabled={transcriptionUnavailable || starting}
+              aria-busy={starting}
+            >
+              {starting ? 'Starting…' : 'Start Call'}
             </button>
           </>
         ) : (

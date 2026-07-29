@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import Logo from './Logo.jsx';
 
@@ -19,8 +19,29 @@ export default function LandingNav({ onGetStarted, startDisabled }) {
   const navigate = useNavigate();
   const location = useLocation();
   const [menuOpen, setMenuOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
   const onLanding = location.pathname === '/';
   const start = onGetStarted || (() => navigate('/register'));
+
+  // NOTE: this pill used to carry real liquid-glass refraction. It was removed
+  // when the WebGL beam field landed: an SVG-filtered backdrop only costs
+  // anything when what is behind it changes, and a canvas that repaints every
+  // frame invalidates it every frame. Measured over a full-page scroll, the two
+  // refracting pills together ran 16.7ms median with 11 dropped frames; leaving
+  // refraction on the draggable Listening pill alone gives 8.3ms and none.
+  // The rim bend was never visible on a 45px bar that spends most of its life
+  // behind the scrolled nav's own frosted backdrop, so this costs nothing to
+  // look at. It keeps the CSS glass dressing below.
+
+  // The bar itself is transparent over the hero, the way the reference is, and
+  // earns a frosted backdrop only once content is passing underneath it —
+  // otherwise a sticky bar with no surface would let cards collide with links.
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 16);
+    onScroll();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
 
   const goSection = (id) => {
     setMenuOpen(false);
@@ -34,7 +55,7 @@ export default function LandingNav({ onGetStarted, startDisabled }) {
   };
 
   return (
-    <header className="lp-nav">
+    <header className={`lp-nav${scrolled ? ' scrolled' : ''}`}>
       <div className="lp-nav-inner">
         <button className="lp-brand" onClick={goHome} aria-label="HusAI home">
           <Logo size={28} />

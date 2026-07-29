@@ -116,6 +116,10 @@ export function CallSessionProvider({ children }) {
   micStreamRef.current = micStream;
   clientStreamRef.current = clientStream;
   const [callActive, setCallActive] = useState(false);
+  // True only while startCall() is in flight (PiP + mic-permission prompt can
+  // take a real moment) — lets the UI show a busy state instead of looking
+  // like the click didn't register.
+  const [starting, setStarting] = useState(false);
   const [micError, setMicError] = useState('');
   const [clientHint, setClientHint] = useState('');
   const [bullets, setBullets] = useState(null);
@@ -329,39 +333,44 @@ export function CallSessionProvider({ children }) {
   }, [callActive, conversationMode, clientStream, requestLifeline]);
 
   const startCall = useCallback(async () => {
-    setMicError('');
-    setClientHint('');
-    setReview(null);
-    setShowReview(false);
-    setSavedMeetingId(null);
-    resetLines();
-    clientSpeechLogRef.current = []; // stale timestamps would mis-trigger the bleed guard
-    lastBanterLineCountRef.current = 0;
-    // Open the floating coach FIRST: requestWindow needs the click's user
-    // activation, which the getUserMedia await below would outlive.
-    if (!isDesktop && pip.supported) {
-      try {
-        await pip.open();
-      } catch {
-        /* PiP declined/unavailable — the inline call view still shows everything */
-      }
-    }
+    setStarting(true);
     try {
-      // Echo cancellation matters most: without it the client's voice (playing
-      // through speakers) bleeds into the mic and corrupts the VA channel.
-      const mic = await navigator.mediaDevices.getUserMedia({
-        audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true },
-      });
-      setMicStream(mic);
-      setCallActive(true);
-      callStartedAtRef.current = Date.now();
-    } catch {
-      pip.close();
-      setMicError(
-        isDesktop
-          ? 'Microphone access denied. Check your OS microphone privacy settings and restart HusAI.'
-          : 'Microphone access denied. Allow the microphone for this site and try again.'
-      );
+      setMicError('');
+      setClientHint('');
+      setReview(null);
+      setShowReview(false);
+      setSavedMeetingId(null);
+      resetLines();
+      clientSpeechLogRef.current = []; // stale timestamps would mis-trigger the bleed guard
+      lastBanterLineCountRef.current = 0;
+      // Open the floating coach FIRST: requestWindow needs the click's user
+      // activation, which the getUserMedia await below would outlive.
+      if (!isDesktop && pip.supported) {
+        try {
+          await pip.open();
+        } catch {
+          /* PiP declined/unavailable — the inline call view still shows everything */
+        }
+      }
+      try {
+        // Echo cancellation matters most: without it the client's voice (playing
+        // through speakers) bleeds into the mic and corrupts the VA channel.
+        const mic = await navigator.mediaDevices.getUserMedia({
+          audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true },
+        });
+        setMicStream(mic);
+        setCallActive(true);
+        callStartedAtRef.current = Date.now();
+      } catch {
+        pip.close();
+        setMicError(
+          isDesktop
+            ? 'Microphone access denied. Check your OS microphone privacy settings and restart HusAI.'
+            : 'Microphone access denied. Allow the microphone for this site and try again.'
+        );
+      }
+    } finally {
+      setStarting(false);
     }
   }, [isDesktop, resetLines, pip.supported, pip.open, pip.close]);
 
@@ -507,6 +516,7 @@ export function CallSessionProvider({ children }) {
 
   const value = {
     callActive,
+    starting,
     isDesktop,
     micError,
     transcriptionUnavailable,
