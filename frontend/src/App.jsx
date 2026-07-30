@@ -1,5 +1,6 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Routes, Route, NavLink, Link, Navigate, useNavigate, useLocation } from 'react-router-dom';
+import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
 import { useAuth } from './auth/AuthContext.jsx';
 import RequireAuth from './auth/RequireAuth.jsx';
 import { CallSessionProvider, useCallSession } from './call/CallSessionContext.jsx';
@@ -79,23 +80,13 @@ function Landing() {
   return <LandingPage onStart={() => navigate('/register')} />;
 }
 
-/**
- * Remounts its child on every route change so the .route-fade entrance
- * animation replays — the premium "settle in" between pages. Keyed on pathname
- * INSIDE any providers, so long-lived state (like an active call) never resets.
- */
-function RouteFade({ children }) {
-  const { pathname } = useLocation();
+// react-router needs an explicit `location` to render the OLD route while
+// AnimatePresence plays its exit animation — left to its own useLocation(),
+// Routes always matches whatever the URL bar says *right now*, so the
+// "exiting" page would silently swap to the new page's content mid-fade.
+function AppRoutes({ location }) {
   return (
-    <div className="route-fade" key={pathname}>
-      {children}
-    </div>
-  );
-}
-
-function AppRoutes() {
-  return (
-    <Routes>
+    <Routes location={location}>
       <Route path="/" element={<Landing />} />
       <Route path="/login" element={<LoginPage />} />
       <Route path="/register" element={<RegisterPage />} />
@@ -118,11 +109,75 @@ function AppRoutes() {
   );
 }
 
+const ROUTE_EASE = [0.4, 0, 0.2, 1];
+
+// Landing (.lp-dark) and the glass auth pages (.auth-glass) both paint
+// themselves dark regardless of the visitor's theme — but `body`'s
+// background still follows the theme. During the route crossfade the
+// entering/exiting page passes through low opacity, so for anyone in light
+// mode, `body`'s pale background shows straight through it — the "white
+// flash" reported when moving in and out of these specific pages, and only
+// these: everywhere else, body's theme-following background already matches
+// what's fading in on top of it, so there's nothing to mismatch.
+const FORCE_DARK_BODY_PATHS = ['/', '/login', '/register'];
+
+/**
+ * Crossfades between routes instead of hard-swapping them. The old page used
+ * to be torn down and the new one mounted in the same React commit (a plain
+ * `key={pathname}` remount with an entrance-only CSS animation) — fine for the
+ * animation itself, but it gave heavy per-page teardown (the landing page's
+ * WebGL beam field, in particular) no time to happen off-screen, so it could
+ * surface as a visible pop between pages. AnimatePresence's `mode="wait"`
+ * holds the old page mounted until it has fully faded to opacity 0, THEN
+ * mounts the new one — so any teardown work happens while already invisible.
+ */
+function RouteFade() {
+  const location = useLocation();
+  const reduceMotion = useReducedMotion();
+  const prevPathRef = useRef(location.pathname);
+
+  // Covers the union of where-we-were and where-we're-going for the whole
+  // crossfade, so body is already the right darkness before either page
+  // starts blending through its own low-opacity moment. Narrowed to just the
+  // arriving page's need in onExitComplete below, once the old page is
+  // actually gone and the new one hasn't started fading in yet — the one
+  // instant where there's a "correct" answer with nothing still transitioning.
+  useEffect(() => {
+    const from = prevPathRef.current;
+    const to = location.pathname;
+    document.body.classList.toggle(
+      'force-dark-canvas',
+      FORCE_DARK_BODY_PATHS.includes(from) || FORCE_DARK_BODY_PATHS.includes(to)
+    );
+    prevPathRef.current = to;
+  }, [location.pathname]);
+
+  const handleExitComplete = () => {
+    document.body.classList.toggle('force-dark-canvas', FORCE_DARK_BODY_PATHS.includes(location.pathname));
+  };
+
+  return (
+    <AnimatePresence mode="wait" initial={false} onExitComplete={handleExitComplete}>
+      <motion.div
+        className="route-fade"
+        key={location.pathname}
+        initial={{ opacity: reduceMotion ? 1 : 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: reduceMotion ? 1 : 0 }}
+        transition={{ duration: reduceMotion ? 0 : 0.2, ease: ROUTE_EASE }}
+      >
+        <AppRoutes location={location} />
+      </motion.div>
+    </AnimatePresence>
+  );
+}
+
 export default function App() {
   const { user, account, logout } = useAuth();
   const { theme, setTheme } = useTheme();
   const navigate = useNavigate();
   const { pathname } = useLocation();
+
   const [menuOpen, setMenuOpen] = useState(false);
   const closeMenu = () => setMenuOpen(false);
   // Desktop-only rail collapse (icons-only). Persisted; the ≤900px drawer
@@ -257,9 +312,7 @@ export default function App() {
           </aside>
 
           <main className="sidebar-main">
-            <RouteFade>
-              <AppRoutes />
-            </RouteFade>
+            <RouteFade />
           </main>
         </div>
       </CallSessionProvider>
@@ -272,11 +325,7 @@ export default function App() {
   // margin and put a second HusAI logo in the nav above their own.
   const GLASS_AUTH_PATHS = ['/login', '/register'];
   if (GLASS_AUTH_PATHS.includes(pathname)) {
-    return (
-      <RouteFade>
-        <AppRoutes />
-      </RouteFade>
-    );
+    return <RouteFade />;
   }
 
   // The remaining auth pages share the landing header + footer so the chrome
@@ -287,18 +336,12 @@ export default function App() {
       <div className="lp auth-shell">
         <LandingNav onGetStarted={() => navigate('/register')} />
         <main className="auth-main">
-          <RouteFade>
-            <AppRoutes />
-          </RouteFade>
+          <RouteFade />
         </main>
         <LandingFooter onGetStarted={() => navigate('/register')} />
       </div>
     );
   }
 
-  return (
-    <RouteFade>
-      <AppRoutes />
-    </RouteFade>
-  );
+  return <RouteFade />;
 }

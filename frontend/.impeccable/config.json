@@ -1,0 +1,17 @@
+{
+  "detector": {
+    "ignoreRules": [],
+    "ignoreFiles": [],
+    "ignoreValues": [
+      {
+        "rule": "gradient-text",
+        "value": "*",
+        "files": [
+          "src/components/landing.css"
+        ],
+        "createdAt": "2026-07-30T03:46:49.119Z",
+        "reason": "User confirmed the hero headline's gradient-clipped emphasis words (confidence./intelligence.) are an intentional brand treatment, not AI-slop drift"
+      }
+    ]
+  }
+}

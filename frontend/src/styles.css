@@ -186,6 +186,16 @@ canvas {
   margin: 0;
 }
 
+/* Belt-and-suspenders against a white flash on route change: <html> has no
+   background of its own by default, so a heavy synchronous DOM swap (e.g. a
+   WebGL canvas tearing down while a route unmounts) can occasionally paint a
+   frame before `body`'s own background composites, exposing the browser's
+   default white beneath it. Matching `--bg` here means there is structurally
+   nothing white left to expose, regardless of what body is doing. */
+html {
+  background: var(--bg);
+}
+
 body {
   font-family: var(--font);
   background: var(--body-glow), var(--bg);
@@ -194,6 +204,24 @@ body {
   min-height: 100vh;
   -webkit-font-smoothing: antialiased;
   transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Set by App.jsx's <RouteFade> while on (or crossfading into/out of) the
+   landing page or the glass auth pages — both paint themselves dark no
+   matter the visitor's theme (see .lp-dark, .auth-glass). Without this, a
+   light-theme visitor mid-fade sees body's pale --bg bleed through the
+   entering/exiting page at low opacity: the reported "white flash" between
+   pages. `background-color` is un-eased here on purpose — the base `body`
+   rule's 0.3s transition exists for a deliberate theme *toggle*, but this
+   class turns on synchronously at the start of a route crossfade, and easing
+   the color underneath a fade that's itself only ~200ms would recreate the
+   exact light-bleed-through this rule exists to prevent, just delayed
+   instead of removed. Turning back off (in onExitComplete, once the new page
+   is already opaque on top) keeps the normal 0.3s — nothing is visible under
+   an opaque page regardless of how body eases underneath it. */
+body.force-dark-canvas {
+  background: var(--body-glow), #0a0b10;
+  transition: background-color 0s, color 0.3s ease;
 }
 
 /* Theme transition on surfaces — calm, not flashy */
@@ -647,24 +675,12 @@ body {
   }
 }
 
-/* Route transitions — pages settle in with a soft fade-rise */
-.route-fade {
-  animation: route-in 0.3s var(--ease-out);
-}
-@keyframes route-in {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: none;
-  }
-}
+/* Route transitions are a Framer Motion crossfade now (AnimatePresence in
+   App.jsx's <RouteFade>), not a CSS animation — it needs the old page held
+   mounted-but-fading during its exit, which a one-shot @keyframes entrance
+   can't express. .route-fade is kept as a plain classname for devtools
+   legibility only; it carries no styles of its own. */
 @media (prefers-reduced-motion: reduce) {
-  .route-fade {
-    animation: none;
-  }
   .sidebar {
     transition: background-color 0.3s ease, border-color 0.3s ease;
   }

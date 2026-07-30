@@ -1264,104 +1264,12 @@
 }
 
 /* ---- Scroll reveal ----
-   Fallback path only: a one-shot IntersectionObserver reveal, used where the
-   browser has no scroll-driven animation support (Safari, Firefox). The JS
-   skips adding .lp-reveal entirely when view() timelines are available, so
-   these two systems never both run on the same element. */
-.lp-reveal {
-  opacity: 0;
-  transform: translateY(18px);
-  transition: opacity 0.35s ease, transform 0.35s ease;
-}
-.lp-reveal.in {
-  opacity: 1;
-  transform: none;
-}
-
-/* ---- Scroll-linked motion (Chromium) ----
-   Every major block fades and lifts as it enters, holds while it is actually
-   being read, and releases as it leaves — driven by scroll POSITION rather than
-   by a timer, so it plays forward scrolling down and backward scrolling up
-   without any extra code. Runs on the compositor: no scroll listener, no
-   per-frame JavaScript, nothing added to the main thread.
-
-   The long 24%-76% plateau is the important part. It keeps each block at full
-   opacity for the whole stretch it occupies readable space, so the fade is
-   something you notice at the edges of the viewport, never something that dims
-   the sentence you are in the middle of reading. */
-@supports (animation-timeline: view()) {
-  .lp-dark .lp-head,
-  .lp-dark .lp-split-text,
-  .lp-dark .lp-card,
-  .lp-dark .lp-plan,
-  .lp-dark .lp-mock,
-  .lp-dark .lp-measure,
-  .lp-dark .lp-outcome,
-  .lp-dark .lp-chips,
-  .lp-dark .faq-item,
-  .lp-dark .lp-final-inner {
-    animation: lp-scroll-fade linear both;
-    animation-timeline: view();
-    animation-range: entry 0% exit 100%;
-  }
-
-  /* Grid rows would otherwise animate in perfect lockstep, since their items
-     share a top edge. Nudging each column's range start walks the cascade
-     across the row as it arrives. */
-  .lp-dark .lp-grid-2 > *:nth-child(2n),
-  .lp-dark .lp-grid-3 > *:nth-child(3n-1),
-  .lp-dark .lp-grid-4 > *:nth-child(4n-2) {
-    animation-range: entry 7% exit 100%;
-  }
-  .lp-dark .lp-grid-3 > *:nth-child(3n),
-  .lp-dark .lp-grid-4 > *:nth-child(4n-1) {
-    animation-range: entry 14% exit 100%;
-  }
-  .lp-dark .lp-grid-4 > *:nth-child(4n) {
-    animation-range: entry 21% exit 100%;
-  }
-
-  /* The hero owns its own entrance (lp-hero-in) and must not be handed a
-     second, competing one. */
-  .lp-dark .lp-hero .lp-head {
-    animation: none;
-  }
-
-  /* Anything materially taller than the viewport is excluded on purpose. Its
-     entry/exit ranges stretch across a whole screen of scrolling, so it sits
-     part-faded while its middle is still being read — measured at 0.68 opacity
-     on the FAQ list before this. Tall regions animate by their parts (the
-     individual .faq-item rows above), never as one block. */
-  .lp-dark .lp-faq-wrap {
-    animation: none;
-  }
-}
-
-/* Plateau bounds are derived, not eyeballed. Across the range `entry 0% exit
-   100%` an element travels viewport+own height, so it is fully on screen for
-   progress between h/(V+h) and V/(V+h). For the short blocks here (a heading is
-   ~10% of viewport height) that is roughly 9%-91%; 18%-86% sits inside it with
-   margin, so a block reaches full opacity shortly after clearing the bottom
-   edge and only starts releasing once it is genuinely leaving at the top.
-   A narrower 24%-76% left headings at 0.38 opacity while still fully visible. */
-@keyframes lp-scroll-fade {
-  0% {
-    opacity: 0;
-    transform: translateY(34px) scale(0.988);
-  }
-  18% {
-    opacity: 1;
-    transform: none;
-  }
-  86% {
-    opacity: 1;
-    transform: none;
-  }
-  100% {
-    opacity: 0;
-    transform: translateY(-18px) scale(0.994);
-  }
-}
+   Handled by <ScrollReveal> (Framer Motion's whileInView) at the component
+   level — see components/ui/ScrollReveal.jsx. That replaced both halves of
+   the CSS-only system that used to live here: the Chromium
+   `animation-timeline: view()` path and the IntersectionObserver fallback for
+   Safari/Firefox. whileInView is IntersectionObserver-based everywhere, so one
+   JS-driven path now covers every browser instead of two parallel ones. */
 
 /* WebGL beam field. Fades up over the CSS field it replaces, so the handover
    when the three.js chunk finishes loading reads as the light settling rather
@@ -1478,23 +1386,17 @@
    same deep violet in either theme, so one calibration covers both. */
 
 /* ---- Hero entrance ----
-   One staggered rise for the whole column. `both` holds the from-state before
-   the delay elapses, so nothing flashes at full opacity on first paint. */
-.lp-hero-inner > * {
-  animation: lp-hero-in 0.72s var(--ease-out) both;
-}
-.lp-hero-inner > *:nth-child(1) { animation-delay: 0.04s; }
-.lp-hero-inner > *:nth-child(2) { animation-delay: 0.12s; }
-.lp-hero-inner > *:nth-child(3) { animation-delay: 0.2s; }
-.lp-hero-inner > *:nth-child(4) { animation-delay: 0.28s; }
-.lp-hero-inner > *:nth-child(5) { animation-delay: 0.36s; }
-.lp-hero-inner > *:nth-child(6) { animation-delay: 0.44s; }
-@keyframes lp-hero-in {
-  from {
-    opacity: 0;
-    transform: translateY(16px);
-  }
-}
+   Used to be one staggered CSS animation across every direct child of
+   .lp-hero-inner, playing once on mount. Every one of those children is now
+   a <ScrollReveal> (Framer Motion) instead, staggered via each one's `delay`
+   prop — see the hero markup in LandingPage.jsx — so the whole column
+   replays on every scroll pass, not just the first mount, and there's
+   nothing left here to fight over opacity/transform with.
+   ListeningPill is the one exception worth calling out: its <ScrollReveal>
+   wrapper owns the entrance opacity/transform, while the pill it wraps keeps
+   owning its own drag transform on a *different* element deeper inside
+   (see ui/ListeningPill.jsx) — same one-property-per-element rule as always,
+   just with Framer Motion on the outside now instead of this keyframe. */
 
 /* Slow drift across the gradient-clipped words, so the headline is subtly alive
    without anything moving. Brand ramp only — no fuchsia, same reason as above. */
@@ -1717,28 +1619,11 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .lp-reveal {
-    opacity: 1;
-    transform: none;
-    transition: none;
-  }
   /* Scroll-linked motion is vestibular by nature — content moving against the
-     scroll is exactly what this preference is asking us to stop. Everything
-     resolves to its settled state and simply stays there. */
-  .lp-dark .lp-head,
-  .lp-dark .lp-split-text,
-  .lp-dark .lp-card,
-  .lp-dark .lp-plan,
-  .lp-dark .lp-mock,
-  .lp-dark .lp-measure,
-  .lp-dark .lp-outcome,
-  .lp-dark .lp-chips,
-  .lp-dark .faq-item,
-  .lp-dark .lp-final-inner {
-    animation: none;
-    opacity: 1;
-    transform: none;
-  }
+     scroll is exactly what this preference is asking us to stop. <ScrollReveal>
+     checks useReducedMotion() itself and renders a plain, unanimated element
+     for every block that used to be listed here, so there is nothing left for
+     this file to reset. */
   .lp-hero-glow {
     animation: none;
   }
@@ -1754,9 +1639,6 @@
   .lp-beams i,
   .lp-beams i > span,
   .lp-hero-title em {
-    animation: none;
-  }
-  .lp-hero-inner > * {
     animation: none;
   }
   .lp-hero-cta .primary:hover:not(:disabled)::after {

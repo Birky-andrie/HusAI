@@ -1,0 +1,1473 @@
+- generic [active] [ref=f9e1]:
+  - generic [ref=f9e2]:
+    - main [ref=f9e3]:
+      - generic [ref=f9e4]:
+        - paragraph [ref=f9e5]: Switching clouds? Get up to $10K in credits + hands-on help.
+        - link "Apply now" [ref=f9e6] [cursor=pointer]:
+          - /url: /migration-credits
+      - generic [ref=f9e11]:
+        - generic [ref=f9e12]:
+          - link [ref=f9e13] [cursor=pointer]:
+            - /url: /
+            - img "Render" [ref=f9e14]
+          - navigation [ref=f9e22]:
+            - list [ref=f9e23]:
+              - generic [ref=f9e24]:
+                - link [ref=f9e25] [cursor=pointer]:
+                  - /url: "#"
+                - generic:
+                  - generic:
+                    - generic:
+                      - generic:
+                        - link:
+                          - /url: /platform
+                          - generic: Platform Overview
+                        - link:
+                          - /url: /workflows
+                          - generic: Workflows
+                      - generic:
+                        - generic:
+                          - generic: Features
+                          - list:
+                            - listitem:
+                              - link:
+                                - /url: /docs/scaling
+                                - generic: Autoscaling
+                            - listitem:
+                              - link:
+                                - /url: /docs/private-services
+                                - generic: Private Networking
+                            - listitem:
+                              - link:
+                                - /url: /docs/disks
+                                - generic: Persistent Disks
+                            - listitem:
+                              - link:
+                                - /url: /docs/infrastructure-as-code
+                                - generic: Infrastructure as Code
+                            - listitem:
+                              - link:
+                                - /url: /docs/preview-environments
+                                - generic: Preview Environments
+                            - listitem:
+                              - link:
+                                - /url: /docs/deploys#zero-downtime-deploys
+                                - generic: Zero Downtime Deploys
+                            - listitem:
+                              - link:
+                                - /url: /docs/api
+                                - generic: Render API
+                        - generic:
+                          - generic: Services
+                          - list:
+                            - listitem:
+                              - link:
+                                - /url: /docs/static-sites
+                                - generic: Static Sites
+                            - listitem:
+                              - link:
+                                - /url: /docs/web-services
+                                - generic: Web Services
+                            - listitem:
+                              - link:
+                                - /url: /docs/private-services
+                                - generic: Private Services
+                            - listitem:
+                              - link:
+                                - /url: /docs/background-workers
+                                - generic: Background Workers
+                            - listitem:
+                              - link:
+                                - /url: /docs/cronjobs
+                                - generic: Cron Jobs
+                            - listitem:
+                              - link:
+                                - /url: /docs/postgresql
+                                - generic: Render Postgres
+                            - listitem:
+                              - link:
+                                - /url: /docs/key-value
+                                - generic: Render Key Value
+              - generic [ref=f9e27]:
+                - link [ref=f9e28] [cursor=pointer]:
+                  - /url: "#"
+                - generic:
+                  - generic:
+                    - generic:
+                      - generic:
+                        - link:
+                          - /url: /docs
+                          - generic: Docs
+                          - generic: Learn how to build and deploy on Render
+                        - link:
+                          - /url: /agents
+                          - generic: Agents
+                          - generic: Deploy to Render with your coding agent
+                      - generic:
+                        - generic:
+                          - generic: Get started
+                          - list:
+                            - listitem:
+                              - link:
+                                - /url: /docs#quickstarts
+                                - generic: Framework Quickstarts
+                            - listitem:
+                              - link:
+                                - /url: /templates
+                                - generic: Templates
+                        - generic:
+                          - generic: Updates & Announcements
+                          - list:
+                            - listitem:
+                              - link:
+                                - /url: /blog
+                                - generic: Blog
+                            - listitem:
+                              - link:
+                                - /url: /changelog
+                                - generic: Changelog
+              - generic [ref=f9e30]:
+                - link [ref=f9e31] [cursor=pointer]:
+                  - /url: "#"
+                - generic:
+                  - generic:
+                    - generic:
+                      - generic:
+                        - link:
+                          - /url: /customers
+                          - generic: Customers
+                          - generic: How the best teams scale faster
+                        - link:
+                          - /url: /migration-credits
+                          - generic: Migration Credits
+                          - generic: Apply for credits to cover switching costs
+                      - generic:
+                        - generic:
+                          - generic: Build
+                          - list:
+                            - listitem:
+                              - link:
+                                - /url: /startups
+                                - generic: Render for Startups
+                            - listitem:
+                              - link:
+                                - /url: /features/hipaa
+                                - generic: HIPAA on Render
+                        - generic:
+                          - generic: Migrate
+                          - list:
+                            - listitem:
+                              - link:
+                                - /url: /docs/migrate-from-heroku
+                                - generic: Heroku Migration Guide
+                            - listitem:
+                              - link:
+                                - /url: /docs/migrate-from-railway
+                                - generic: Railway Migration Guide
+              - listitem [ref=f9e33]:
+                - link "Pricing" [ref=f9e34] [cursor=pointer]:
+                  - /url: /pricing
+              - generic [ref=f9e37]:
+                - link [ref=f9e38] [cursor=pointer]:
+                  - /url: "#"
+                - generic:
+                  - generic:
+                    - generic:
+                      - generic:
+                        - generic:
+                          - list:
+                            - listitem:
+                              - link:
+                                - /url: /about
+                                - generic: About Us
+                            - listitem:
+                              - link:
+                                - /url: /security
+                                - generic: Security
+                            - listitem:
+                              - link:
+                                - /url: /careers
+                                - generic: Careers
+                            - listitem:
+                              - link:
+                                - /url: /newsroom
+                                - generic: Newsroom
+        - generic [ref=f9e40]:
+          - list [ref=f9e41]:
+            - listitem [ref=f9e42]:
+              - link [ref=f9e43] [cursor=pointer]:
+                - /url: /migration-credits
+          - link [ref=f9e45] [cursor=pointer]:
+            - /url: https://dashboard.render.com/
+          - link "Get Started" [ref=f9e47] [cursor=pointer]:
+            - /url: https://dashboard.render.com/register
+      - generic [ref=f9e49]:
+        - generic [ref=f9e54]:
+          - heading "Predictable pricing that scales with you." [level=1] [ref=f9e55]
+          - generic [ref=f9e56]:
+            - paragraph [ref=f9e57]:
+              - text: Jump to
+              - link "workspace plans" [ref=f9e58] [cursor=pointer]:
+                - /url: "#workspace-plans"
+              - text: ","
+              - link "compute pricing" [ref=f9e59] [cursor=pointer]:
+                - /url: "#compute"
+              - text: ", and"
+              - link "FAQs" [ref=f9e60] [cursor=pointer]:
+                - /url: "#faq"
+              - text: .
+            - paragraph [ref=f9e61]:
+              - text: Are you a VC-funded startup? Get up to $100K in credits with
+              - link "Render for Startups ↗" [ref=f9e62] [cursor=pointer]:
+                - /url: /startups
+            - paragraph [ref=f9e63]:
+              - text: Looking to migrate? We can help and you can get up to $10K in credits.
+              - link "Sign up now ↗" [ref=f9e64] [cursor=pointer]:
+                - /url: https://render.com/migration-credits
+        - generic [ref=f9e65]:
+          - generic [ref=f9e66]: Workspace Plans
+          - generic [ref=f9e68]:
+            - generic [ref=f9e70]: Hobby
+            - generic [ref=f9e72]: Pro
+            - generic [ref=f9e74]: Scale
+            - generic [ref=f9e76]: Enterprise
+            - generic [ref=f9e80]:
+              - generic [ref=f9e81]: For individuals building personal projects and prototypes.
+              - generic [ref=f9e83]:
+                - generic [ref=f9e84]: $0/mo
+                - generic [ref=f9e85]: + compute
+            - generic [ref=f9e87]:
+              - generic [ref=f9e88]: For teams deploying production-grade apps and agents.
+              - generic [ref=f9e90]:
+                - generic [ref=f9e91]: $25/mo
+                - generic [ref=f9e92]: + compute
+            - generic [ref=f9e94]:
+              - generic [ref=f9e95]: For teams that need advanced governance and compliance.
+              - generic [ref=f9e97]:
+                - generic [ref=f9e98]: $499/mo
+                - generic [ref=f9e99]: + compute
+            - generic [ref=f9e101]:
+              - generic [ref=f9e102]: For teams that need dedicated support and uptime SLAs.
+              - paragraph [ref=f9e104]: Custom pricing
+            - link "Deploy for free" [ref=f9e107] [cursor=pointer]:
+              - /url: https://dashboard.render.com/register?next=%2Fselect-plan%3Fplan%3Dhobby
+            - link "Start with Pro" [ref=f9e116] [cursor=pointer]:
+              - /url: https://dashboard.render.com/register?next=%2Fselect-plan%3Fplan%3Dprofessional
+            - link "Start with Scale" [ref=f9e125] [cursor=pointer]:
+              - /url: https://dashboard.render.com/register?next=%2Fselect-plan%3Fplan%3Dorganization
+            - link "Get in touch" [ref=f9e134] [cursor=pointer]:
+              - /url: /contact
+            - list [ref=f9e144]:
+              - listitem [ref=f9e145]: Connect your repo, and go
+              - listitem [ref=f9e146]:
+                - generic [ref=f9e147]: Deploy up to 25 services
+              - listitem [ref=f9e148]:
+                - generic [ref=f9e149]: 5 GB of bandwidth included
+              - listitem [ref=f9e150]:
+                - generic [ref=f9e151]: Single-service previews
+              - listitem [ref=f9e152]:
+                - generic [ref=f9e153]: Global regions & CDN
+              - listitem [ref=f9e154]:
+                - generic [ref=f9e155]: Custom domains
+              - listitem [ref=f9e156]:
+                - generic [ref=f9e157]: Firewall & DDoS mitigation
+              - listitem [ref=f9e158]:
+                - generic [ref=f9e159]: Database PITR
+              - listitem [ref=f9e160]:
+                - generic [ref=f9e161]: Chat support
+            - list [ref=f9e163]:
+              - listitem [ref=f9e164]: "All Hobby features, plus:"
+              - listitem [ref=f9e165]:
+                - generic [ref=f9e166]: Unlimited team members
+              - listitem [ref=f9e167]:
+                - generic [ref=f9e168]: No service maximum
+              - listitem [ref=f9e169]:
+                - generic [ref=f9e170]: 25 GB bandwidth included
+              - listitem [ref=f9e171]:
+                - generic [ref=f9e172]: Full-stack previews
+              - listitem [ref=f9e173]:
+                - generic [ref=f9e174]: Horizontal autoscaling
+              - listitem [ref=f9e175]:
+                - generic [ref=f9e176]: AWS private links & OIDC
+              - listitem [ref=f9e177]:
+                - generic [ref=f9e178]: Isolated environments
+              - listitem [ref=f9e179]:
+                - generic [ref=f9e180]: Workspace audit logs
+            - list [ref=f9e182]:
+              - listitem [ref=f9e183]: "All Pro features, plus:"
+              - listitem [ref=f9e184]:
+                - generic [ref=f9e185]: Multiple workspaces
+              - listitem [ref=f9e186]:
+                - generic [ref=f9e187]: 1 TB of bandwidth included
+              - listitem [ref=f9e188]:
+                - generic [ref=f9e189]: Extended metrics retention
+              - listitem [ref=f9e190]:
+                - generic [ref=f9e191]: Inbound IP rules
+              - listitem [ref=f9e192]:
+                - generic [ref=f9e193]: HIPAA-compliant workspaces
+              - listitem [ref=f9e194]:
+                - generic [ref=f9e195]: SAML SSO & SCIM
+              - listitem [ref=f9e196]:
+                - generic [ref=f9e197]: Advanced RBAC roles
+              - listitem [ref=f9e198]:
+                - generic [ref=f9e199]: Organization audit logs
+            - list [ref=f9e201]:
+              - listitem [ref=f9e202]: "All Scale features, plus:"
+              - listitem [ref=f9e203]:
+                - generic [ref=f9e204]: Contractual uptime SLAs
+              - listitem [ref=f9e205]:
+                - generic [ref=f9e206]: Technical account manager
+              - listitem [ref=f9e207]:
+                - generic [ref=f9e208]: Support Slack channel
+              - listitem [ref=f9e209]:
+                - generic [ref=f9e210]: Support response SLAs
+        - generic [ref=f9e212]:
+          - generic [ref=f9e213]: Plan Details and Features Prompt
+          - link "Compare all workspace features" [ref=f9e219] [cursor=pointer]:
+            - /url: "#features"
+        - generic [ref=f9e227]:
+          - generic [ref=f9e228]: Compute
+          - generic [ref=f9e233]:
+            - generic [ref=f9e234]:
+              - generic [ref=f9e235]: Compute pricing
+              - generic [ref=f9e236]: Sensible, scalable, prorated by the second.
+            - generic [ref=f9e237]:
+              - generic [ref=f9e239]:
+                - generic [ref=f9e240]:
+                  - link "Static Sites" [ref=f9e241] [cursor=pointer]:
+                    - /url: "#static-sites"
+                  - generic [ref=f9e245]: $0 USD
+                  - generic [ref=f9e246]: per month
+                - list [ref=f9e248]:
+                  - listitem [ref=f9e249]:
+                    - generic [ref=f9e252]: Lightning-fast CDN
+                  - listitem [ref=f9e253]:
+                    - generic [ref=f9e256]: Automatic continuous deploys from Git
+                  - listitem [ref=f9e257]:
+                    - generic [ref=f9e260]: Instant cache invalidation
+                  - listitem [ref=f9e261]:
+                    - generic [ref=f9e264]: Custom domains with fully managed TLS
+              - generic [ref=f9e265]:
+                - generic [ref=f9e266]:
+                  - generic [ref=f9e267]:
+                    - link "Services" [ref=f9e268] [cursor=pointer]:
+                      - /url: "#services"
+                    - generic [ref=f9e272]: From
+                    - generic [ref=f9e273]: $0 USD
+                    - generic [ref=f9e274]: per month
+                  - list [ref=f9e276]:
+                    - listitem [ref=f9e277]:
+                      - generic [ref=f9e280]: Web services with HTTP/2 and full TLS
+                    - listitem [ref=f9e281]:
+                      - generic [ref=f9e284]: Node, Python, Go, Rust, Ruby, and Elixir
+                    - listitem [ref=f9e285]:
+                      - generic [ref=f9e288]: Private services
+                    - listitem [ref=f9e289]:
+                      - generic [ref=f9e292]: Custom Docker containers
+                    - listitem [ref=f9e293]:
+                      - generic [ref=f9e296]: Background workers
+                    - listitem [ref=f9e297]:
+                      - generic [ref=f9e300]:
+                        - link [ref=f9e301] [cursor=pointer]:
+                          - /url: https://docs.render.com/disks
+                        - text: for $0.25/GB per month
+                - generic [ref=f9e303]:
+                  - generic:
+                    - generic [ref=f9e304]:
+                      - button "Web Services" [ref=f9e305] [cursor=pointer]
+                      - button "Private Services" [ref=f9e308] [cursor=pointer]
+                      - button "Background Workers" [ref=f9e310] [cursor=pointer]
+                    - table [ref=f9e313]:
+                      - rowgroup [ref=f9e314]:
+                        - row [ref=f9e315]:
+                          - columnheader "Instance Type" [ref=f9e316]
+                          - columnheader "Pricing" [ref=f9e317]
+                          - columnheader "RAM" [ref=f9e318]
+                          - columnheader "CPU" [ref=f9e319]
+                      - rowgroup [ref=f9e320]:
+                        - row [ref=f9e321]:
+                          - cell "Free" [ref=f9e322]
+                          - cell "$0/month" [ref=f9e324]
+                          - cell "512 MB" [ref=f9e326]
+                          - cell "0.1" [ref=f9e328]
+                        - row [ref=f9e330]:
+                          - cell "Starter" [ref=f9e331]
+                          - cell "$7/month" [ref=f9e333]
+                          - cell "512 MB" [ref=f9e335]
+                          - cell "0.5" [ref=f9e337]
+                        - row [ref=f9e339]:
+                          - cell "Standard" [ref=f9e340]
+                          - cell "$25/month" [ref=f9e342]
+                          - cell "2 GB" [ref=f9e344]
+                          - cell "1" [ref=f9e346]
+                        - row [ref=f9e348]:
+                          - cell "Pro" [ref=f9e349]
+                          - cell "$85/month" [ref=f9e351]
+                          - cell "4 GB" [ref=f9e353]
+                          - cell "2" [ref=f9e355]
+                        - row [ref=f9e357]:
+                          - cell "Pro Plus" [ref=f9e358]
+                          - cell "$175/month" [ref=f9e360]
+                          - cell "8 GB" [ref=f9e362]
+                          - cell "4" [ref=f9e364]
+                        - row [ref=f9e366]:
+                          - cell "Pro Max" [ref=f9e367]
+                          - cell "$225/month" [ref=f9e369]
+                          - cell "16 GB" [ref=f9e371]
+                          - cell "4" [ref=f9e373]
+                        - row [ref=f9e375]:
+                          - cell "Pro Ultra" [ref=f9e376]
+                          - cell "$450/month" [ref=f9e378]
+                          - cell "32 GB" [ref=f9e380]
+                          - cell "8" [ref=f9e382]
+                        - row [ref=f9e384]:
+                          - cell "Custom" [ref=f9e385]
+                          - cell [ref=f9e387]:
+                            - link "Contact sales" [ref=f9e389] [cursor=pointer]:
+                              - /url: /contact
+                          - cell "Up to 512 GB" [ref=f9e390]
+                          - cell "Up to 64" [ref=f9e392]
+                  - button "Show Pricing" [ref=f9e395] [cursor=pointer]
+              - generic [ref=f9e399]:
+                - generic [ref=f9e400]:
+                  - generic [ref=f9e401]:
+                    - link "Render Postgres" [ref=f9e402] [cursor=pointer]:
+                      - /url: "#postgresql"
+                    - generic [ref=f9e406]: From
+                    - generic [ref=f9e407]: $0 USD
+                    - generic [ref=f9e408]: per month
+                  - list [ref=f9e410]:
+                    - listitem [ref=f9e411]:
+                      - generic [ref=f9e414]: Fully managed PostgreSQL databases
+                    - listitem [ref=f9e415]:
+                      - generic [ref=f9e418]:
+                        - text: Logical backup retention
+                        - strong [ref=f9e419]: (paid only)
+                    - listitem [ref=f9e420]:
+                      - generic [ref=f9e423]: Connect from anywhere
+                    - listitem [ref=f9e424]:
+                      - generic [ref=f9e427]:
+                        - text: Expandable storage ($0.30/GB)
+                        - strong [ref=f9e428]: (paid only)
+                    - listitem [ref=f9e429]:
+                      - generic [ref=f9e432]:
+                        - text: High availability
+                        - strong [ref=f9e433]: (Pro and above)
+                    - listitem [ref=f9e434]:
+                      - generic [ref=f9e437]:
+                        - text: Point-in-time-recovery (PITR)
+                        - strong [ref=f9e438]: (paid only)
+                - generic [ref=f9e439]:
+                  - table [ref=f9e441]:
+                    - rowgroup [ref=f9e442]:
+                      - row [ref=f9e443]:
+                        - columnheader "Tier" [ref=f9e444]
+                        - columnheader "Instance Type" [ref=f9e445]
+                        - columnheader "Pricing" [ref=f9e446]
+                        - columnheader "CPU" [ref=f9e447]
+                        - columnheader "RAM" [ref=f9e448]
+                        - columnheader "Connection Limit" [ref=f9e449]
+                    - rowgroup [ref=f9e450]:
+                      - row [ref=f9e451]:
+                        - cell [ref=f9e452]:
+                          - strong [ref=f9e454]: Free
+                        - cell "Free" [ref=f9e455]
+                        - cell "$0 (30-day limit)" [ref=f9e457]
+                        - cell "0.1" [ref=f9e459]
+                        - cell "256 MB" [ref=f9e461]
+                        - cell "100 connections" [ref=f9e463]
+                      - row [ref=f9e465]:
+                        - cell [ref=f9e466]:
+                          - strong [ref=f9e468]: Basic
+                        - cell "Basic-256mb" [ref=f9e469]
+                        - cell "$6/month" [ref=f9e471]
+                        - cell "0.1" [ref=f9e473]
+                        - cell "256 MB" [ref=f9e475]
+                        - cell "100 connections" [ref=f9e477]
+                      - row [ref=f9e479]:
+                        - cell [ref=f9e480]:
+                          - strong [ref=f9e482]: Basic
+                        - cell "Basic-1gb" [ref=f9e483]
+                        - cell "$19/month" [ref=f9e485]
+                        - cell "0.5" [ref=f9e487]
+                        - cell "1 GB" [ref=f9e489]
+                        - cell "100 connections" [ref=f9e491]
+                      - row [ref=f9e493]:
+                        - cell [ref=f9e494]:
+                          - strong [ref=f9e496]: Basic
+                        - cell "Basic-4gb" [ref=f9e497]
+                        - cell "$75/month" [ref=f9e499]
+                        - cell "2" [ref=f9e501]
+                        - cell "4 GB" [ref=f9e503]
+                        - cell "100 connections" [ref=f9e505]
+                      - row [ref=f9e507]:
+                        - cell [ref=f9e508]:
+                          - strong [ref=f9e510]: Pro
+                        - cell "Pro-4gb" [ref=f9e511]
+                        - cell "$55/month" [ref=f9e513]
+                        - cell "1" [ref=f9e515]
+                        - cell "4 GB" [ref=f9e517]
+                        - cell "100 connections" [ref=f9e519]
+                      - row [ref=f9e521]:
+                        - cell [ref=f9e522]:
+                          - strong [ref=f9e524]: Pro
+                        - cell "Pro-8gb" [ref=f9e525]
+                        - cell "$100/month" [ref=f9e527]
+                        - cell "2" [ref=f9e529]
+                        - cell "8 GB" [ref=f9e531]
+                        - cell "200 connections" [ref=f9e533]
+                      - row [ref=f9e535]:
+                        - cell [ref=f9e536]:
+                          - strong [ref=f9e538]: Pro
+                        - cell "Pro-16gb" [ref=f9e539]
+                        - cell "$200/month" [ref=f9e541]
+                        - cell "4" [ref=f9e543]
+                        - cell "16 GB" [ref=f9e545]
+                        - cell "400 connections" [ref=f9e547]
+                      - row [ref=f9e549]:
+                        - cell [ref=f9e550]:
+                          - strong [ref=f9e552]: Pro
+                        - cell "Pro-32gb" [ref=f9e553]
+                        - cell "$400/month" [ref=f9e555]
+                        - cell "8" [ref=f9e557]
+                        - cell "32 GB" [ref=f9e559]
+                        - cell "500 connections" [ref=f9e561]
+                      - row [ref=f9e563]:
+                        - cell [ref=f9e564]:
+                          - strong [ref=f9e566]: Pro
+                        - cell "Pro-64gb" [ref=f9e567]
+                        - cell "$800/month" [ref=f9e569]
+                        - cell "16" [ref=f9e571]
+                        - cell "64 GB" [ref=f9e573]
+                        - cell "500 connections" [ref=f9e575]
+                      - row [ref=f9e577]:
+                        - cell [ref=f9e578]:
+                          - strong [ref=f9e580]: Pro
+                        - cell "Pro-128gb" [ref=f9e581]
+                        - cell "$1,700/month" [ref=f9e583]
+                        - cell "32" [ref=f9e585]
+                        - cell "128 GB" [ref=f9e587]
+                        - cell "500 connections" [ref=f9e589]
+                      - row [ref=f9e591]:
+                        - cell [ref=f9e592]:
+                          - strong [ref=f9e594]: Pro
+                        - cell "Pro-192gb" [ref=f9e595]
+                        - cell "$2,500/month" [ref=f9e597]
+                        - cell "48" [ref=f9e599]
+                        - cell "192 GB" [ref=f9e601]
+                        - cell "500 connections" [ref=f9e603]
+                      - row [ref=f9e605]:
+                        - cell [ref=f9e606]:
+                          - strong [ref=f9e608]: Pro
+                        - cell "Pro-256gb" [ref=f9e609]
+                        - cell "$3,000/month" [ref=f9e611]
+                        - cell "64" [ref=f9e613]
+                        - cell "256 GB" [ref=f9e615]
+                        - cell "500 connections" [ref=f9e617]
+                      - row [ref=f9e619]:
+                        - cell [ref=f9e620]:
+                          - strong [ref=f9e622]: Pro
+                        - cell "Pro-384gb" [ref=f9e623]
+                        - cell "$4,600/month" [ref=f9e625]
+                        - cell "96" [ref=f9e627]
+                        - cell "384 GB" [ref=f9e629]
+                        - cell "500 connections" [ref=f9e631]
+                      - row [ref=f9e633]:
+                        - cell [ref=f9e634]:
+                          - strong [ref=f9e636]: Pro
+                        - cell "Pro-512gb" [ref=f9e637]
+                        - cell "$6,200/month" [ref=f9e639]
+                        - cell "128" [ref=f9e641]
+                        - cell "512 GB" [ref=f9e643]
+                        - cell "500 connections" [ref=f9e645]
+                      - row [ref=f9e647]:
+                        - cell [ref=f9e648]:
+                          - strong [ref=f9e650]: Accelerated
+                        - cell "Accelerated-16gb" [ref=f9e651]
+                        - cell "$160/month" [ref=f9e653]
+                        - cell "2" [ref=f9e655]
+                        - cell "16 GB" [ref=f9e657]
+                        - cell "400 connections" [ref=f9e659]
+                      - row [ref=f9e661]:
+                        - cell [ref=f9e662]:
+                          - strong [ref=f9e664]: Accelerated
+                        - cell "Accelerated-32gb" [ref=f9e665]
+                        - cell "$350/month" [ref=f9e667]
+                        - cell "4" [ref=f9e669]
+                        - cell "32 GB" [ref=f9e671]
+                        - cell "500 connections" [ref=f9e673]
+                      - row [ref=f9e675]:
+                        - cell [ref=f9e676]:
+                          - strong [ref=f9e678]: Accelerated
+                        - cell "Accelerated-64gb" [ref=f9e679]
+                        - cell "$750/month" [ref=f9e681]
+                        - cell "8" [ref=f9e683]
+                        - cell "64 GB" [ref=f9e685]
+                        - cell "500 connections" [ref=f9e687]
+                      - row [ref=f9e689]:
+                        - cell [ref=f9e690]:
+                          - strong [ref=f9e692]: Accelerated
+                        - cell "Accelerated-128gb" [ref=f9e693]
+                        - cell "$1,500/month" [ref=f9e695]
+                        - cell "16" [ref=f9e697]
+                        - cell "128 GB" [ref=f9e699]
+                        - cell "500 connections" [ref=f9e701]
+                      - row [ref=f9e703]:
+                        - cell [ref=f9e704]:
+                          - strong [ref=f9e706]: Accelerated
+                        - cell "Accelerated-256gb" [ref=f9e707]
+                        - cell "$2,500/month" [ref=f9e709]
+                        - cell "32" [ref=f9e711]
+                        - cell "256 GB" [ref=f9e713]
+                        - cell "500 connections" [ref=f9e715]
+                      - row [ref=f9e717]:
+                        - cell [ref=f9e718]:
+                          - strong [ref=f9e720]: Accelerated
+                        - cell "Accelerated-384gb" [ref=f9e721]
+                        - cell "$4,500/month" [ref=f9e723]
+                        - cell "48" [ref=f9e725]
+                        - cell "384 GB" [ref=f9e727]
+                        - cell "500 connections" [ref=f9e729]
+                      - row [ref=f9e731]:
+                        - cell [ref=f9e732]:
+                          - strong [ref=f9e734]: Accelerated
+                        - cell "Accelerated-512gb" [ref=f9e735]
+                        - cell "$6,000/month" [ref=f9e737]
+                        - cell "64" [ref=f9e739]
+                        - cell "512 GB" [ref=f9e741]
+                        - cell "500 connections" [ref=f9e743]
+                      - row [ref=f9e745]:
+                        - cell [ref=f9e746]:
+                          - strong [ref=f9e748]: Accelerated
+                        - cell "Accelerated-768gb" [ref=f9e749]
+                        - cell "$9,000/month" [ref=f9e751]
+                        - cell "96" [ref=f9e753]
+                        - cell "768 GB" [ref=f9e755]
+                        - cell "500 connections" [ref=f9e757]
+                      - row [ref=f9e759]:
+                        - cell [ref=f9e760]:
+                          - strong [ref=f9e762]: Accelerated
+                        - cell "Accelerated-1024gb" [ref=f9e763]
+                        - cell "$11,000/month" [ref=f9e765]
+                        - cell "128" [ref=f9e767]
+                        - cell "1024 GB" [ref=f9e769]
+                        - cell "500 connections" [ref=f9e771]
+                  - button "Show Pricing" [ref=f9e774] [cursor=pointer]
+              - generic [ref=f9e778]:
+                - generic [ref=f9e779]:
+                  - generic [ref=f9e780]:
+                    - link "Render Key Value" [ref=f9e781] [cursor=pointer]:
+                      - /url: "#key-value"
+                    - generic [ref=f9e785]: From
+                    - generic [ref=f9e786]: $0 USD
+                    - generic [ref=f9e787]: per month
+                  - list [ref=f9e789]:
+                    - listitem [ref=f9e790]:
+                      - generic [ref=f9e793]: Fully managed Redis®-compatible caching
+                    - listitem [ref=f9e794]:
+                      - generic [ref=f9e797]: Connect from anywhere
+                    - listitem [ref=f9e798]:
+                      - generic [ref=f9e801]: Maximize availability by queueing jobs
+                    - listitem [ref=f9e802]:
+                      - generic [ref=f9e805]: Reduce primary DB's load
+                    - listitem [ref=f9e806]:
+                      - generic [ref=f9e809]: Cache pages, results, fragments
+                - generic [ref=f9e810]:
+                  - table [ref=f9e812]:
+                    - rowgroup [ref=f9e813]:
+                      - row [ref=f9e814]:
+                        - columnheader "Instance Type" [ref=f9e815]
+                        - columnheader "Pricing" [ref=f9e816]
+                        - columnheader "RAM" [ref=f9e817]
+                        - columnheader "High CPU" [ref=f9e818]
+                        - columnheader "Connection Limit" [ref=f9e819]
+                        - columnheader "Persistence" [ref=f9e820]
+                    - rowgroup [ref=f9e821]:
+                      - row [ref=f9e822]:
+                        - cell "Free" [ref=f9e823]
+                        - cell "$0/month" [ref=f9e825]
+                        - cell "25 MB" [ref=f9e827]
+                        - cell [ref=f9e829]
+                        - cell "50 connections" [ref=f9e830]
+                        - cell [ref=f9e832]:
+                          - img "No" [ref=f9e834]
+                      - row [ref=f9e837]:
+                        - cell "Starter" [ref=f9e838]
+                        - cell "$10/month" [ref=f9e840]
+                        - cell "256 MB" [ref=f9e842]
+                        - cell [ref=f9e844]
+                        - cell "250 connections" [ref=f9e845]
+                        - cell [ref=f9e847]:
+                          - img "Yes" [ref=f9e849]
+                      - row [ref=f9e851]:
+                        - cell "Standard" [ref=f9e852]
+                        - cell "$32/month" [ref=f9e854]
+                        - cell "1 GB" [ref=f9e856]
+                        - cell [ref=f9e858]
+                        - cell "1,000 connections" [ref=f9e859]
+                        - cell [ref=f9e861]:
+                          - img "Yes" [ref=f9e863]
+                      - row [ref=f9e865]:
+                        - cell "Pro" [ref=f9e866]
+                        - cell "$135/month" [ref=f9e868]
+                        - cell "5 GB" [ref=f9e870]
+                        - cell [ref=f9e872]
+                        - cell "5,000 connections" [ref=f9e873]
+                        - cell [ref=f9e875]:
+                          - img "Yes" [ref=f9e877]
+                      - row [ref=f9e879]:
+                        - cell "Pro Plus" [ref=f9e880]
+                        - cell "$250/month" [ref=f9e882]
+                        - cell "10 GB" [ref=f9e884]
+                        - cell [ref=f9e886]
+                        - cell "10,000 connections" [ref=f9e887]
+                        - cell [ref=f9e889]:
+                          - img "Yes" [ref=f9e891]
+                      - row [ref=f9e893]:
+                        - cell "Pro Max" [ref=f9e894]
+                        - cell "$550/month" [ref=f9e896]
+                        - cell "20 GB" [ref=f9e898]
+                        - cell [ref=f9e900]:
+                          - img "Yes" [ref=f9e902]
+                        - cell "20,000 connections" [ref=f9e904]
+                        - cell [ref=f9e906]:
+                          - img "Yes" [ref=f9e908]
+                      - row [ref=f9e910]:
+                        - cell "Pro Ultra" [ref=f9e911]
+                        - cell "$1100/month" [ref=f9e913]
+                        - cell "40 GB" [ref=f9e915]
+                        - cell [ref=f9e917]:
+                          - img "Yes" [ref=f9e919]
+                        - cell "40,000 connections" [ref=f9e921]
+                        - cell [ref=f9e923]:
+                          - img "Yes" [ref=f9e925]
+                      - row [ref=f9e927]:
+                        - cell "Custom" [ref=f9e928]
+                        - cell [ref=f9e930]:
+                          - link "Contact sales" [ref=f9e932] [cursor=pointer]:
+                            - /url: /contact
+                        - cell "Up to 512 GB" [ref=f9e933]
+                        - cell [ref=f9e935]:
+                          - img "Yes" [ref=f9e937]
+                        - cell [ref=f9e939]:
+                          - link "Contact sales" [ref=f9e941] [cursor=pointer]:
+                            - /url: /contact
+                        - cell [ref=f9e942]:
+                          - img "Yes" [ref=f9e944]
+                  - button "Show Pricing" [ref=f9e947] [cursor=pointer]
+              - generic [ref=f9e951]:
+                - generic [ref=f9e952]:
+                  - generic [ref=f9e953]:
+                    - link "Cron Jobs" [ref=f9e954] [cursor=pointer]:
+                      - /url: "#cron-jobs"
+                    - generic [ref=f9e958]: From
+                    - generic [ref=f9e959]: $1 USD
+                    - generic [ref=f9e960]: per month
+                  - list [ref=f9e962]:
+                    - listitem [ref=f9e963]:
+                      - generic [ref=f9e966]: Run any command or script periodically
+                    - listitem [ref=f9e967]:
+                      - generic [ref=f9e970]: Failure notifications
+                    - listitem [ref=f9e971]:
+                      - generic [ref=f9e974]: Full support for cron expressions
+                    - listitem [ref=f9e975]:
+                      - generic [ref=f9e978]: Prorated by the second
+                    - listitem [ref=f9e979]:
+                      - generic [ref=f9e982]: Live cron job logs
+                - generic [ref=f9e983]:
+                  - table [ref=f9e985]:
+                    - rowgroup [ref=f9e986]:
+                      - row [ref=f9e987]:
+                        - columnheader "Instance Type" [ref=f9e988]
+                        - columnheader "Pricing" [ref=f9e989]
+                        - columnheader "RAM" [ref=f9e990]
+                        - columnheader "CPU" [ref=f9e991]
+                    - rowgroup [ref=f9e992]:
+                      - row [ref=f9e993]:
+                        - cell "Starter" [ref=f9e994]
+                        - cell "$0.00016/minute" [ref=f9e996]
+                        - cell "512 MB" [ref=f9e998]
+                        - cell "0.5" [ref=f9e1000]
+                      - row [ref=f9e1002]:
+                        - cell "Standard" [ref=f9e1003]
+                        - cell "$0.00058/minute" [ref=f9e1005]
+                        - cell "2 GB" [ref=f9e1007]
+                        - cell "1" [ref=f9e1009]
+                      - row [ref=f9e1011]:
+                        - cell "Pro" [ref=f9e1012]
+                        - cell "$0.00197/minute" [ref=f9e1014]
+                        - cell "4 GB" [ref=f9e1016]
+                        - cell "2" [ref=f9e1018]
+                      - row [ref=f9e1020]:
+                        - cell "Pro Plus" [ref=f9e1021]
+                        - cell "$0.00405/minute" [ref=f9e1023]
+                        - cell "8 GB" [ref=f9e1025]
+                        - cell "4" [ref=f9e1027]
+                      - row [ref=f9e1029]:
+                        - cell "Custom" [ref=f9e1030]
+                        - cell [ref=f9e1032]:
+                          - link "Contact sales" [ref=f9e1034] [cursor=pointer]:
+                            - /url: /contact
+                        - cell "Up to 512 GB" [ref=f9e1035]
+                        - cell "Up to 64" [ref=f9e1037]
+                  - button "Show Pricing" [ref=f9e1040] [cursor=pointer]
+              - generic [ref=f9e1044]:
+                - generic [ref=f9e1045]:
+                  - generic [ref=f9e1046]:
+                    - link "Workflows (Beta)" [ref=f9e1047] [cursor=pointer]:
+                      - /url: "#workflows"
+                    - generic [ref=f9e1051]: From
+                    - generic [ref=f9e1052]: $1 USD
+                    - generic [ref=f9e1053]: per month
+                  - list [ref=f9e1055]:
+                    - listitem [ref=f9e1056]:
+                      - generic [ref=f9e1059]: Fully-managed durable execution
+                    - listitem [ref=f9e1060]:
+                      - generic [ref=f9e1063]: Run 1000s of parallel, async tasks
+                    - listitem [ref=f9e1064]:
+                      - generic [ref=f9e1067]: Sub-second task spin-up
+                    - listitem [ref=f9e1068]:
+                      - generic [ref=f9e1071]: Automatic task retries
+                - generic [ref=f9e1072]:
+                  - table [ref=f9e1074]:
+                    - rowgroup [ref=f9e1075]:
+                      - row [ref=f9e1076]:
+                        - columnheader "Task compute" [ref=f9e1077]
+                        - columnheader "$/Hour" [ref=f9e1078]
+                        - columnheader "CPU" [ref=f9e1079]
+                        - columnheader "RAM" [ref=f9e1080]
+                    - rowgroup [ref=f9e1081]:
+                      - row [ref=f9e1082]:
+                        - cell "Starter" [ref=f9e1083]
+                        - cell "$0.05" [ref=f9e1085]
+                        - cell "0.5" [ref=f9e1087]
+                        - cell "512MB" [ref=f9e1089]
+                      - row [ref=f9e1091]:
+                        - cell "Standard" [ref=f9e1092]
+                        - cell "$0.20" [ref=f9e1094]
+                        - cell "1" [ref=f9e1096]
+                        - cell "2GB" [ref=f9e1098]
+                      - row [ref=f9e1100]:
+                        - cell "Pro" [ref=f9e1101]
+                        - cell "$0.40" [ref=f9e1103]
+                        - cell "2" [ref=f9e1105]
+                        - cell "4GB" [ref=f9e1107]
+                      - row [ref=f9e1109]:
+                        - cell "Pro Plus" [ref=f9e1110]
+                        - cell "$1.00" [ref=f9e1112]
+                        - cell "4" [ref=f9e1114]
+                        - cell "8GB" [ref=f9e1116]
+                      - row [ref=f9e1118]:
+                        - cell "Pro Max" [ref=f9e1119]
+                        - cell "$2.00" [ref=f9e1121]
+                        - cell "4" [ref=f9e1123]
+                        - cell "16GB" [ref=f9e1125]
+                      - row [ref=f9e1127]:
+                        - cell "Pro Ultra" [ref=f9e1128]
+                        - cell "$7.00" [ref=f9e1130]
+                        - cell "8" [ref=f9e1132]
+                        - cell "32GB" [ref=f9e1134]
+                  - button "Show Pricing" [ref=f9e1137] [cursor=pointer]
+        - generic [ref=f9e1141]:
+          - generic [ref=f9e1142]: Features
+          - generic [ref=f9e1144]:
+            - generic [ref=f9e1147]:
+              - generic [ref=f9e1148]: Workspace features
+              - generic [ref=f9e1149]: Compare features across workspace plans.
+            - generic [ref=f9e1151]:
+              - generic [ref=f9e1152]: Hobby
+              - generic [ref=f9e1154]: Pro
+              - generic [ref=f9e1156]: Scale
+              - generic [ref=f9e1158]: Enterprise
+            - generic [ref=f9e1160]:
+              - heading "Render Services & Storage" [level=3] [ref=f9e1162]
+              - generic [ref=f9e1163]:
+                - generic [ref=f9e1164]: Compute
+                - paragraph [ref=f9e1168]:
+                  - text: Render services run on compute.
+                  - link "See compute pricing for details" [ref=f9e1169] [cursor=pointer]:
+                    - /url: https://render.com/pricing#compute
+                  - text: .
+              - generic [ref=f9e1170]:
+                - generic [ref=f9e1171]:
+                  - generic [ref=f9e1172]: Maximum services
+                  - button [ref=f9e1173] [cursor=pointer]
+                - paragraph [ref=f9e1180]: "25"
+                - paragraph [ref=f9e1183]: Unlimited
+                - paragraph [ref=f9e1186]: Unlimited
+                - paragraph [ref=f9e1189]: Unlimited
+              - generic [ref=f9e1190]: Static Sites
+              - generic [ref=f9e1205]: Standard services
+              - generic [ref=f9e1220]: Web services
+              - generic [ref=f9e1235]: Private services
+              - generic [ref=f9e1250]: Background workers
+              - generic [ref=f9e1265]:
+                - generic [ref=f9e1266]:
+                  - generic [ref=f9e1267]: Persistent disks
+                  - button [ref=f9e1268] [cursor=pointer]
+                - paragraph [ref=f9e1275]: $0.25 per GB per month
+                - paragraph [ref=f9e1278]: $0.25 per GB per month
+                - paragraph [ref=f9e1281]: $0.25 per GB per month
+                - paragraph [ref=f9e1284]: $0.25 per GB per month
+              - generic [ref=f9e1285]: Postgres databases
+              - generic [ref=f9e1300]:
+                - generic [ref=f9e1301]: Expandable storage
+                - paragraph [ref=f9e1305]: $0.30 per GB
+                - paragraph [ref=f9e1308]: $0.30 per GB
+                - paragraph [ref=f9e1311]: $0.30 per GB
+                - paragraph [ref=f9e1314]: $0.30 per GB
+              - generic [ref=f9e1315]:
+                - generic [ref=f9e1316]: Point-in-time recovery window
+                - paragraph [ref=f9e1320]: 3 days
+                - paragraph [ref=f9e1323]: 7 days
+                - paragraph [ref=f9e1326]: 7 days
+                - paragraph [ref=f9e1329]: 7 days
+              - generic [ref=f9e1330]: Read-only replicas
+              - generic [ref=f9e1345]: High availability
+              - generic [ref=f9e1360]: Key-value (Redis-compatible)
+              - generic [ref=f9e1375]: Cron jobs
+              - generic [ref=f9e1390]: Workflows
+              - generic [ref=f9e1405]:
+                - generic [ref=f9e1406]:
+                  - generic [ref=f9e1407]: Concurrent task runs
+                  - button [ref=f9e1408] [cursor=pointer]
+                - paragraph [ref=f9e1415]: 20 task runs
+                - generic [ref=f9e1417]:
+                  - paragraph [ref=f9e1418]: 50 task runs
+                  - generic [ref=f9e1419]: then $10/mo per 50
+                - generic [ref=f9e1421]:
+                  - paragraph [ref=f9e1422]: 100 task runs
+                  - generic [ref=f9e1423]: then $10/mo per 50
+                - paragraph [ref=f9e1426]: Custom
+              - generic [ref=f9e1427]:
+                - generic [ref=f9e1428]: Task compute plans
+                - paragraph [ref=f9e1432]: Up to Pro
+                - paragraph [ref=f9e1435]: Up to Pro Ultra
+                - paragraph [ref=f9e1438]: Up to Pro Ultra
+                - paragraph [ref=f9e1441]: Custom
+              - generic [ref=f9e1442]: Service scaling
+              - generic [ref=f9e1458]:
+                - generic [ref=f9e1459]: Vertical scaling
+                - button [ref=f9e1460] [cursor=pointer]
+              - generic [ref=f9e1477]:
+                - generic [ref=f9e1478]:
+                  - generic [ref=f9e1479]: Horizontal autoscaling
+                  - button [ref=f9e1480] [cursor=pointer]
+                - generic [ref=f9e1485]: —
+            - generic [ref=f9e1496]:
+              - heading "Networking" [level=3] [ref=f9e1498]
+              - generic [ref=f9e1499]: Automatic private networking
+              - generic [ref=f9e1514]:
+                - generic [ref=f9e1515]: Bandwidth
+                - generic [ref=f9e1518]:
+                  - paragraph [ref=f9e1519]: 5 GB included per month
+                  - generic [ref=f9e1520]: then $0.15 per GB
+                - generic [ref=f9e1522]:
+                  - paragraph [ref=f9e1523]: 25 GB included per month
+                  - generic [ref=f9e1524]: then $0.15 per GB
+                - generic [ref=f9e1526]:
+                  - paragraph [ref=f9e1527]: 1 TB included per month
+                  - generic [ref=f9e1528]: then $0.15 per GB
+                - paragraph [ref=f9e1531]: Custom
+              - generic [ref=f9e1532]: Global regions
+              - generic [ref=f9e1548]:
+                - generic [ref=f9e1549]: Zero-config CDN
+                - button [ref=f9e1550] [cursor=pointer]
+              - generic [ref=f9e1567]: Edge caching for web services
+              - generic [ref=f9e1582]:
+                - generic [ref=f9e1583]: Custom domains
+                - generic [ref=f9e1586]:
+                  - paragraph [ref=f9e1587]: 2 included
+                  - generic [ref=f9e1588]: then $0.25/domain/month
+                - generic [ref=f9e1590]:
+                  - paragraph [ref=f9e1591]: 15 included
+                  - generic [ref=f9e1592]: then $0.25/domain/month
+                - generic [ref=f9e1594]:
+                  - paragraph [ref=f9e1595]: 25 included
+                  - generic [ref=f9e1596]: then $0.25/domain/month
+                - paragraph [ref=f9e1599]: Custom
+              - generic [ref=f9e1600]: Automatic TLS
+              - generic [ref=f9e1615]: Wildcard domains
+              - generic [ref=f9e1630]: WebSockets
+              - generic [ref=f9e1645]: Service discovery
+              - generic [ref=f9e1660]:
+                - generic [ref=f9e1661]: Dedicated IPs
+                - generic [ref=f9e1663]: —
+                - generic [ref=f9e1666]:
+                  - paragraph [ref=f9e1667]: $100 per month
+                  - generic [ref=f9e1668]: for each IP set
+                - generic [ref=f9e1670]:
+                  - paragraph [ref=f9e1671]: $100 per month
+                  - generic [ref=f9e1672]: for each IP set
+                - paragraph [ref=f9e1675]: Custom
+              - generic [ref=f9e1676]:
+                - generic [ref=f9e1677]:
+                  - generic [ref=f9e1678]: AWS private links
+                  - button [ref=f9e1679] [cursor=pointer]
+                - generic [ref=f9e1684]: —
+                - generic [ref=f9e1687]:
+                  - paragraph [ref=f9e1688]: $30 per month
+                  - generic [ref=f9e1689]: Includes up to 3 links
+                - generic [ref=f9e1691]:
+                  - paragraph [ref=f9e1692]: $30 per month
+                  - generic [ref=f9e1693]: Includes up to 3 links
+                - paragraph [ref=f9e1696]: Custom
+              - generic [ref=f9e1697]:
+                - generic [ref=f9e1698]: Private link outbound bandwidth
+                - generic [ref=f9e1700]: —
+                - paragraph [ref=f9e1704]: $0.03 per GB
+                - paragraph [ref=f9e1707]: $0.03 per GB
+                - paragraph [ref=f9e1710]: Custom
+            - generic [ref=f9e1711]:
+              - heading "Protection" [level=3] [ref=f9e1713]
+              - generic [ref=f9e1714]: Automatic DDoS mitigation
+              - generic [ref=f9e1729]: Firewall
+              - generic [ref=f9e1744]: HTTPS only
+              - generic [ref=f9e1759]:
+                - generic [ref=f9e1760]:
+                  - generic [ref=f9e1761]: Inbound IP rules
+                  - button [ref=f9e1762] [cursor=pointer]
+                - generic [ref=f9e1768]:
+                  - paragraph [ref=f9e1769]: Datastores only
+                  - generic [ref=f9e1770]: Postgres and Key Value
+                - generic [ref=f9e1772]:
+                  - paragraph [ref=f9e1773]: Datastores only
+                  - generic [ref=f9e1774]: Postgres and Key Value
+              - generic [ref=f9e1781]:
+                - generic [ref=f9e1782]: Network-isolated environments
+                - generic [ref=f9e1784]: —
+            - generic [ref=f9e1795]:
+              - heading "Build & Deploy" [level=3] [ref=f9e1797]
+              - generic [ref=f9e1798]: Automatic builds
+              - generic [ref=f9e1813]:
+                - generic [ref=f9e1814]: Standard build pipeline
+                - generic [ref=f9e1817]:
+                  - paragraph [ref=f9e1818]: 500 mins per month
+                  - generic [ref=f9e1819]: then $5 per 1K mins
+                - generic [ref=f9e1821]:
+                  - paragraph [ref=f9e1822]: 1K mins per month
+                  - generic [ref=f9e1823]: then $5 per 1K mins
+                - generic [ref=f9e1825]:
+                  - paragraph [ref=f9e1826]: 5K mins per workspace per mo.
+                  - generic [ref=f9e1827]: then $5 per 1K mins
+                - paragraph [ref=f9e1830]: Custom
+              - generic [ref=f9e1831]:
+                - generic [ref=f9e1832]:
+                  - generic [ref=f9e1833]: Performance build pipeline
+                  - button [ref=f9e1834] [cursor=pointer]
+                - generic [ref=f9e1839]: —
+                - paragraph [ref=f9e1843]: $25 per 1000 mins
+                - paragraph [ref=f9e1846]: $25 per 1000 mins
+                - paragraph [ref=f9e1849]: Custom
+              - generic [ref=f9e1850]: Native runtimes
+              - generic [ref=f9e1865]: Docker builds
+              - generic [ref=f9e1880]: Environment variables & secret files
+              - generic [ref=f9e1895]: Monorepo support
+              - generic [ref=f9e1910]: Previews
+              - generic [ref=f9e1925]: Single-service previews
+              - generic [ref=f9e1940]:
+                - generic [ref=f9e1941]: Full-stack preview environments
+                - generic [ref=f9e1943]: —
+              - generic [ref=f9e1954]: Deploy orchestration
+              - generic [ref=f9e1969]: Auto-deploys
+              - generic [ref=f9e1984]: Zero-downtime deploys
+              - generic [ref=f9e1999]: Deploy hooks
+              - generic [ref=f9e2014]: Pre-deploy command
+              - generic [ref=f9e2029]:
+                - generic [ref=f9e2030]: Instant rollbacks
+                - paragraph [ref=f9e2034]: 5 builds retained
+                - paragraph [ref=f9e2037]: 15 builds retained
+                - paragraph [ref=f9e2040]: 30 builds retained
+                - paragraph [ref=f9e2043]: 30 builds retained
+              - generic [ref=f9e2044]:
+                - generic [ref=f9e2045]: Projects
+                - paragraph [ref=f9e2049]: Unlimited
+                - paragraph [ref=f9e2052]: Unlimited
+                - paragraph [ref=f9e2055]: Unlimited
+                - paragraph [ref=f9e2058]: Unlimited
+              - generic [ref=f9e2059]:
+                - generic [ref=f9e2060]: Environments
+                - paragraph [ref=f9e2064]: 2 per project
+                - paragraph [ref=f9e2067]: Unlimited
+                - paragraph [ref=f9e2070]: Unlimited
+                - paragraph [ref=f9e2073]: Unlimited
+              - generic [ref=f9e2074]: Protected environments
+              - generic [ref=f9e2090]:
+                - generic [ref=f9e2091]: Infrastructure as code
+                - button [ref=f9e2092] [cursor=pointer]
+            - generic [ref=f9e2109]:
+              - heading "Monitoring" [level=3] [ref=f9e2111]
+              - generic [ref=f9e2112]: SSH access
+              - generic [ref=f9e2127]: Health checks
+              - generic [ref=f9e2142]: Service metrics
+              - generic [ref=f9e2157]: Notifications
+              - generic [ref=f9e2172]:
+                - generic [ref=f9e2173]: Log retention
+                - paragraph [ref=f9e2177]: 7 days
+                - paragraph [ref=f9e2180]: 14 days
+                - paragraph [ref=f9e2183]: 30 days
+                - paragraph [ref=f9e2186]: 30 days
+              - generic [ref=f9e2187]: Log streams
+              - generic [ref=f9e2202]:
+                - generic [ref=f9e2203]: HTTP request logs
+                - generic [ref=f9e2205]: —
+              - generic [ref=f9e2216]:
+                - generic [ref=f9e2217]: OpenTelemetry metrics stream
+                - generic [ref=f9e2219]: —
+            - generic [ref=f9e2230]:
+              - heading "Platform Access & Security" [level=3] [ref=f9e2232]
+              - generic [ref=f9e2233]:
+                - generic [ref=f9e2234]: Team seats
+                - paragraph [ref=f9e2238]: "1"
+                - paragraph [ref=f9e2241]: Unlimited
+                - paragraph [ref=f9e2244]: Unlimited
+                - paragraph [ref=f9e2247]: Unlimited
+              - generic [ref=f9e2248]:
+                - generic [ref=f9e2249]: Workspaces
+                - paragraph [ref=f9e2253]: "1"
+                - paragraph [ref=f9e2256]: "1"
+                - paragraph [ref=f9e2259]: Unlimited
+                - paragraph [ref=f9e2262]: Unlimited
+              - generic [ref=f9e2263]: 2FA & Google login
+              - generic [ref=f9e2278]:
+                - generic [ref=f9e2279]: Enforce 2FA & Google login
+                - generic [ref=f9e2281]: —
+              - generic [ref=f9e2292]:
+                - generic [ref=f9e2293]: Workspace user roles
+                - generic [ref=f9e2295]: —
+                - paragraph [ref=f9e2299]: Admin, Developer
+                - paragraph [ref=f9e2302]: Admin, Developer, Contributor, Viewer, Billing
+                - paragraph [ref=f9e2305]: Admin, Developer, Contributor, Viewer, Billing
+              - generic [ref=f9e2306]:
+                - generic [ref=f9e2307]: Organization user roles
+                - generic [ref=f9e2309]: —
+                - generic [ref=f9e2311]: —
+                - paragraph [ref=f9e2315]: Owner, Member, Guest
+                - paragraph [ref=f9e2318]: Owner, Member, Guest
+              - generic [ref=f9e2319]:
+                - generic [ref=f9e2320]: SAML SSO
+                - generic [ref=f9e2322]: —
+                - generic [ref=f9e2324]: —
+              - generic [ref=f9e2332]:
+                - generic [ref=f9e2333]: SCIM
+                - generic [ref=f9e2335]: —
+                - generic [ref=f9e2337]: —
+              - generic [ref=f9e2345]:
+                - generic [ref=f9e2346]: AWS OIDC Integration
+                - generic [ref=f9e2348]: —
+              - generic [ref=f9e2359]:
+                - generic [ref=f9e2360]: Audit logs
+                - generic [ref=f9e2362]: —
+                - paragraph [ref=f9e2366]: Workspace
+                - paragraph [ref=f9e2369]: Workspace and organization
+                - paragraph [ref=f9e2372]: Workspace and organization
+            - generic [ref=f9e2373]:
+              - heading "Compliance" [level=3] [ref=f9e2375]
+              - generic [ref=f9e2376]: GDPR DPA
+              - generic [ref=f9e2391]: SOC 2 Type II
+              - generic [ref=f9e2406]: ISO 27001
+              - generic [ref=f9e2421]:
+                - generic [ref=f9e2422]:
+                  - generic [ref=f9e2423]: SOC 2 & ISO documentation
+                  - button [ref=f9e2424] [cursor=pointer]
+                - generic [ref=f9e2429]: —
+              - generic [ref=f9e2440]:
+                - generic [ref=f9e2441]: HIPAA BAA
+                - generic [ref=f9e2443]: —
+                - generic [ref=f9e2445]: —
+                - paragraph [ref=f9e2449]: 20% compute premium for enabled workspaces
+                - paragraph [ref=f9e2452]: 20% compute premium for enabled workspaces
+            - generic [ref=f9e2453]:
+              - heading "Support" [level=3] [ref=f9e2455]
+              - generic [ref=f9e2456]: Community
+              - generic [ref=f9e2471]: Email
+              - generic [ref=f9e2486]:
+                - generic [ref=f9e2487]: Chat
+                - generic [ref=f9e2489]: —
+              - generic [ref=f9e2500]:
+                - generic [ref=f9e2501]: Premium support
+                - generic [ref=f9e2503]: —
+                - paragraph [ref=f9e2507]: Add-on
+                - paragraph [ref=f9e2510]: Add-on
+              - generic [ref=f9e2514]:
+                - generic [ref=f9e2515]: Private Slack channel
+                - generic [ref=f9e2517]: —
+                - paragraph [ref=f9e2521]: Add-on
+                - paragraph [ref=f9e2524]: Add-on
+              - generic [ref=f9e2528]:
+                - generic [ref=f9e2529]: Dedicated technical account manager
+                - generic [ref=f9e2531]: —
+                - paragraph [ref=f9e2535]: Add-on
+                - paragraph [ref=f9e2538]: Add-on
+              - generic [ref=f9e2542]:
+                - generic [ref=f9e2543]: Support response SLAs
+                - generic [ref=f9e2545]: —
+                - paragraph [ref=f9e2549]: Add-on
+                - paragraph [ref=f9e2552]: Add-on
+              - generic [ref=f9e2556]:
+                - generic [ref=f9e2557]: Migration assistance & architecture review
+                - generic [ref=f9e2559]: —
+                - paragraph [ref=f9e2563]: Add-on
+                - paragraph [ref=f9e2566]: Add-on
+        - generic [ref=f9e2570]:
+          - generic [ref=f9e2571]: FAQ
+          - generic [ref=f9e2575]:
+            - heading "Frequently Asked Questions" [level=2] [ref=f9e2577]
+            - generic [ref=f9e2580]:
+              - generic [ref=f9e2581]:
+                - heading "How does billing work?" [level=3] [ref=f9e2582]
+                - paragraph [ref=f9e2584]:
+                  - text: "Render charges for three things: your workspace plan (flat subscription), metered features like bandwidth (usage-based), and"
+                  - link "compute" [ref=f9e2585] [cursor=pointer]:
+                    - /url: https://render.com/pricing#compute
+                  - text: for your applications (usage-based).
+              - generic [ref=f9e2586]:
+                - heading "How am I billed for compute?" [level=3] [ref=f9e2587]
+                - paragraph [ref=f9e2589]:
+                  - link "Compute plans" [ref=f9e2590] [cursor=pointer]:
+                    - /url: https://render.com/pricing#compute
+                  - text: are set at a per-service basis, and billing is prorated to the second. If you create a web service on a paid compute plan and turn it off 24 hours later, you are only billed for 24 hours of compute. This also applies to service types that spin up and shut down automatically, like Cron Jobs and Workflows. You are only billed for compute when these services are actively running your workload.
+              - generic [ref=f9e2591]:
+                - heading "My Pro or Scale workspace did not have any activity or services this month. Will I still be charged for the workspace subscription?" [level=3] [ref=f9e2592]
+                - paragraph [ref=f9e2594]: If a workspace has no services (live or suspended) and no activity during a month, the workspace subscription fee for that month will be waived.
+              - generic [ref=f9e2595]:
+                - heading "I run a large agency with developers on multiple teams. What does this mean for us?" [level=3] [ref=f9e2596]
+                - paragraph [ref=f9e2598]:
+                  - text: Scale and Enterprise plans let you create multiple workspaces within the same organization to better manage multiple teams. Our team is happy to help you determine the best way to organize your teams on Render.
+                  - link "Contact us" [ref=f9e2599] [cursor=pointer]:
+                    - /url: https://render.com/contact
+                  - text: here.
+              - generic [ref=f9e2600]:
+                - heading "What are build pipeline minutes, and how can I track my usage?" [level=3] [ref=f9e2601]
+                - generic [ref=f9e2602]:
+                  - paragraph [ref=f9e2603]:
+                    - text: Your workspace's builds and other pre-deploy tasks use Render compute resources.
+                    - link "Pipeline minutes" [ref=f9e2604] [cursor=pointer]:
+                      - /url: https://docs.render.com/build-pipeline#pipeline-minutes
+                    - text: track the duration of these tasks. You can view your pipeline usage from your dashboard's Billing page.
+                  - paragraph [ref=f9e2605]:
+                    - text: With a Professional plan or higher, you can enable the
+                    - link "Performance pipeline" [ref=f9e2606] [cursor=pointer]:
+                      - /url: https://docs.render.com/build-pipeline#pipeline-tiers
+                    - text: to run builds on larger compute instances, with an additional corresponding charge for pipeline minutes.
+              - generic [ref=f9e2607]:
+                - heading "How do free compute plans work?" [level=3] [ref=f9e2608]
+                - paragraph [ref=f9e2610]:
+                  - text: With Render’s
+                  - link "Free compute plans" [ref=f9e2611] [cursor=pointer]:
+                    - /url: https://render.com/docs/free
+                  - text: ", you can spin up"
+                  - link "web services" [ref=f9e2612] [cursor=pointer]:
+                    - /url: https://docs.render.com/free#free-web-services
+                  - text: ","
+                  - link "Render Key Value instances" [ref=f9e2613] [cursor=pointer]:
+                    - /url: https://docs.render.com/free#free-key-value
+                  - text: ", and"
+                  - link "Render Postgres databases" [ref=f9e2614] [cursor=pointer]:
+                    - /url: https://render.com/docs/free#free-postgres
+                  - text: at no charge. Free compute plans types have usage limits and are designed to help you to explore new tech, build personal projects, and preview Render's developer experience.
+              - generic [ref=f9e2615]:
+                - heading "Which payment methods do you accept?" [level=3] [ref=f9e2616]
+                - paragraph [ref=f9e2618]:
+                  - text: We accept all major credit and debit cards. Your payment info is stored and processed securely by
+                  - link "Stripe" [ref=f9e2619] [cursor=pointer]:
+                    - /url: https://stripe.com/
+                  - text: and never touches our servers.
+              - generic [ref=f9e2620]:
+                - heading "Why was I charged $1 after adding a credit card?" [level=3] [ref=f9e2621]
+                - paragraph [ref=f9e2623]: A $1 USD transaction is performed as a credit security check to ensure your card details are correct and authorized. The charge is refunded after the transaction completes.
+              - generic [ref=f9e2624]:
+                - heading "I have an infrequently asked question." [level=3] [ref=f9e2625]
+                - paragraph [ref=f9e2627]:
+                  - text: Great! We're always around to help. You can email us any time at
+                  - link "support@render.com" [ref=f9e2628] [cursor=pointer]:
+                    - /url: mailto:support@render.com
+                  - text: ", or talk to us in our"
+                  - link "user community" [ref=f9e2629] [cursor=pointer]:
+                    - /url: https://community.render.com/
+                  - text: .
+        - generic [ref=f9e2630]:
+          - generic [ref=f9e2631]: CTA
+          - generic [ref=f9e2635]:
+            - generic [ref=f9e2636]:
+              - heading "Start building with Render" [level=2] [ref=f9e2637]
+              - generic [ref=f9e2638]: The Zero DevOps cloud for developers and teams.
+            - link "Get Started" [ref=f9e2639] [cursor=pointer]:
+              - /url: https://dashboard.render.com/register
+      - generic [ref=f9e2647]:
+        - generic [ref=f9e2750]:
+          - generic [ref=f9e2753]:
+            - generic [ref=f9e2754]: Features
+            - list [ref=f9e2755]:
+              - listitem [ref=f9e2756]:
+                - link "Render CLI" [ref=f9e2757] [cursor=pointer]:
+                  - /url: /docs/cli
+              - listitem [ref=f9e2758]:
+                - link "Render MCP" [ref=f9e2759] [cursor=pointer]:
+                  - /url: /docs/mcp-server
+              - listitem [ref=f9e2760]:
+                - link "Autoscaling" [ref=f9e2761] [cursor=pointer]:
+                  - /url: https://docs.render.com/scaling
+              - listitem [ref=f9e2762]:
+                - link "Private Networking" [ref=f9e2763] [cursor=pointer]:
+                  - /url: /docs/private-network
+              - listitem [ref=f9e2764]:
+                - link "Persistent Disks" [ref=f9e2765] [cursor=pointer]:
+                  - /url: https://docs.render.com/disks
+              - listitem [ref=f9e2766]:
+                - link "Infrastructure As Code" [ref=f9e2767] [cursor=pointer]:
+                  - /url: https://docs.render.com/infrastructure-as-code
+              - listitem [ref=f9e2768]:
+                - link "Preview Environments" [ref=f9e2769] [cursor=pointer]:
+                  - /url: https://docs.render.com/preview-environments
+              - listitem [ref=f9e2770]:
+                - link "Zero Downtime Deploys" [ref=f9e2771] [cursor=pointer]:
+                  - /url: https://docs.render.com/deploys#zero-downtime-deploys
+              - listitem [ref=f9e2772]:
+                - link "Docker support" [ref=f9e2773] [cursor=pointer]:
+                  - /url: /docs/docker
+              - listitem [ref=f9e2774]:
+                - link "REST API" [ref=f9e2775] [cursor=pointer]:
+                  - /url: https://docs.render.com/api
+          - generic [ref=f9e2778]:
+            - generic [ref=f9e2779]: Services
+            - list [ref=f9e2780]:
+              - listitem [ref=f9e2781]:
+                - link "Static Sites" [ref=f9e2782] [cursor=pointer]:
+                  - /url: https://docs.render.com/static-sites
+              - listitem [ref=f9e2783]:
+                - link "Web Services" [ref=f9e2784] [cursor=pointer]:
+                  - /url: https://docs.render.com/web-services
+              - listitem [ref=f9e2785]:
+                - link "Render Workflows" [ref=f9e2786] [cursor=pointer]:
+                  - /url: /docs/workflows
+              - listitem [ref=f9e2787]:
+                - link "Private Services" [ref=f9e2788] [cursor=pointer]:
+                  - /url: https://docs.render.com/private-services
+              - listitem [ref=f9e2789]:
+                - link "Background Workers" [ref=f9e2790] [cursor=pointer]:
+                  - /url: https://docs.render.com/background-workers
+              - listitem [ref=f9e2791]:
+                - link "Cron Jobs" [ref=f9e2792] [cursor=pointer]:
+                  - /url: https://docs.render.com/cronjobs
+              - listitem [ref=f9e2793]:
+                - link "Render Postgres" [ref=f9e2794] [cursor=pointer]:
+                  - /url: /docs/postgresql
+              - listitem [ref=f9e2795]:
+                - link "Render Key Value" [ref=f9e2796] [cursor=pointer]:
+                  - /url: /docs/key-value
+          - generic [ref=f9e2799]:
+            - generic [ref=f9e2800]: Legal
+            - list [ref=f9e2801]:
+              - listitem [ref=f9e2802]:
+                - link "Privacy Policy" [ref=f9e2803] [cursor=pointer]:
+                  - /url: /privacy
+              - listitem [ref=f9e2804]:
+                - link "Security" [ref=f9e2805] [cursor=pointer]:
+                  - /url: /security
+              - listitem [ref=f9e2806]:
+                - link "Shared Responsibility Model" [ref=f9e2807] [cursor=pointer]:
+                  - /url: /docs/shared-responsibility-model
+              - listitem [ref=f9e2808]:
+                - link "Terms of Use" [ref=f9e2809] [cursor=pointer]:
+                  - /url: /terms
+              - listitem [ref=f9e2810]:
+                - link "DMCA Policy" [ref=f9e2811] [cursor=pointer]:
+                  - /url: /dmca-policy
+              - listitem [ref=f9e2812]:
+                - link "DPA" [ref=f9e2813] [cursor=pointer]:
+                  - /url: /dpa
+              - listitem [ref=f9e2814]:
+                - link "Acceptable Use" [ref=f9e2815] [cursor=pointer]:
+                  - /url: /acceptable-use
+          - generic [ref=f9e2818]:
+            - generic [ref=f9e2819]: Resources
+            - list [ref=f9e2820]:
+              - listitem [ref=f9e2821]:
+                - link "Pricing" [ref=f9e2822] [cursor=pointer]:
+                  - /url: /pricing
+              - listitem [ref=f9e2823]:
+                - link "Docs" [ref=f9e2824] [cursor=pointer]:
+                  - /url: /docs
+              - listitem [ref=f9e2825]:
+                - link "Changelog" [ref=f9e2826] [cursor=pointer]:
+                  - /url: /changelog
+              - listitem [ref=f9e2827]:
+                - link "Templates" [ref=f9e2828] [cursor=pointer]:
+                  - /url: /templates
+              - listitem [ref=f9e2829]:
+                - link "Blog" [ref=f9e2830] [cursor=pointer]:
+                  - /url: /blog
+              - listitem [ref=f9e2831]:
+                - link "Articles" [ref=f9e2832] [cursor=pointer]:
+                  - /url: /articles
+              - listitem [ref=f9e2833]:
+                - link "Render for Startups" [ref=f9e2834] [cursor=pointer]:
+                  - /url: /startups
+          - generic [ref=f9e2837]:
+            - generic [ref=f9e2838]: Company
+            - list [ref=f9e2839]:
+              - listitem [ref=f9e2840]:
+                - link "About" [ref=f9e2841] [cursor=pointer]:
+                  - /url: /about
+              - listitem [ref=f9e2842]:
+                - link "Careers" [ref=f9e2843] [cursor=pointer]:
+                  - /url: /careers
+              - listitem [ref=f9e2844]:
+                - link "Newsroom" [ref=f9e2845] [cursor=pointer]:
+                  - /url: /newsroom
+              - listitem [ref=f9e2846]:
+                - link "Brand Kit" [ref=f9e2847] [cursor=pointer]:
+                  - /url: https://cdn.sanity.io/files/hvk0tap5/production/40134cba8baae95e988e65d2a0675c2521e9c731.zip
+              - listitem [ref=f9e2848]:
+                - link "Contact" [ref=f9e2849] [cursor=pointer]:
+                  - /url: /contact
+          - generic [ref=f9e2851]:
+            - generic [ref=f9e2852]:
+              - generic [ref=f9e2853]: Comparisons
+              - list [ref=f9e2854]:
+                - listitem [ref=f9e2855]:
+                  - link "Vercel" [ref=f9e2856] [cursor=pointer]:
+                    - /url: /docs/render-vs-vercel-comparison
+                - listitem [ref=f9e2857]:
+                  - link "Heroku" [ref=f9e2858] [cursor=pointer]:
+                    - /url: /docs/render-vs-heroku-comparison
+                - listitem [ref=f9e2859]:
+                  - link "Railway" [ref=f9e2860] [cursor=pointer]:
+                    - /url: /articles/render-vs-railway
+                - listitem [ref=f9e2861]:
+                  - link "Fly.io" [ref=f9e2862] [cursor=pointer]:
+                    - /url: /articles/render-vs-fly-io
+            - generic [ref=f9e2863]:
+              - generic [ref=f9e2864]: Socials
+              - list [ref=f9e2865]:
+                - listitem [ref=f9e2866]:
+                  - link "X / Twitter" [ref=f9e2867] [cursor=pointer]:
+                    - /url: https://x.com/render
+                - listitem [ref=f9e2868]:
+                  - link "LinkedIn" [ref=f9e2869] [cursor=pointer]:
+                    - /url: https://www.linkedin.com/company/renderco/
+                - listitem [ref=f9e2870]:
+                  - link "Discord" [ref=f9e2871] [cursor=pointer]:
+                    - /url: https://discord.gg/kt5namUTqb
+                - listitem [ref=f9e2872]:
+                  - link "Reddit" [ref=f9e2873] [cursor=pointer]:
+                    - /url: https://www.reddit.com/r/render/
+                - listitem [ref=f9e2874]:
+                  - link "YouTube" [ref=f9e2875] [cursor=pointer]:
+                    - /url: https://www.youtube.com/@render-inc
+        - generic [ref=f9e2878]:
+          - list [ref=f9e2879]:
+            - listitem [ref=f9e2880]:
+              - link [ref=f9e2881] [cursor=pointer]:
+                - /url: https://x.com/render
+            - listitem [ref=f9e2883]:
+              - link [ref=f9e2884] [cursor=pointer]:
+                - /url: https://www.linkedin.com/company/renderco/
+            - listitem [ref=f9e2886]:
+              - link [ref=f9e2887] [cursor=pointer]:
+                - /url: https://github.com/render-oss
+          - list [ref=f9e2889]:
+            - listitem [ref=f9e2890]: © Render 2026
+    - button "Toggle theme" [ref=f9e2891] [cursor=pointer]
+  - alert [ref=f9e2903]

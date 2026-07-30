@@ -1,4 +1,5 @@
 import { useId, useState } from 'react';
+import ScrollReveal from './ui/ScrollReveal.jsx';
 
 const FAQS = [
   { q: 'What is HusAI?', a: 'HusAI is a live communication coach for virtual assistants. It listens alongside you on client calls, offers ready-to-say suggestions the moment you need them, and turns every call into a personalized review and practice plan.' },
@@ -10,7 +11,7 @@ const FAQS = [
   { q: 'What is AI Review?', a: 'After every call, HusAI analyzes your side of the conversation and scores confidence, clarity, conciseness, and professionalism — with specific strengths, patterns to fix, and roleplay exercises built from your own words.' },
   { q: 'How does personalized Practice work?', a: 'Each weakness HusAI spots becomes a targeted roleplay. An AI client responds dynamically and gets more challenging as you improve, so the real call feels easy.' },
   { q: 'Can HusAI analyze pronunciation and speaking patterns?', a: 'HusAI tracks patterns like filler words, over-apologizing, hedging, and response latency, and turns them into concrete, practical coaching over time.' },
-  { q: 'Does HusAI work with international clients?', a: 'Absolutely — it’s built for Filipino VAs working with US, UK, and AU clients, and handles English/Filipino code-switching in transcription.' },
+  { q: 'Does HusAI work with international clients?', a: 'Absolutely — it’s built for VAs working with US, UK, and AU clients, and handles English/Filipino code-switching in transcription.' },
   { q: 'Does HusAI support Windows and macOS?', a: 'HusAI runs in the browser (Chrome/Edge) and as a desktop companion for Windows and macOS, sharing the same account and data across devices.' },
   { q: 'Is my conversation data secure?', a: 'Your data is tied to your account, transported over HTTPS, and AI keys never touch the client. Transcript retention is configurable, and you can delete your account and all associated data at any time.' },
 ];
@@ -18,7 +19,7 @@ const FAQS = [
 function FAQItem({ item, open, onToggle }) {
   const id = useId();
   return (
-    <div className={`faq-item${open ? ' open' : ''}`}>
+    <ScrollReveal as="div" className={`faq-item${open ? ' open' : ''}`} distance={40} amount={0.4}>
       <button
         className="faq-q"
         aria-expanded={open}
@@ -34,7 +35,7 @@ function FAQItem({ item, open, onToggle }) {
       <div className="faq-a" id={`${id}-panel`} role="region" aria-labelledby={`${id}-btn`} hidden={!open}>
         <p>{item.a}</p>
       </div>
-    </div>
+    </ScrollReveal>
   );
 }
 

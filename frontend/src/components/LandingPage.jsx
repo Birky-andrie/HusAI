@@ -4,6 +4,7 @@ import Logo from './Logo.jsx';
 import AudioWaveform from './ui/AudioWaveform.jsx';
 import HeroBeams from './ui/HeroBeams.jsx';
 import ListeningPill from './ui/ListeningPill.jsx';
+import ScrollReveal from './ui/ScrollReveal.jsx';
 
 // three.js is ~400KB of the bundle and exists purely for a decorative backdrop,
 // so it is split into its own chunk and fetched after first paint. Until it
@@ -29,11 +30,11 @@ const GCheck = () => (<svg {...g} width="18" height="18"><path d="M20 6 9 17l-5-
 
 function SectionHead({ eyebrow, title, sub, center = true }) {
   return (
-    <div className={`lp-head${center ? ' center' : ''}`}>
+    <ScrollReveal as="div" className={`lp-head${center ? ' center' : ''}`}>
       {eyebrow && <span className="lp-eyebrow">{eyebrow}</span>}
       <h2>{title}</h2>
       {sub && <p className="lp-sub">{sub}</p>}
-    </div>
+    </ScrollReveal>
   );
 }
 
@@ -154,25 +155,6 @@ export default function LandingPage({ onStart, startDisabled }) {
     };
   }, []);
 
-  // Scroll-reveal FALLBACK. Chromium drives the real thing from CSS scroll
-  // timelines (see landing.css → "Scroll-linked motion"), which is bidirectional
-  // and costs no main-thread work; this one-shot observer exists only for
-  // browsers without view() support, so it bails out where CSS has it covered.
-  // Bailing also matters for correctness: .lp-reveal pins opacity to 0 until it
-  // fires, which would fight the CSS animation for control of the same property.
-  useEffect(() => {
-    if (window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) return undefined;
-    if (CSS.supports?.('animation-timeline: view()')) return undefined;
-    const els = Array.from(document.querySelectorAll('.lp-section, .lp-final'));
-    els.forEach((el) => el.classList.add('lp-reveal'));
-    const io = new IntersectionObserver(
-      (entries) => entries.forEach((e) => e.isIntersecting && (e.target.classList.add('in'), io.unobserve(e.target))),
-      { threshold: 0.1, rootMargin: '0px 0px -8% 0px' }
-    );
-    els.forEach((el) => io.observe(el));
-    return () => io.disconnect();
-  }, []);
-
   return (
     // lp-dark: the landing runs on its own always-dark purple canvas in both
     // themes (the same call already made for .lp-measure). The auth pages share
@@ -180,14 +162,24 @@ export default function LandingPage({ onStart, startDisabled }) {
     // keep following the user's theme.
     <div className="lp lp-dark" ref={pageRef}>
       {/* Fixed, full-viewport: the beam field sits behind every section and
-          stays put as the page scrolls over it, rather than ending with the hero. */}
+          stays put as the page scrolls over it, rather than ending with the hero.
+          HeroBeams renders unconditionally and stays mounted for the page's whole
+          lifetime — it used to also do double duty as the Suspense `fallback` for
+          BeamsWebGL, which meant React tore down and remounted a *second* HeroBeams
+          instance the moment the lazy chunk resolved. Its animation timing is
+          deterministic per-instance (see HeroBeams.jsx) but not continuous across
+          instances, so that remount showed up as a visible jump in the beam
+          pattern — worse on returning to the landing page, where the WebGL probe
+          and lazy import both re-run from scratch. BeamsWebGL now only ever mounts
+          ADDITIVELY on top (fallback={null}, nothing to tear down), fading in via
+          .lp-beams-gl's own animation once it's ready; HeroBeams is never touched
+          again after its one mount. */}
       <div className="lp-backdrop" aria-hidden="true">
-        {webglBeams ? (
-          <Suspense fallback={<HeroBeams />}>
+        <HeroBeams />
+        {webglBeams && (
+          <Suspense fallback={null}>
             <BeamsWebGL />
           </Suspense>
-        ) : (
-          <HeroBeams />
         )}
       </div>
       <LandingNav onGetStarted={start} startDisabled={startDisabled} />
@@ -196,24 +188,28 @@ export default function LandingPage({ onStart, startDisabled }) {
       <section className="lp-hero" id="lp-top">
         <div className="lp-hero-glow" aria-hidden="true" />
         <div className="lp-hero-inner">
-          <span className="lp-badge lp-hero-badge"><GSpark /> Live Communication Coach 2.0</span>
-          <h1 className="lp-hero-title">
+          <ScrollReveal as="span" className="lp-badge lp-hero-badge" delay={0.04}>
+            <GSpark /> Live Communication Coach 2.0
+          </ScrollReveal>
+          <ScrollReveal as="h1" className="lp-hero-title" delay={0.12}>
             Speak with <em>confidence.</em><br />Respond with <em>intelligence.</em>
-          </h1>
-          <p className="lp-hero-sub">
+          </ScrollReveal>
+          <ScrollReveal as="p" className="lp-hero-sub" delay={0.2}>
             "Husay" is Filipino for skill/finesse — HusAI sharpens it in real time helps virtual workers master sales calls,
             interviews, and client meetings — unobtrusive, intelligent, and always in your corner.
-          </p>
-          <div className="lp-hero-cta">
+          </ScrollReveal>
+          <ScrollReveal as="div" className="lp-hero-cta" delay={0.28}>
             <button className="primary" onClick={start} disabled={startDisabled}>Get Started Free</button>
             <button className="lp-ghost" onClick={() => scrollTo('how')}><GPlay /> Watch Demo</button>
-          </div>
-          <ListeningPill>
-            <span className="lp-hero-mic"><GMic /></span>
-            <AudioWaveform bars={9} className="lg" />
-            <span className="lp-hero-listening">Listening…</span>
-          </ListeningPill>
-          <ul className="lp-pillars">
+          </ScrollReveal>
+          <ScrollReveal as="div" delay={0.36}>
+            <ListeningPill>
+              <span className="lp-hero-mic"><GMic /></span>
+              <AudioWaveform bars={9} className="lg" />
+              <span className="lp-hero-listening">Listening…</span>
+            </ListeningPill>
+          </ScrollReveal>
+          <ScrollReveal as="ul" className="lp-pillars" delay={0.44}>
             {PILLARS.map((p) => (
               <li className="lp-pillar" key={p.title}>
                 <span className="lp-pillar-icon">{p.icon}</span>
@@ -223,7 +219,7 @@ export default function LandingPage({ onStart, startDisabled }) {
                 </div>
               </li>
             ))}
-          </ul>
+          </ScrollReveal>
         </div>
       </section>
 
@@ -231,12 +227,12 @@ export default function LandingPage({ onStart, startDisabled }) {
       <section className="lp-section">
         <SectionHead eyebrow="The Problem" title="Every silence costs you credibility." sub="On a live client call, hesitation is loud. These are the moments that quietly hold VAs back." />
         <div className="lp-grid-3">
-          {PROBLEMS.map((p) => (
-            <article className="lp-card" key={p.title}>
+          {PROBLEMS.map((p, i) => (
+            <ScrollReveal as="article" className="lp-card" key={p.title} delay={i * 0.08}>
               <span className="lp-icon">{p.icon}</span>
               <h3>{p.title}</h3>
               <p>{p.body}</p>
-            </article>
+            </ScrollReveal>
           ))}
         </div>
       </section>
@@ -244,7 +240,7 @@ export default function LandingPage({ onStart, startDisabled }) {
       {/* Solution */}
       <section className="lp-section lp-alt">
         <div className="lp-split">
-          <div className="lp-split-text">
+          <ScrollReveal as="div" className="lp-split-text">
             <SectionHead eyebrow="The Solution" title="Meet HusAI — your invisible strategist." center={false} />
             <p className="lp-body">
               HusAI listens alongside you, understands the conversation, and steps in only when it helps. It coaches you
@@ -255,14 +251,14 @@ export default function LandingPage({ onStart, startDisabled }) {
               <li><GCheck /> Coach — the Lifeline, exactly when you need it</li>
               <li><GCheck /> Train — a personalized review after every call</li>
             </ul>
-          </div>
+          </ScrollReveal>
           <div className="lp-split-visual">
-            <div className="lp-mock">
+            <ScrollReveal as="div" className="lp-mock" delay={0.12}>
               <div className="lp-mock-head"><Logo size={22} /><span className="lp-mock-live">● LIVE</span></div>
               <div className="lp-mock-line client">Client: “…so how confident are you in hitting the revised Q3 numbers?”</div>
               <div className="lp-mock-insight"><GSpark /> HusAI Insight — detected hesitation. Suggested pivot below.</div>
               <div className="lp-mock-reply">“Let's break down the pipeline. What specific bottlenecks are we seeing?”</div>
-            </div>
+            </ScrollReveal>
           </div>
         </div>
       </section>
@@ -271,13 +267,13 @@ export default function LandingPage({ onStart, startDisabled }) {
       <section className="lp-section" id="how">
         <SectionHead eyebrow="How it works" title="Four steps to absolute clarity." sub="From setup to mastery in one seamless flow." />
         <div className="lp-grid-4">
-          {STEPS.map((s) => (
-            <article className="lp-card lp-step" key={s.n}>
+          {STEPS.map((s, i) => (
+            <ScrollReveal as="article" className="lp-card lp-step" key={s.n} delay={i * 0.08}>
               <span className="lp-step-n">{s.n}</span>
               <span className="lp-icon">{s.icon}</span>
               <h3>{s.title}</h3>
               <p>{s.body}</p>
-            </article>
+            </ScrollReveal>
           ))}
         </div>
       </section>
@@ -286,17 +282,17 @@ export default function LandingPage({ onStart, startDisabled }) {
       <section className="lp-section lp-alt" id="features">
         <SectionHead eyebrow="Core Features" title="Cognitive edge, on every call." sub="Everything you need to master any professional interaction." />
         <div className="lp-grid-2">
-          {FEATURES.map((f) => (
-            <article className="lp-card lp-feature" key={f.title}>
+          {FEATURES.map((f, i) => (
+            <ScrollReveal as="article" className="lp-card lp-feature" key={f.title} delay={i * 0.08}>
               <span className="lp-icon">{f.icon}</span>
               <div>
                 <h3>{f.title}</h3>
                 <p>{f.body}</p>
               </div>
-            </article>
+            </ScrollReveal>
           ))}
         </div>
-        <div className="lp-measure">
+        <ScrollReveal as="div" className="lp-measure">
           <div>
             <span className="lp-eyebrow light">Post-Call Analytics</span>
             <h3>Measure to master.</h3>
@@ -307,30 +303,30 @@ export default function LandingPage({ onStart, startDisabled }) {
               <span key={i} style={{ height: `${h}%` }} className={h >= 85 ? 'peak' : ''} />
             ))}
           </div>
-        </div>
+        </ScrollReveal>
       </section>
 
       {/* Practice */}
       <section className="lp-section">
         <div className="lp-split reverse">
-          <div className="lp-split-text">
+          <ScrollReveal as="div" className="lp-split-text">
             <SectionHead eyebrow="Personalized Practice" title="Train like it's the real thing." center={false} />
             <p className="lp-body">
               Every weakness HusAI spots becomes a targeted roleplay. An AI client pushes back, asks the hard questions,
               and gets tougher as you improve — so the real call feels easy.
             </p>
-            <div className="lp-chips">
+            <ScrollReveal as="div" className="lp-chips" delay={0.1}>
               {['Discovery calls', 'Objection handling', 'Explaining delays', 'Difficult clients', 'Sales pitches'].map((c) => (
                 <span className="lp-chip" key={c}>{c}</span>
               ))}
-            </div>
-          </div>
+            </ScrollReveal>
+          </ScrollReveal>
           <div className="lp-split-visual">
-            <div className="lp-mock">
+            <ScrollReveal as="div" className="lp-mock" delay={0.12}>
               <div className="lp-mock-line client">Client: “Honestly, the timeline seems aggressive for our bandwidth.”</div>
               <div className="lp-mock-reply you">You: “I hear you. What specific phase worries you most on bandwidth?”</div>
               <div className="lp-mock-feedback"><GCheck /> Strong active listening · reflected the concern back</div>
-            </div>
+            </ScrollReveal>
           </div>
         </div>
       </section>
@@ -339,11 +335,11 @@ export default function LandingPage({ onStart, startDisabled }) {
       <section className="lp-section lp-alt">
         <SectionHead eyebrow="Outcomes" title="Communicate like a top-tier VA." sub="Awareness, in the moment. Growth, over time." />
         <div className="lp-grid-4">
-          {OUTCOMES.map((o) => (
-            <div className="lp-outcome" key={o.label}>
+          {OUTCOMES.map((o, i) => (
+            <ScrollReveal as="div" className="lp-outcome" key={o.label} delay={i * 0.08}>
               <span className="lp-outcome-stat">{o.stat}</span>
               <span className="lp-outcome-label">{o.label}</span>
-            </div>
+            </ScrollReveal>
           ))}
         </div>
       </section>
@@ -352,14 +348,14 @@ export default function LandingPage({ onStart, startDisabled }) {
       <section className="lp-section">
         <SectionHead eyebrow="Loved by VAs" title="Confidence, earned call after call." />
         <div className="lp-grid-3">
-          {TESTIMONIALS.map((t) => (
-            <figure className="lp-card lp-quote" key={t.name}>
+          {TESTIMONIALS.map((t, i) => (
+            <ScrollReveal as="figure" className="lp-card lp-quote" key={t.name} delay={i * 0.08}>
               <blockquote>“{t.quote}”</blockquote>
               <figcaption>
                 <strong>{t.name}</strong>
                 <span>{t.role}</span>
               </figcaption>
-            </figure>
+            </ScrollReveal>
           ))}
         </div>
       </section>
@@ -368,8 +364,8 @@ export default function LandingPage({ onStart, startDisabled }) {
       <section className="lp-section lp-alt" id="pricing">
         <SectionHead eyebrow="Pricing" title="Invest in your voice." sub="Simple, transparent pricing for professionals." />
         <div className="lp-plans">
-          {PLANS.map((p) => (
-            <div className={`lp-plan${p.popular ? ' popular' : ''}`} key={p.name}>
+          {PLANS.map((p, i) => (
+            <ScrollReveal as="div" className={`lp-plan${p.popular ? ' popular' : ''}`} key={p.name} delay={i * 0.08}>
               {p.popular && <span className="lp-plan-tag">Most Popular</span>}
               <h3>{p.name}</h3>
               <p className="lp-plan-tagline">{p.tagline}</p>
@@ -381,7 +377,7 @@ export default function LandingPage({ onStart, startDisabled }) {
                 {p.features.map((f) => (<li key={f}><GCheck /> {f}</li>))}
               </ul>
               <button className={p.popular ? 'primary' : 'secondary'} onClick={start} style={{ width: '100%' }}>{p.cta}</button>
-            </div>
+            </ScrollReveal>
           ))}
         </div>
       </section>
@@ -396,11 +392,11 @@ export default function LandingPage({ onStart, startDisabled }) {
 
       {/* Final CTA */}
       <section className="lp-final">
-        <div className="lp-final-inner">
+        <ScrollReveal as="div" className="lp-final-inner">
           <h2>Ready to speak with confidence?</h2>
           <p>Join the VAs turning every client call into their sharpest yet.</p>
           <button className="primary" onClick={start} disabled={startDisabled}>Get Started Free</button>
-        </div>
+        </ScrollReveal>
       </section>
 
       <LandingFooter onGetStarted={start} />
