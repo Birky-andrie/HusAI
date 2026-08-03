@@ -48,10 +48,15 @@
 .minibar {
   width: 100%;
   max-width: 42px;
-  border-radius: 8px 8px 4px 4px;
+  height: 100%;
+  /* Data-driven size is a transform now, not a layout-triggering height change
+     (see MiniBars.jsx) — bottom-anchored so scaling down still reads as the
+     bar shrinking toward the baseline, matching the flex-end column layout. */
+  transform-origin: bottom;
+  border-radius: var(--radius-xs) var(--radius-xs) 0 0;
   background: linear-gradient(180deg, var(--accent-bright), var(--accent-strong));
   opacity: 0.55;
-  transition: height 0.5s ease;
+  transition: transform 0.5s var(--ease-out);
 }
 .minibar.peak {
   opacity: 1;
@@ -150,16 +155,18 @@
   background: var(--accent);
   transition: transform 0.08s linear;
 }
-/* Idle/decorative waveform */
+/* Idle/decorative waveform. Renamed from aw-bounce: the motion itself was
+   already a smooth ease-in-out breathing scale with no overshoot, never an
+   actual spring/bounce curve — only the name matched the "bounce" antipattern. */
 .aw i {
   width: 3px;
   height: 100%;
   transform: scaleY(0.3);
   border-radius: 2px;
   background: var(--accent);
-  animation: aw-bounce 1.1s ease-in-out infinite;
+  animation: aw-pulse 1.1s ease-in-out infinite;
 }
-@keyframes aw-bounce {
+@keyframes aw-pulse {
   0%, 100% { transform: scaleY(0.26); opacity: 0.6; }
   50% { transform: scaleY(0.9); opacity: 1; }
 }

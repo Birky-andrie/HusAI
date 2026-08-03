@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-07-27T09:15:00Z",
+  "generatedAt": "2026-08-03T06:44:53.228Z",
   "title": "Design System: HusAI",
   "extensions": {
     "colorMeta": {
@@ -8,62 +8,339 @@
         "role": "primary",
         "displayName": "Violet Primary",
         "canonical": "#8b5cf6",
-        "tonalRamp": ["#190448", "#2c0780", "#3f0ab7", "#520dee", "#7841f5", "#9f78f8", "#c6b0fb", "#eee7fe"]
+        "tonalRamp": [
+          "#190448",
+          "#2a0779",
+          "#3a09a9",
+          "#4b0cd9",
+          "#6426f3",
+          "#8756f6",
+          "#ba9efa",
+          "#eee7fe"
+        ]
+      },
+      "indigo-strong": {
+        "role": "primary",
+        "displayName": "Indigo Strong",
+        "canonical": "#6366f1",
+        "tonalRamp": [
+          "#060846",
+          "#0b0d75",
+          "#0f12a4",
+          "#1317d3",
+          "#2c30ec",
+          "#5b5ef0",
+          "#a1a3f7",
+          "#e8e8fd"
+        ]
+      },
+      "violet-bright": {
+        "role": "primary",
+        "displayName": "Violet Bright",
+        "canonical": "#a78bfa",
+        "tonalRamp": [
+          "#150349",
+          "#23057a",
+          "#3107ab",
+          "#3f09dc",
+          "#5823f6",
+          "#7d54f8",
+          "#b59dfb",
+          "#ece7fe"
+        ]
       },
       "live-fuchsia": {
         "role": "secondary",
         "displayName": "Live Fuchsia",
         "canonical": "#e879f9",
-        "tonalRamp": ["#400349", "#710681", "#a108b9", "#d20bf1", "#de3ff6", "#e877f9", "#f1affb", "#fbe7fe"]
+        "tonalRamp": [
+          "#400349",
+          "#6b057a",
+          "#9508ab",
+          "#c00adc",
+          "#d923f5",
+          "#e254f7",
+          "#ee9dfb",
+          "#fbe7fe"
+        ]
+      },
+      "live-fuchsia-bright": {
+        "role": "secondary",
+        "displayName": "Live Fuchsia Bright",
+        "canonical": "#f0abfc",
+        "tonalRamp": [
+          "#3f034a",
+          "#6a047b",
+          "#9406ac",
+          "#be08de",
+          "#d721f7",
+          "#e053f9",
+          "#ed9dfb",
+          "#fbe6fe"
+        ]
       },
       "danger-rose": {
-        "role": "semantic-danger",
+        "role": "semantic",
         "displayName": "Danger Rose",
         "canonical": "#f43f5e",
-        "tonalRamp": ["#480410", "#7f071c", "#b70a28", "#ee0e34", "#f44160", "#f7798e", "#fab0bd", "#fee7eb"]
+        "tonalRamp": [
+          "#480410",
+          "#79071a",
+          "#a90a25",
+          "#d90c2f",
+          "#f32649",
+          "#f55671",
+          "#f99fae",
+          "#fee7eb"
+        ]
       },
       "warning-amber": {
-        "role": "semantic-warning",
+        "role": "semantic",
         "displayName": "Warning Amber",
         "canonical": "#f5b544",
-        "tonalRamp": ["#493004", "#805407", "#b7790a", "#ef9d0d", "#f5b441", "#f8ca78", "#fbe0af", "#fef5e7"]
+        "tonalRamp": [
+          "#493004",
+          "#795006",
+          "#a96f09",
+          "#da8f0c",
+          "#f3a925",
+          "#f6bc56",
+          "#fad99e",
+          "#fef5e7"
+        ]
       },
       "warning-text": {
-        "role": "semantic-warning-text",
-        "displayName": "Warning Amber (text variant)",
+        "role": "semantic",
+        "displayName": "Warning Text",
         "canonical": "#f0d48a",
-        "note": "Dark-mode-only lighter variant, formalized from a value already in production. Light mode reuses warning-amber directly (#b45309 already clears 5.02:1 on white)."
+        "tonalRamp": [
+          "#443409",
+          "#71560e",
+          "#9e7814",
+          "#cb9b1a",
+          "#e5b434",
+          "#ebc561",
+          "#f3dea5",
+          "#fcf7e8"
+        ]
       },
       "canvas": {
         "role": "neutral",
         "displayName": "Canvas",
         "canonical": "#0a0b10",
-        "tonalRamp": ["#1d202f", "#343953", "#4a5277", "#616a9b", "#848bb2", "#a8adc8", "#cbcfdf", "#eff0f5"]
+        "tonalRamp": [
+          "#1d202f",
+          "#31364e",
+          "#454c6e",
+          "#58618d",
+          "#727ba7",
+          "#9198ba",
+          "#c0c4d8",
+          "#eff0f5"
+        ]
+      },
+      "surface": {
+        "role": "neutral",
+        "displayName": "Surface",
+        "canonical": "#0e1017",
+        "tonalRamp": [
+          "#1d2130",
+          "#30374f",
+          "#444d6f",
+          "#57638f",
+          "#707da8",
+          "#909abb",
+          "#c0c5d8",
+          "#eff1f5"
+        ]
+      },
+      "card": {
+        "role": "neutral",
+        "displayName": "Card",
+        "canonical": "#14161f",
+        "tonalRamp": [
+          "#1e212f",
+          "#32374e",
+          "#464d6c",
+          "#5a638c",
+          "#747da5",
+          "#939ab9",
+          "#c1c5d7",
+          "#f0f1f5"
+        ]
+      },
+      "card-elevated": {
+        "role": "neutral",
+        "displayName": "Card Elevated",
+        "canonical": "#1c1f2b",
+        "tonalRamp": [
+          "#1e212e",
+          "#32384d",
+          "#464e6c",
+          "#5b648b",
+          "#747ea4",
+          "#939ab9",
+          "#c1c6d7",
+          "#f0f1f5"
+        ]
+      },
+      "inset": {
+        "role": "neutral",
+        "displayName": "Inset",
+        "canonical": "#0c0e15",
+        "tonalRamp": [
+          "#1c2031",
+          "#2e3651",
+          "#414c72",
+          "#536192",
+          "#6d7bac",
+          "#8d98be",
+          "#bec4da",
+          "#eff0f6"
+        ]
+      },
+      "text-primary": {
+        "role": "neutral",
+        "displayName": "Text Primary",
+        "canonical": "#eef0f6",
+        "tonalRamp": [
+          "#1a2032",
+          "#2c3653",
+          "#3e4c75",
+          "#4f6196",
+          "#697bb0",
+          "#8a98c1",
+          "#bcc4dc",
+          "#eef0f6"
+        ]
+      },
+      "text-body": {
+        "role": "neutral",
+        "displayName": "Text Body",
+        "canonical": "#c3c8d6",
+        "tonalRamp": [
+          "#1f232d",
+          "#343a4c",
+          "#48516a",
+          "#5d6988",
+          "#7782a2",
+          "#959eb7",
+          "#c2c7d6",
+          "#f0f1f5"
+        ]
+      },
+      "text-secondary": {
+        "role": "neutral",
+        "displayName": "Text Secondary",
+        "canonical": "#8b93a7",
+        "tonalRamp": [
+          "#21242c",
+          "#373c49",
+          "#4d5466",
+          "#636c83",
+          "#7d869c",
+          "#9aa1b2",
+          "#c5c9d3",
+          "#f1f2f4"
+        ]
+      },
+      "text-muted": {
+        "role": "neutral",
+        "displayName": "Text Muted",
+        "canonical": "#788198",
+        "tonalRamp": [
+          "#21242b",
+          "#373c48",
+          "#4d5465",
+          "#636c82",
+          "#7d869c",
+          "#9aa1b2",
+          "#c5c9d3",
+          "#f1f2f4"
+        ]
       }
     },
     "typographyMeta": {
-      "display": { "displayName": "Display", "purpose": "Page-level greetings (Dashboard, Plans header)." },
-      "title": { "displayName": "Title", "purpose": "Large numeric values — plan prices, stat-tile figures. Tabular-nums." },
-      "headline": { "displayName": "Headline", "purpose": "Card and section headers." },
-      "body": { "displayName": "Body", "purpose": "Default copy, descriptions, form labels." },
-      "label": { "displayName": "Label", "purpose": "Uppercase tracked labels — stat labels, sidebar section headers." },
-      "mono": { "displayName": "Mono", "purpose": "Tabular data that must not shift width: call timers, scores." }
+      "display": {
+        "displayName": "Display",
+        "purpose": "Page-level greetings — Dashboard \"Good morning,\" Plans header."
+      },
+      "title": {
+        "displayName": "Title",
+        "purpose": "Large numeric values — plan prices, stat-tile figures. Tabular-nums."
+      },
+      "body": {
+        "displayName": "Body",
+        "purpose": "Default copy, descriptions, form labels."
+      },
+      "label": {
+        "displayName": "Label",
+        "purpose": "Uppercase tracked labels — stat-tile labels, sidebar section headers."
+      },
+      "mono": {
+        "displayName": "Mono",
+        "purpose": "Tabular data that must not shift width — call timers, score numbers."
+      }
     },
     "shadows": [
-      { "name": "ambient-interactive", "value": "0 1px 2px rgba(0,0,0,0.28), 0 18px 44px -12px rgba(0,0,0,0.5)", "purpose": "The system's one shadow. Hover/focus/floating states only — never a resting card." },
-      { "name": "focus-ring", "value": "0 0 0 3px rgba(139,92,246,0.14)", "purpose": "Violet halo on focused inputs and interactive elements." },
-      { "name": "live-pulse", "value": "animated box-shadow ring, var(--live-soft) to transparent (see coach-pulse keyframe)", "purpose": "The signature 'this is live' animation on every live/active indicator." }
+      {
+        "name": "ambient-interactive",
+        "value": "0 1px 2px rgba(0,0,0,0.28), 0 18px 44px -12px rgba(0,0,0,0.5)",
+        "purpose": "Hover/focus/floating-surface elevation. PINNED FOR REMOVAL per the Zero-Shadow Rule target — currently still in use, described as the honest before-state, not a feature to preserve."
+      },
+      {
+        "name": "focus-ring",
+        "value": "0 0 0 3px var(--accent-soft)",
+        "purpose": "Keyboard focus visibility. Kept even under the Zero-Shadow target — accessibility affordance, not a depth shadow."
+      },
+      {
+        "name": "live-pulse",
+        "value": "animated box-shadow ring, var(--live-soft) to transparent (@keyframes coach-pulse)",
+        "purpose": "The app's signature live-indicator language. Kept under Zero-Shadow — motion/signal, not static depth."
+      }
     ],
     "motion": [
-      { "name": "ease-standard", "value": "cubic-bezier(0.4, 0, 0.2, 1)", "purpose": "Default easing for state transitions." },
-      { "name": "ease-out-entrance", "value": "cubic-bezier(0.16, 1, 0.3, 1)", "purpose": "Page/route transitions and entrances." },
-      { "name": "duration-standard", "value": "280ms", "purpose": "Default transition duration." }
+      {
+        "name": "ease",
+        "value": "cubic-bezier(0.4, 0, 0.2, 1)",
+        "purpose": "Default state-transition easing."
+      },
+      {
+        "name": "ease-out",
+        "value": "cubic-bezier(0.16, 1, 0.3, 1)",
+        "purpose": "Entrance/settle easing — springs, materialize-in surfaces."
+      },
+      {
+        "name": "duration-default",
+        "value": "280ms",
+        "purpose": "Default transition duration."
+      }
     ],
     "breakpoints": [
-      { "name": "laptop", "value": "1100px" },
-      { "name": "tablet-drawer", "value": "900px" },
-      { "name": "phone-lg", "value": "640px" },
-      { "name": "phone", "value": "480px" }
+      {
+        "name": "xs",
+        "value": "480px"
+      },
+      {
+        "name": "sm",
+        "value": "640px"
+      },
+      {
+        "name": "md",
+        "value": "900px"
+      },
+      {
+        "name": "lg",
+        "value": "1000px"
+      },
+      {
+        "name": "xl",
+        "value": "1100px"
+      },
+      {
+        "name": "shell",
+        "value": "1240px"
+      }
     ]
   },
   "components": [
@@ -71,82 +348,106 @@
       "name": "Primary Button",
       "kind": "button",
       "refersTo": "button-primary",
-      "description": "Main call-to-action — violet→indigo gradient fill, used once per view for the single most important action.",
-      "html": "<button class=\"ds-btn-primary\">Start a Call</button>",
-      "css": ".ds-btn-primary { background: linear-gradient(135deg, #8b5cf6, #6366f1); color: #fff; border: none; border-radius: 12px; padding: 11px 18px; font-weight: 600; font-size: 0.9rem; box-shadow: 0 6px 20px -6px #8b5cf6; transition: transform 0.2s cubic-bezier(0.4,0,0.2,1); cursor: pointer; } .ds-btn-primary:hover { transform: translateY(-1px); } .ds-btn-primary:focus-visible { outline: none; box-shadow: 0 6px 20px -6px #8b5cf6, 0 0 0 3px rgba(139,92,246,0.14); }"
+      "description": "The brand acting — main call-to-action across the app.",
+      "html": "<button class=\"ds-btn-primary\">Start a call</button>",
+      "css": ".ds-btn-primary { background: var(--grad); color: #fff; border: none; border-radius: var(--radius-sm); padding: 11px 18px; font-weight: 600; box-shadow: 0 6px 20px -6px var(--accent); transition: transform 0.28s var(--ease); cursor: pointer; } .ds-btn-primary:hover { transform: translateY(-1px); } .ds-btn-primary:focus-visible { box-shadow: 0 0 0 3px var(--accent-soft); outline: none; }"
     },
     {
       "name": "Secondary Button",
       "kind": "button",
       "refersTo": "button-secondary",
-      "description": "Neutral bordered button — sits visually behind Primary, no gradient or shadow.",
+      "description": "Sits visually behind Primary — card-elevated fill, full-opacity border, no shadow.",
       "html": "<button class=\"ds-btn-secondary\">Cancel</button>",
-      "css": ".ds-btn-secondary { background: #1c1f2b; color: #eef0f6; border: 1px solid rgba(255,255,255,0.12); border-radius: 12px; padding: 11px 18px; font-weight: 600; font-size: 0.9rem; cursor: pointer; transition: border-color 0.2s ease; } .ds-btn-secondary:hover { border-color: rgba(255,255,255,0.2); } .ds-btn-secondary:focus-visible { outline: none; box-shadow: 0 0 0 3px rgba(139,92,246,0.14); }"
+      "css": ".ds-btn-secondary { background: var(--card-2); color: var(--text); border: 1px solid var(--border-2); border-radius: var(--radius-sm); padding: 11px 18px; font-weight: 600; cursor: pointer; transition: border-color 0.28s var(--ease); } .ds-btn-secondary:hover { border-color: var(--accent-border); } .ds-btn-secondary:focus-visible { box-shadow: 0 0 0 3px var(--accent-soft); outline: none; }"
     },
     {
-      "name": "Text Input",
-      "kind": "input",
-      "refersTo": "input",
-      "description": "Recessed (inset) field — background sits one step below canvas, violet ring on focus.",
-      "html": "<input class=\"ds-input\" type=\"text\" placeholder=\"you@example.com\" />",
-      "css": ".ds-input { font: inherit; background: #0c0e15; border: 1px solid rgba(255,255,255,0.12); border-radius: 12px; color: #eef0f6; padding: 11px 13px; width: 100%; transition: border-color 0.2s ease, box-shadow 0.2s ease; } .ds-input:focus { outline: none; border-color: #8b5cf6; box-shadow: 0 0 0 3px rgba(139,92,246,0.14); } .ds-input::placeholder { color: #5b6377; }"
+      "name": "Danger Button",
+      "kind": "button",
+      "refersTo": "button-danger",
+      "description": "Solid danger fill — reserved for destructive confirmation only.",
+      "html": "<button class=\"ds-btn-danger\">Delete account</button>",
+      "css": ".ds-btn-danger { background: var(--danger); color: #fff; border: none; border-radius: var(--radius-sm); padding: 11px 18px; font-weight: 600; cursor: pointer; } .ds-btn-danger:hover { filter: brightness(1.08); } .ds-btn-danger:focus-visible { box-shadow: 0 0 0 3px var(--danger-soft); outline: none; }"
     },
     {
       "name": "Dashboard Card",
       "kind": "card",
       "refersTo": "dash-card",
-      "description": "The default content container — flat at rest (border only), lifts with a soft shadow on hover.",
-      "html": "<section class=\"ds-card\"><h3 class=\"ds-card-title\">Recent Calls</h3><p class=\"ds-card-body\">No calls yet — start one above.</p></section>",
-      "css": ".ds-card { background: #14161f; border: 1px solid rgba(255,255,255,0.07); border-radius: 18px; padding: 22px; transition: transform 0.25s cubic-bezier(0.4,0,0.2,1), box-shadow 0.25s cubic-bezier(0.4,0,0.2,1), border-color 0.25s ease; } .ds-card:hover { transform: translateY(-2px); border-color: rgba(139,92,246,0.32); box-shadow: 0 1px 2px rgba(0,0,0,0.28), 0 18px 44px -12px rgba(0,0,0,0.5); } .ds-card-title { font-size: 1.02rem; font-weight: 600; color: #eef0f6; margin-bottom: 12px; } .ds-card-body { font-size: 0.86rem; color: #8b93a7; }"
+      "description": "Default card — flat at rest, border does the resting depth work.",
+      "html": "<div class=\"ds-card\"><h3>Recent calls</h3><p>Your last 5 coached calls appear here.</p></div>",
+      "css": ".ds-card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: var(--card-pad); } .ds-card:hover { background: var(--card-2); border-color: var(--border-2); } .ds-card h3 { margin: 0 0 8px; font-size: 1.02rem; font-weight: 600; color: var(--text); }"
+    },
+    {
+      "name": "Text Input",
+      "kind": "input",
+      "refersTo": "input-default",
+      "description": "Recessed inset background — focus shifts the border to accent plus the violet focus ring.",
+      "html": "<input class=\"ds-input\" type=\"text\" placeholder=\"Search calls…\" />",
+      "css": ".ds-input { background: var(--inset); border: 1px solid var(--border-2); border-radius: var(--radius-sm); padding: 10px 14px; color: var(--text); font-size: 0.9rem; } .ds-input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); outline: none; }"
     },
     {
       "name": "Sidebar Nav Item",
       "kind": "nav",
-      "refersTo": "side-nav-item",
-      "description": "Transparent by default; active state is a violet color-wash pill — no border, no shadow, color only.",
-      "html": "<a class=\"ds-nav-item active\" href=\"#\"><svg width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.8\"><rect x=\"3\" y=\"3\" width=\"7\" height=\"9\" rx=\"1.5\"/><rect x=\"14\" y=\"3\" width=\"7\" height=\"5\" rx=\"1.5\"/></svg><span>Dashboard</span></a>",
-      "css": ".ds-nav-item { display: flex; align-items: center; gap: 12px; padding: 10px 12px; border-radius: 12px; color: #8b93a7; text-decoration: none; font-size: 0.92rem; font-weight: 500; transition: background 0.2s ease, color 0.2s ease; } .ds-nav-item:hover { background: #1c1f2b; color: #eef0f6; } .ds-nav-item.active { background: rgba(139,92,246,0.14); color: #a78bfa; font-weight: 600; }"
+      "refersTo": "nav-item",
+      "description": "Active state is a violet pill wash, color only — no border, no shadow.",
+      "html": "<a class=\"ds-nav-item ds-nav-item--active\" href=\"#\">Dashboard</a>",
+      "css": ".ds-nav-item { display: block; padding: 9px 14px; border-radius: var(--radius-sm); color: var(--text-secondary); text-decoration: none; font-size: 0.9rem; } .ds-nav-item:hover { background: var(--card-2); color: var(--text); } .ds-nav-item--active { background: var(--accent-soft); color: var(--accent-text); font-weight: 600; }"
     },
     {
-      "name": "Smart Replies (Lifeline Card)",
+      "name": "Lifeline / Smart Replies Card",
       "kind": "custom",
       "refersTo": "lifeline-card",
-      "description": "Signature component — up to 3 AI-suggested reply lines during a live call, with a real-time audio-reactive mic visualizer in the header. Persists until manually dismissed.",
-      "html": "<div class=\"ds-lifeline\"><div class=\"ds-lifeline-head\"><span class=\"ds-lifeline-title\">Smart Replies</span><button class=\"ds-lifeline-dismiss\" aria-label=\"Dismiss\">✕</button></div><ul class=\"ds-lifeline-list\"><li class=\"ds-lifeline-item\">Just to confirm, you'd like this done by Friday, correct?</li></ul></div>",
-      "css": ".ds-lifeline { background: #14161f; border: 1px solid rgba(255,255,255,0.07); border-radius: 18px; padding: 16px; width: 320px; } .ds-lifeline-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; } .ds-lifeline-title { font-size: 0.86rem; font-weight: 600; color: #eef0f6; } .ds-lifeline-dismiss { background: none; border: none; color: #5b6377; cursor: pointer; font-size: 0.9rem; } .ds-lifeline-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; } .ds-lifeline-item { font-size: 0.86rem; line-height: 1.5; color: #c3c8d6; padding: 10px 12px; background: #1c1f2b; border-radius: 12px; }"
+      "description": "Signature component — up to three AI-suggested reply lines during a live call, each copyable. Persists until manually dismissed; never auto-hides. Floating variant uses glass material (blur + saturate) because it sits directly over live page content; the docked PiP variant stays opaque.",
+      "html": "<div class=\"ds-lifeline\"><div class=\"ds-lifeline-head\"><span class=\"ds-lifeline-dot\"></span>Live suggestions</div><button class=\"ds-lifeline-reply\">\"I hear you — let me check that and get back to you within the hour.\"</button></div>",
+      "css": ".ds-lifeline { background: color-mix(in srgb, var(--card-2) 72%, transparent); backdrop-filter: blur(20px) saturate(180%); border: 1px solid var(--glass-border-top, var(--border-2)); border-radius: var(--radius); padding: 16px; } .ds-lifeline-head { display: flex; align-items: center; gap: 8px; font-size: 0.76rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--live); margin-bottom: 10px; } .ds-lifeline-dot { width: 7px; height: 7px; border-radius: 999px; background: var(--live); animation: coach-pulse 1.6s ease-out infinite; } .ds-lifeline-reply { display: block; width: 100%; text-align: left; background: var(--card); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 10px 12px; color: var(--text-body); font-size: 0.86rem; margin-bottom: 8px; cursor: pointer; } .ds-lifeline-reply:hover { border-color: var(--accent-border); } @keyframes coach-pulse { 0%,100% { box-shadow: 0 0 0 0 var(--live-soft);} 50% { box-shadow: 0 0 0 6px transparent; } }"
     }
   ],
   "narrative": {
     "northStar": "The Quiet Command Center",
-    "overview": "HusAI's current visual system is a dark-first (with a fully-designed light counterpart), violet-anchored interface built for a moment of real pressure: a VA on a live call, needing calm, precise help without visual noise. The system leans toward Raycast's control-panel precision and Linear's restraint, layered with a single warm signal color (violet→indigo) that means \"this is the brand acting on your behalf,\" and a second, deliberately rarer color (fuchsia) that means \"the AI is live right now.\" Everything else — text, borders, surfaces — stays neutral so those two signals stand out when they appear. The color palette is now a closed, enforced list (see rules below): every saturated/semantic token is declared under one of four categories (Brand, AI/Live, Semantic status, Neutral) directly in styles.css, with two documented exceptions (a stray gradient in the logo mark, an intentionally always-dark landing-page section). The Once-Per-Page and Two-Signal rules are enforced on the Dashboard and Sidebar. The system is not yet as visually restrained as its Raycast influence suggests it should be on depth and spacing: cards and interactive elements still use soft ambient box-shadows on hover (a glow-and-lift feel) rather than Raycast's shadow-free, pure surface-ladder depth model, and there is no fixed section-rhythm token yet. This is stated plainly as the honest current baseline, not glossed over — it's the most concrete lever available if a future pass wants to move closer to that reference.",
+    "overview": "HusAI's current visual system is a dark-first (with a fully-designed light counterpart), violet-anchored interface built for a moment of real pressure: a VA on a live call, needing calm, precise help without visual noise. The system leans toward Raycast's control-panel precision and Linear's restraint, layered with a single warm signal color (violet→indigo) that means \"this is the brand acting on your behalf,\" and a second, deliberately rarer color (fuchsia) that means \"the AI is live right now.\" Everything else — text, borders, surfaces — stays neutral so those two signals stand out when they appear.\n\nPinned reference (binding, partially carried out): Raycast's actual UI achieves depth with zero drop shadows — a pure surface-color ladder where each layer reads as \"one step forward\" than the last — plus 1px hairline borders, a 96px section rhythm, and a hard rule that any saturated accent appears at most once per page. HusAI adopts this depth/spacing/restraint philosophy, while keeping violet/indigo (never Raycast's red) as the one accent color, per the Two-Signal Rule.",
     "keyCharacteristics": [
       "Two-signal color language: violet for brand/action, fuchsia strictly for \"AI is active right now\"",
       "Flat-at-rest, lift-on-interaction elevation (borders do the resting work; shadow is reserved for hover/focus feedback)",
       "Generous fluid spacing driven by clamp(), so density adapts smoothly rather than snapping at breakpoints",
-      "A recurring pulsing-dot motif (coach-pulse) is the app's signature \"something live is happening\" language, reused identically across the LIVE nav badge, the sidebar's active-call status, and the floating coach header"
+      "A recurring pulsing-dot motif (coach-pulse) is the signature \"something live is happening\" language, reused identically across the LIVE nav badge, sidebar active-call status, and the floating coach header"
     ],
     "rules": [
-      { "name": "The Closed Palette Rule", "body": "Every saturated/semantic color is declared in styles.css under one of four categories: Brand (violet/indigo), AI/Live (fuchsia), Semantic status (danger/warning only — no success color), Neutral. A new color requires picking a category or adding a documented Known Exception, never silent drift. Pure #fff/#000 are the neutral scale's extremes and aren't tokenized separately.", "section": "colors" },
-      { "name": "The Two-Signal Rule (enforced)", "body": "Violet = the brand acting. Fuchsia = the AI acting live, right now. Fixed violations: the notification dot (was fuchsia, now violet — it isn't AI-live), coach-status-live (was violet, now fuchsia — it is), and the sidebar LIVE badge (was always-on, now wired to real call state).", "section": "colors" },
-      { "name": "The Once-Per-Page Rule (implemented on Dashboard/Sidebar)", "body": "A saturated accent appears at full strength at most once per viewport. The Dashboard hero banner is the sole survivor; the sidebar Start-a-Call button, Pro promo card, header CTA, and Quick Actions tile were demoted to flat accent or neutral. Chart/data-encoding color (trend bars, legend dots) is a separate category, not covered.", "section": "colors" },
-      { "name": "No Success Color", "body": "There is deliberately no dedicated success/positive color. A score improving is shown with neutral text plus a directional glyph, never brand violet (fixed: .delta.good was reusing --accent-bright for this).", "section": "colors" },
-      { "name": "The Zero-Shadow Rule (pinned target, not yet implemented)", "body": "No element carries a box-shadow for depth, at rest or on interaction — surface-color steps and hairline borders do all the depth work. Focus rings and the live-pulse animation are exempt (state signals, not depth). Supersedes the Rest-Is-Flat Rule's hover-shadow allowance.", "section": "elevation" },
-      { "name": "The Rest-Is-Flat Rule (current, partially superseded)", "body": "Surfaces carry a border, never a shadow, at rest — this half already matches the pinned target; the hover-shadow half is retired by the Zero-Shadow Rule.", "section": "elevation" },
-      { "name": "The Section-Rhythm Rule (pinned target, not yet implemented)", "body": "Major page sections are separated by a fixed 96px gap (not fluid) — spacing within a section still scales with --gap. No dedicated section-gap token exists today.", "section": "layout" }
+      {
+        "name": "The Once-Per-Page Rule",
+        "body": "A saturated accent — the violet gradient fill, or a fuchsia live indicator — appears at full strength at most once in a given viewport of a page. Implemented on Dashboard/Sidebar. Chart/data-encoding color is a separate category and not covered.",
+        "section": "colors"
+      },
+      {
+        "name": "The Two-Signal Rule",
+        "body": "Violet = the brand acting. Fuchsia = the AI acting live, right now. A third saturated color is never introduced for pure decoration. Enforced.",
+        "section": "colors"
+      },
+      {
+        "name": "The Section-Rhythm Rule",
+        "body": "Pinned target, not yet implemented. Major sections on a page are separated by a fixed 96px gap, never a fluid one — spacing within a section still scales with --gap.",
+        "section": "typography"
+      },
+      {
+        "name": "The Zero-Shadow Rule",
+        "body": "Pinned target, supersedes Rest-Is-Flat. No element carries a box-shadow for depth, at rest or on interaction — depth comes exclusively from the surface-color ladder and hairline borders. Focus rings and the live-pulse animation are exempt.",
+        "section": "elevation"
+      },
+      {
+        "name": "The Rest-Is-Flat Rule",
+        "body": "Current, partially superseded. Surfaces carry a border, never a shadow, at rest. The remaining gap (interactive hover shadow) is retired by the Zero-Shadow Rule.",
+        "section": "elevation"
+      }
     ],
     "dos": [
       "Do treat violet as the only \"brand action\" color and fuchsia as the only \"AI is live\" color — never swap their roles.",
       "Do keep cards and rows flat (border only) at rest; add the Ambient Interactive shadow only on hover/focus/floating states.",
       "Do use the uppercase, tracked Label style for section headers and stat labels — it's the app's one consistent all-caps convention.",
-      "Do let spacing scale fluidly with clamp() rather than jumping at fixed breakpoints.",
-      "Do pick one of the four color categories (or a documented Known Exception) before adding any new saturated color — never drift in a one-off hex."
+      "Do let spacing scale fluidly with clamp() rather than jumping at fixed breakpoints."
     ],
     "donts": [
       "Don't introduce a third saturated brand color for decoration. Anything that isn't violet, fuchsia, or a strict danger/warning status stays neutral gray.",
       "Don't apply a resting shadow to a card or tile — that's reserved for interaction, per the Rest-Is-Flat Rule.",
-      "Don't recolor an icon or status element to violet/fuchsia when its real-world meaning is something else (destructive, warning, success) — semantic color always wins over brand color. (Fixed: .delta.good.)",
-      "Don't use the pill/999px radius on anything that isn't a status chip, badge, or toggle.",
-      "Don't use a thick (>1px) or full-strength-accent border as a decorative left-edge marker — reserved for genuine typographic conventions (blockquotes) at a subdued weight (2px, --border-accent), never as a card/tab pseudo-selection indicator."
+      "Don't recolor an icon or status element to violet/fuchsia when its real-world meaning is something else (destructive, warning, success) — semantic color always wins over brand color.",
+      "Don't use the pill/999px radius on anything that isn't a status chip, badge, or toggle."
     ]
   }
 }

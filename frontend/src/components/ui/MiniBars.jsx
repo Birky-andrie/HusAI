@@ -13,7 +13,10 @@ export default function MiniBars({ data = [], height = 150 }) {
         <div className="minibar-col" key={i}>
           <div
             className={`minibar${d.value === peak ? ' peak' : ''}`}
-            style={{ height: `${Math.max(6, (d.value / max) * 100)}%` }}
+            // scaleY instead of a height percentage — the box is always full
+            // height (see ui.css), so an animated value change is a compositor
+            // transform, not a layout-triggering resize.
+            style={{ transform: `scaleY(${Math.max(6, (d.value / max) * 100) / 100})` }}
             title={`${d.label ?? ''}: ${d.value}`}
           />
           {d.label && <span className="minibar-label">{d.label}</span>}

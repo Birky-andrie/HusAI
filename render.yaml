@@ -28,3 +28,18 @@ services:
       # Optional — only needed to hard-delete a user's Supabase auth identity:
       - key: SUPABASE_SERVICE_ROLE_KEY
         sync: false
+      # Stripe. Without these, the app runs fine but billing stays disabled -
+      # GET /api/billing/plans reports "configured": false and nothing is
+      # purchasable. Copy values from backend/.env (test keys, sk_test_...), or
+      # switch to live keys (sk_live_...) once ready to charge real cards.
+      - key: STRIPE_SECRET_KEY
+        sync: false
+      # From a webhook endpoint registered against THIS Render URL in the
+      # Stripe dashboard (Developers -> Webhooks) - NOT the `stripe listen`
+      # CLI's secret, which only forwards to localhost and changes every run.
+      - key: STRIPE_WEBHOOK_SECRET
+        sync: false
+      - key: STRIPE_PRICE_PRO_MONTHLY
+        sync: false
+      - key: STRIPE_PRICE_PRO_YEARLY
+        sync: false
