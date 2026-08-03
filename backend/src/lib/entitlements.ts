@@ -2,16 +2,43 @@ import type { Request, Response, NextFunction } from 'express';
 import { prisma } from '../db.js';
 
 /**
- * The ONE place that interprets a payment provider's raw subscription status.
- * Nothing else in the app compares `subscription.status` to a string literal —
- * change the mapping here and every gate follows.
+ * The ONE place that decides what a user is allowed to do.
  *
- * Plans are intentionally coarse ('free' | 'trial' | 'pro'). What each plan
- * *includes* is still being finalized, so FEATURES below is the seam for that
- * decision, not a promise about it.
+ * Nothing else in the app compares `subscription.status` to a string literal or
+ * hardcodes a limit — change the mapping or the numbers here and every gate
+ * follows.
+ *
+ * Precedence, highest first:
+ *   1. `user.planOverride` — the manual prototype lever (see PLAN_OVERRIDES).
+ *   2. The Stripe subscription status.
+ *   3. Free.
+ *
+ * The override winning over billing is intentional: during the prototype we
+ * grant access by hand, and a support grant must not be silently undone the
+ * next time a Stripe webhook lands.
  */
 
 export type Plan = 'free' | 'trial' | 'pro';
+
+/** Valid values for `User.planOverride`. Anything else is ignored as if null. */
+const PLAN_OVERRIDES = new Set(['unlimited', 'pro', 'free']);
+
+export interface Limits {
+  /** Calls per calendar month. `null` = unlimited. */
+  callsPerMonth: number | null;
+  /** Total call minutes per calendar month. `null` = unlimited. */
+  minutesPerMonth: number | null;
+}
+
+export const FREE_LIMITS: Limits = {
+  callsPerMonth: 3,
+  minutesPerMonth: 30,
+};
+
+export const UNLIMITED: Limits = {
+  callsPerMonth: null,
+  minutesPerMonth: null,
+};
 
 export interface Entitlements {
   plan: Plan;
@@ -24,6 +51,10 @@ export interface Entitlements {
   currentPeriodEnd: Date | null;
   cancelAtPeriodEnd: boolean;
   trialEndsAt: Date | null;
+  /** What this user may spend this month. */
+  limits: Limits;
+  /** Set when a manual override is what granted this plan, for UI + support. */
+  overrideReason: string | null;
 }
 
 export const FREE_ENTITLEMENTS: Entitlements = {
@@ -34,6 +65,8 @@ export const FREE_ENTITLEMENTS: Entitlements = {
   currentPeriodEnd: null,
   cancelAtPeriodEnd: false,
   trialEndsAt: null,
+  limits: FREE_LIMITS,
+  overrideReason: null,
 };
 
 // Stripe subscription statuses that mean "this person is paying us".
@@ -50,51 +83,89 @@ type SubscriptionRow = {
   trialEndsAt: Date | null;
 };
 
-export function resolveEntitlements(sub: SubscriptionRow | null | undefined): Entitlements {
+type OverrideRow = {
+  planOverride: string | null;
+  planOverrideNote: string | null;
+};
+
+export function resolveEntitlements(
+  sub: SubscriptionRow | null | undefined,
+  user?: OverrideRow | null
+): Entitlements {
+  const override = user?.planOverride;
+
+  if (override && PLAN_OVERRIDES.has(override)) {
+    if (override === 'free') {
+      return { ...FREE_ENTITLEMENTS, overrideReason: user?.planOverrideNote ?? 'manually set to free' };
+    }
+    // 'unlimited' and 'pro' both mean full access with no quota. They are kept
+    // as separate words only so the DB says why: 'unlimited' reads as a grant,
+    // 'pro' reads as "treat exactly like a paying customer".
+    return {
+      plan: 'pro',
+      status: override,
+      active: true,
+      pastDue: false,
+      currentPeriodEnd: null,
+      cancelAtPeriodEnd: false,
+      trialEndsAt: null,
+      limits: UNLIMITED,
+      overrideReason: user?.planOverrideNote ?? `granted (${override})`,
+    };
+  }
+
   if (!sub) return FREE_ENTITLEMENTS;
 
   const status = sub.status || 'free';
   const trialing = status === 'trialing';
   const paid = PAID_STATUSES.has(status);
+  const active = trialing || paid;
 
   return {
     plan: trialing ? 'trial' : paid ? 'pro' : 'free',
     status,
-    active: trialing || paid,
+    active,
     pastDue: GRACE_STATUSES.has(status),
     currentPeriodEnd: sub.currentPeriodEnd,
     cancelAtPeriodEnd: sub.cancelAtPeriodEnd,
     trialEndsAt: sub.trialEndsAt,
+    limits: active ? UNLIMITED : FREE_LIMITS,
+    overrideReason: null,
   };
 }
 
 /** Server-side truth for a user's plan. Never trust the client for this. */
 export async function entitlementsForUser(userId: string): Promise<Entitlements> {
-  const sub = await prisma.subscription.findUnique({ where: { userId } });
-  return resolveEntitlements(sub);
+  const [sub, user] = await Promise.all([
+    prisma.subscription.findUnique({ where: { userId } }),
+    prisma.user.findUnique({
+      where: { id: userId },
+      select: { planOverride: true, planOverrideNote: true },
+    }),
+  ]);
+  return resolveEntitlements(sub, user);
 }
 
 /**
- * Gate a route behind an active paid/trial subscription.
- *
- * DELIBERATELY UNUSED TODAY. Plan contents are not finalized, so no existing
- * feature is locked — wiring this onto a route now would be guessing at the
- * product. When tiers are decided, add it after `authRequired`:
+ * Gate a route behind an active paid/trial plan.
  *
  *   router.post('/some-pro-feature', authRequired, requireActivePlan, handler)
  *
- * It is exported (and typechecked) so turning a feature Pro-only is a one-line
- * change rather than a new subsystem.
+ * Responds 402 with a machine-readable `error: 'upgrade-required'` and the
+ * feature name, which is what the client turns into the upgrade overlay.
  */
-export async function requireActivePlan(req: Request, res: Response, next: NextFunction): Promise<void> {
-  const ent = await entitlementsForUser(req.user!.id);
-  if (!ent.active) {
-    res.status(402).json({
-      error: 'upgrade-required',
-      message: 'This feature is part of HusAI Pro.',
-      plan: ent.plan,
-    });
-    return;
-  }
-  next();
+export function requireActivePlan(feature = 'This feature') {
+  return async function (req: Request, res: Response, next: NextFunction): Promise<void> {
+    const ent = await entitlementsForUser(req.user!.id);
+    if (!ent.active) {
+      res.status(402).json({
+        error: 'upgrade-required',
+        message: `${feature} is part of HusAI Pro.`,
+        feature,
+        plan: ent.plan,
+      });
+      return;
+    }
+    next();
+  };
 }

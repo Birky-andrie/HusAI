@@ -1,0 +1,651 @@
+- generic [ref=e2]:
+  - generic:
+    - generic: expand_more expand_more expand_more expand_more expand_more expand_more expand_more expand_more expand_more expand_more expand_more expand_more
+    - banner [ref=e3]:
+      - generic [ref=e4]:
+        - text: expand_more expand_more expand_more expand_more expand_more expand_more expand_more expand_more expand_more expand_more expand_more expand_more
+        - link "Open the Google Workspace page" [ref=e6] [cursor=pointer]:
+          - /url: /intl/en_ph/
+        - generic [ref=e15]:
+          - generic [ref=e16]:
+            - button "Open search" [ref=e17] [cursor=pointer]
+            - generic:
+              - generic:
+                - generic:
+                  - generic:
+                    - generic:
+                      - generic:
+                        - search:
+                          - generic:
+                            - generic:
+                              - combobox "Search"
+                              - generic:
+                                - generic: Search
+                                - generic: resources
+                            - button "Close search"
+                        - listbox "Popular suggestions":
+                          - generic: Popular
+                        - status
+          - link "Try Meet for Work with Google Workspace" [ref=e23] [cursor=pointer]:
+            - /url: https://workspace.google.com/intl/en_ph/products/meet/for-work/?from=gafb-meet-def-en_ph
+            - generic [ref=e24]: Try Meet for work
+          - link "Sign into Google Meet" [ref=e26] [cursor=pointer]:
+            - /url: https://accounts.google.com/ServiceLogin?ltmpl=meet&continue=https://meet.google.com?hs=193&ec=wgc-[basename]-[module]-signin
+            - generic [ref=e27]: Go to app
+      - generic [ref=e29]:
+        - group [ref=e30]:
+          - generic "Solutions" [ref=e31] [cursor=pointer]
+        - group [ref=e32]:
+          - generic "Products" [ref=e33] [cursor=pointer]
+        - group [ref=e34]:
+          - generic "Industries" [ref=e35] [cursor=pointer]
+        - link "Open the AI page" [ref=e37] [cursor=pointer]:
+          - /url: /intl/en_ph/solutions/ai/
+          - text: AI
+        - link "Open the Pricing page" [ref=e39] [cursor=pointer]:
+          - /url: https://workspace.google.com/pricing?source=gafb-meet-globalnav-en-PH&hl=en-PH&ga_region=apac&ga_country=ph&ga_lang=en
+          - text: Pricing
+        - group [ref=e40]:
+          - generic "Resources" [ref=e41] [cursor=pointer]
+  - main [ref=e42]:
+    - generic [ref=e49]:
+      - generic [ref=e50]:
+        - generic [ref=e51]:
+          - img "Google Meet Product Logo" [ref=e53]
+          - heading "Video calls, enhanced with AI" [level=1] [ref=e55]
+          - generic [ref=e56]:
+            - paragraph [ref=e57]: Make connecting easy with AI-powered video calls that enable collaboration and expression.
+            - generic [ref=e58]:
+              - link "Sign into Google Meet" [ref=e60] [cursor=pointer]:
+                - /url: https://accounts.google.com/ServiceLogin?ltmpl=meet&continue=https://meet.google.com?hs=193&ec=wgc-[basename]-[module]-signin
+                - generic [ref=e61]: Go to app
+              - link "Try Meet for Work with Google Workspace" [ref=e63] [cursor=pointer]:
+                - /url: https://workspace.google.com/intl/en_ph/products/meet/for-work/?from=gafb-meet-def-en_ph
+                - generic [ref=e64]: Try Meet for work
+        - img "Three windows of a Google Meet video call show participants for a virtual party." [ref=e67]
+      - link "Explore the features of Google Meet" [ref=e69] [cursor=pointer]:
+        - /url: "#gemini-in-meet"
+        - generic [ref=e70]: Explore features
+    - list [ref=e76]:
+      - listitem [ref=e77]:
+        - option "Navigate to the Gemini in Meet section of the page" [selected] [ref=e78] [cursor=pointer]:
+          - generic [ref=e79]: Gemini in Meet
+      - listitem [ref=e80]:
+        - option "Jump to the connect section of the page" [ref=e81] [cursor=pointer]:
+          - generic [ref=e82]: Flexible
+      - listitem [ref=e83]:
+        - option "Jump to the enhance section of the page" [ref=e84] [cursor=pointer]:
+          - generic [ref=e85]: Enhance
+      - listitem [ref=e86]:
+        - option "Jump to the collaborate section of the page" [ref=e87] [cursor=pointer]:
+          - generic [ref=e88]: Collaborate
+      - listitem [ref=e89]:
+        - option "Jump to the secure section of the page" [ref=e90] [cursor=pointer]:
+          - generic [ref=e91]: Secure
+      - listitem [ref=e92]:
+        - option "Jump to the premium section of the page" [ref=e93] [cursor=pointer]:
+          - generic [ref=e94]: Premium
+      - listitem [ref=e95]:
+        - option "Jump to the customers section of the page" [ref=e96] [cursor=pointer]:
+          - generic [ref=e97]: Customers
+      - listitem [ref=e98]:
+        - option "Jump to the Google Meet FAQs" [ref=e99] [cursor=pointer]:
+          - generic [ref=e100]: FAQs
+    - generic [ref=e107]:
+      - img "A person on a Google Meet call surrounded by Gemini features, including note-taking, translations, and a meeting agenda being generated." [ref=e110]
+      - generic [ref=e111]:
+        - heading "Drive decisions and action with AI-enhanced meetings" [level=2] [ref=e112]
+        - paragraph [ref=e114]:
+          - text: Turn discussions into next steps instantly. With Gemini in Google Meet automating your notes, translating conversations, and surfacing key insights, your team can focus entirely on making choices and moving work forward. Unlock
+          - link "Open the Gemini in Google Meet page" [ref=e116] [cursor=pointer]:
+            - /url: https://workspace.google.com/intl/en_ph/resources/ai-for-meetings/
+            - text: Gemini in Google Meet
+          - text: .
+    - generic [ref=e120]:
+      - generic [ref=e121]:
+        - heading "Meet on any device" [level=2] [ref=e122]
+        - paragraph [ref=e124]:
+          - text: Join on your mobile phone or tablet via the Google Meet app, available on the
+          - link "Open the App Store page in a new tab" [ref=e126] [cursor=pointer]:
+            - /url: https://apps.apple.com/us/app/google-meet/id1096918571
+            - text: App Store
+          - text: and
+          - link "Open the Play Store page in a new tab" [ref=e128] [cursor=pointer]:
+            - /url: https://play.google.com/store/apps/details?id=com.google.android.apps.tachyon
+            - text: Play Store
+          - text: . Or connect from your computer browser – no software install needed.
+      - img "People joining a Google Meet call from a mobile phone and tablet, reacting with smiling face and heart-eye emojis." [ref=e131]
+    - generic [ref=e137]:
+      - heading "Built for better conversations" [level=3] [ref=e138]
+      - paragraph [ref=e139]: Meet handles the details so you can focus on the conversation.
+    - generic [ref=e142]:
+      - generic [ref=e144]:
+        - generic:
+          - paragraph:
+            - strong
+      - generic [ref=e150]:
+        - group [ref=e152]:
+          - heading "Look your best, no matter where you are" [level=3] [ref=e155] [cursor=pointer]
+          - generic [ref=e156]:
+            - generic [ref=e159]:
+              - complementary [ref=e161]:
+                - 'button "Open Tooltip: This feature is available on certain Google One, Google Workspace Business, and Google Workspace Enterprise plans." [ref=e162]':
+                  - generic: Premium feature
+              - paragraph [ref=e169]:
+                - text: Enjoy up to 1080p video quality
+                - superscript [ref=e170]: "1"
+                - text: and studio look or studio lighting (premium features), and personalize your background.
+            - img "A person using “Studio lighting” and “Framing” in Google Meet to adjust their video appearance." [ref=e174]
+        - group [ref=e176]:
+          - heading "Ensure you're always heard clearly" [level=3] [ref=e179] [cursor=pointer]
+        - group [ref=e181]:
+          - heading "Stay informed with live captions" [level=3] [ref=e184] [cursor=pointer]
+    - generic [ref=e190]:
+      - heading "Do more, together" [level=3] [ref=e191]
+      - paragraph [ref=e192]: Seamlessly collaborate with integrations across Google Workspace.
+    - generic [ref=e201]:
+      - group [ref=e203]:
+        - heading "Connect as work is happening" [level=3] [ref=e206] [cursor=pointer]
+        - generic [ref=e207]:
+          - paragraph [ref=e211]:
+            - text: Make meetings an easy extension of your daily workflows by joining directly from
+            - link "Open the Google Docs page" [ref=e213] [cursor=pointer]:
+              - /url: https://workspace.google.com/intl/en_ph/products/docs/?from=gafb-meet-def-en_ph
+              - text: Google Docs
+            - text: ","
+            - link "Open the Sheets page" [ref=e215] [cursor=pointer]:
+              - /url: https://workspace.google.com/intl/en_ph/products/sheets/?from=gafb-meet-def-en_ph
+              - text: Sheets
+            - text: ", and"
+            - link "Open the Slides page" [ref=e217] [cursor=pointer]:
+              - /url: https://workspace.google.com/intl/en_ph/products/slides/?from=gafb-meet-def-en_ph
+              - text: Slides
+            - text: .
+          - img "People in a Google Meet call collaborate in real time on a Google Doc." [ref=e221]
+      - group [ref=e223]:
+        - heading "Help everyone arrive prepared" [level=3] [ref=e226] [cursor=pointer]
+      - group [ref=e228]:
+        - heading "Keep presentations engaging" [level=3] [ref=e231] [cursor=pointer]
+    - generic [ref=e235]:
+      - img "Google Meet call showing an up-close video of someone cooking and two remote participants." [ref=e238]
+      - generic [ref=e239]:
+        - heading "Enjoy every moment" [level=2] [ref=e240]
+        - paragraph [ref=e242]:
+          - text: Make your time together fun. Watch YouTube videos, listen to music, and play games with Meet live sharing
+          - superscript [ref=e243]: "2"
+          - text: . Enjoy interactive features like effects and emoji reactions.
+    - generic [ref=e247]:
+      - generic [ref=e248]:
+        - heading "Stay safe" [level=2] [ref=e249]
+        - paragraph [ref=e251]:
+          - text: Your data is
+          - link "Open the encrypted page in a new tab" [ref=e253] [cursor=pointer]:
+            - /url: https://support.google.com/a/answer/7582940?hl=en-PH#zippy=%2Cencryption
+            - text: encrypted
+          - text: by default, and an array of
+          - link "Open the safety measures page" [ref=e255] [cursor=pointer]:
+            - /url: https://workspace.google.com/intl/en_ph/security
+            - text: safety measures
+          - text: – like advanced encryption, anti-abuse measures, and privacy
+          - link "Open the controls page in a new tab" [ref=e257] [cursor=pointer]:
+            - /url: https://support.google.com/a/answer/7582940?hl=en-PH
+            - text: controls
+          - text: – keep your data private.
+      - img "A waiting room notification in Google Meet, giving the host the option to “Bring in” or “Deny” a participant." [ref=e260]
+    - generic [ref=e264]:
+      - img "A group of employees gather around Google Meet hardware for a meeting. Beside it are two close-up images of Google Meet hardware." [ref=e267]
+      - generic [ref=e268]:
+        - heading "Conference room devices from trusted partners" [level=2] [ref=e269]
+        - paragraph [ref=e271]:
+          - link "Open the Google Meet hardware page in a new tab" [ref=e273] [cursor=pointer]:
+            - /url: https://meetingdevices.withgoogle.com/
+            - text: Google Meet hardware
+          - text: provides secure, scalable meeting solutions for any room. Cross-platform interoperability enables internal and external teams to easily join the discussion, while built-in AI ensures everyone feels included and stays engaged.
+    - generic [ref=e279]:
+      - heading "Do more with premium features" [level=3] [ref=e280]
+      - paragraph [ref=e281]:
+        - text: Sign up for a
+        - link "Open the Google Workspace page" [ref=e283] [cursor=pointer]:
+          - /url: https://workspace.google.com/pricing.html?source=gafb-meet-body-en-PH&hl=en-PH&ga_region=apac&ga_country=ph&ga_lang=en
+          - text: Google Workspace
+        - text: or
+        - link "Open the Google One Premium page in a new tab" [ref=e285] [cursor=pointer]:
+          - /url: https://one.google.com/about/plans?hl=en-PH
+          - text: Google One Premium
+        - text: plan to access premium features.
+    - generic [ref=e292]:
+      - generic [ref=e293]:
+        - generic:
+          - generic [ref=e295]:
+            - img "A meeting being scheduled for Friday, 24 July, with a dropdown menu to adjust the time and duration." [ref=e297]
+            - generic [ref=e298]:
+              - complementary [ref=e301]:
+                - 'button "Open Tooltip: This feature is available on certain Google One, Google Workspace Business, and Google Workspace Enterprise plans." [ref=e302]':
+                  - generic: Premium feature
+              - heading "Meet longer" [level=3] [ref=e309]
+              - paragraph [ref=e311]: Hold group calls for up to 24 hours.
+          - generic [ref=e313]:
+            - img "A red recording icon and a stop button." [ref=e315]
+            - generic [ref=e316]:
+              - complementary [ref=e319]:
+                - 'button "Open Tooltip: This feature is available on certain Google One, Google Workspace Business, and Google Workspace Enterprise plans." [ref=e320]':
+                  - generic: Premium feature
+              - heading "Keep a record" [level=3] [ref=e327]
+              - paragraph [ref=e329]: Use recordings and transcripts to capture what was discussed.
+          - generic [ref=e331]:
+            - img "A list of meeting contributors in Google Meet showing their mute and unmute statuses." [ref=e333]
+            - generic [ref=e334]:
+              - complementary [ref=e337]:
+                - 'button "Open Tooltip: This feature is available on certain Google One, Google Workspace Business, and Google Workspace Enterprise plans." [ref=e338]':
+                  - generic: Premium feature
+              - heading "Host larger meetings" [level=3] [ref=e345]
+              - paragraph [ref=e347]: Add up to 1000 participants.
+      - generic: arrow_forward arrow_forward
+      - tablist [ref=e348]:
+        - tab "Meet longer" [selected] [ref=e349]
+        - tab "Keep a record" [ref=e350]
+        - tab "Host larger meetings" [ref=e351]
+    - generic [ref=e357]:
+      - heading "Learn why organizations use Meet" [level=2] [ref=e364]
+      - generic [ref=e370]:
+        - generic [ref=e371]:
+          - generic:
+            - generic [ref=e375]:
+              - generic:
+                - generic:
+                  - generic:
+                    - img "Meditech logo"
+              - figure [ref=e377]:
+                - blockquote [ref=e378]:
+                  - paragraph [ref=e379]: “We found that we were able to save an average of seven hours per employee per week by reducing some manual tasks such as notetaking during meetings... One common use case that saves time across our teams is the ability to automatically summarize our Google Meet calls.”
+                - generic [ref=e380]:
+                  - strong [ref=e381]: Kimberly Hansen
+                  - text: ", Manager of Corporate Technologies, MEDITECH"
+                - link "Learn more about MEDITECH customer story" [ref=e383] [cursor=pointer]:
+                  - /url: https://workspace.google.com/blog/customer-stories/how-meditech-integrating-gemini-highly-regulated-healthcare-workflows?e=48754805&hl=en-PH
+                  - generic [ref=e384]: Learn more
+            - generic [ref=e388]:
+              - generic:
+                - generic:
+                  - generic:
+                    - img "Robinhood company logo"
+              - figure [ref=e390]:
+                - blockquote [ref=e391]:
+                  - paragraph [ref=e392]: “Meet has also opened doors for global connection. I recently had a meeting across three continents, in four different time zones, with zero latency.”
+                - generic [ref=e393]:
+                  - strong [ref=e394]: Chris Montfort
+                  - text: ", Head of Strategic Operations for Corporate Engineering, Robinhood"
+                - link "Learn more about the Robinhood customer story" [ref=e396] [cursor=pointer]:
+                  - /url: https://workspace.google.com/blog/customer-stories/robinhood?hl=en-PH
+                  - generic [ref=e397]: Learn more
+            - generic [ref=e401]:
+              - generic:
+                - generic:
+                  - generic:
+                    - img "Forum Virium Helsinki Logo"
+              - figure [ref=e403]:
+                - blockquote [ref=e404]:
+                  - paragraph [ref=e405]: “Our staff also travel a lot to collaborate on projects with European cities, and we previously didn’t have a way for them to participate in meetings remotely. With Google Meet, they can easily attend from anywhere on any device, without the need for desktop applications.”
+                - generic [ref=e406]:
+                  - strong [ref=e407]: Juhani Kantola
+                  - text: ", CIO, Forum Virium Helsinki"
+                - link "Learn more about Virium Helsinki customer story" [ref=e409] [cursor=pointer]:
+                  - /url: https://workspace.google.com/blog/customer-stories/forum-virium-helsinki-builds-thriving-workplace?e=48754805&hl=en-PH
+                  - generic [ref=e410]: Learn more
+            - generic [ref=e414]:
+              - generic:
+                - generic:
+                  - generic:
+                    - img "Pepperdine University logo"
+              - figure [ref=e416]:
+                - blockquote [ref=e417]:
+                  - paragraph [ref=e418]: “The captioning within Google Meet is going to be a huge game changer in extending equity and accessibility, especially for those with language barriers...With Workspace with Gemini, we can now quickly transcribe meeting minutes within Google Docs and summarize them in a succinct way to share with our users.”
+                - generic [ref=e419]:
+                  - strong [ref=e420]: Jonathan See
+                  - text: ", Chief Information Officer, Pepperdine University"
+                - link "Watch a video about how Pepperdine University uses Google Meet" [ref=e422] [cursor=pointer]:
+                  - /url: https://www.youtube.com/watch?v=i6OjYfQTMoE
+                  - generic [ref=e423]: Learn more
+            - generic [ref=e427]:
+              - generic:
+                - generic:
+                  - generic:
+                    - img "Vimeo company logo"
+              - figure [ref=e429]:
+                - blockquote [ref=e430]:
+                  - paragraph [ref=e431]: “Transitioning to Google Meet means we can use Gemini to take meeting notes, summarize them, extract insights, and generate and distribute action items. We connect with our colleagues more effectively now.”
+                - generic [ref=e432]:
+                  - strong [ref=e433]: Yael Burla
+                  - text: ", Principal Product Marketer, Vimeo"
+                - link "Learn more about the Vimeo customer story" [ref=e435] [cursor=pointer]:
+                  - /url: https://workspace.google.com/blog/customer-stories/how-vimeo-uses-gemini-and-google-workspace-help-customers-create-videos-move-needle?hl=en-PH
+                  - generic [ref=e436]: Learn more
+            - generic [ref=e440]:
+              - generic:
+                - generic:
+                  - generic:
+                    - img "Equifax logo"
+              - figure [ref=e442]:
+                - blockquote [ref=e443]:
+                  - paragraph [ref=e444]: “Google Meet is a core part of how our teams work together. The product has evolved so much in such a short period of time, and those changes and new features have helped us define what 'ruthless collaboration' can look like at Equifax.”
+                - generic [ref=e445]:
+                  - strong [ref=e446]: JK Krug
+                  - text: ", Vice President of Digital Employee Experience, Equifax"
+                - link "Learn more about the Equifax customer story" [ref=e448] [cursor=pointer]:
+                  - /url: https://workspace.google.com/blog/customer-stories/how-equifax-achieved-ruthless-collaboration-google-workspace?hl=en-PH
+                  - generic [ref=e449]: Learn more
+        - generic:
+          - generic:
+            - button "Previous slide" [disabled]: arrow_forward
+            - button "Next slide" [ref=e450] [cursor=pointer]: arrow_forward
+        - tablist [ref=e451]:
+          - tab "Navigate to slide 1" [selected] [ref=e452]
+          - tab "Navigate to slide 2" [ref=e453]
+          - tab "Navigate to slide 3" [ref=e454]
+          - tab "Navigate to slide 4" [ref=e455]
+          - tab "Navigate to slide 5" [ref=e456]
+          - tab "Navigate to slide 6" [ref=e457]
+    - generic [ref=e465]:
+      - heading "Curious about Google Meet?" [level=3] [ref=e466]
+      - paragraph [ref=e467]: Take a look at our FAQs to learn more.
+    - generic [ref=e471]:
+      - generic [ref=e474]:
+        - button "Expand all" [ref=e479] [cursor=pointer]:
+          - generic [ref=e480]: Expand all unfold_more
+        - list [ref=e481]:
+          - generic:
+            - listitem [ref=e482]:
+              - group [ref=e484]
+            - listitem [ref=e489]:
+              - group [ref=e491]
+            - listitem [ref=e496]:
+              - group [ref=e498]
+            - listitem [ref=e503]:
+              - group [ref=e505]
+            - listitem [ref=e510]:
+              - group [ref=e512]
+            - listitem [ref=e517]:
+              - group [ref=e519]
+      - generic [ref=e526]:
+        - heading "Need more help?" [level=3] [ref=e527]
+        - generic [ref=e528]:
+          - paragraph [ref=e529]: Browse tips and step-by-step guides made for both new users and power users.
+          - link "Visit the Google Workspace help center" [ref=e531] [cursor=pointer]:
+            - /url: https://support.google.com/a/users/answer/9282720?hl=en-PH
+            - generic [ref=e532]: Help center
+    - generic [ref=e541]:
+      - img "Meet icon" [ref=e544]
+      - generic [ref=e546]:
+        - heading "Connect on Google Meet" [level=2] [ref=e547]
+        - generic [ref=e548]:
+          - link "Sign into Google Meet" [ref=e550] [cursor=pointer]:
+            - /url: https://accounts.google.com/ServiceLogin?ltmpl=meet&amp;continue=https%3A%2F%2Fmeet.google.com%3Fhs%3D193&amp;
+            - generic [ref=e551]: Go to app
+          - link "Try Meet for Work with Google Workspace" [ref=e553] [cursor=pointer]:
+            - /url: https://workspace.google.com/intl/en_ph/products/meet/for-work/?from=gafb-meet-def-en_ph
+            - generic [ref=e554]: Try Meet for work
+    - generic [ref=e559]:
+      - paragraph [ref=e560]:
+        - superscript [ref=e561]: "1"
+        - text: Bandwidth permitting. Google Meet automatically adjusts to the highest video quality possible based on your bandwidth.
+      - paragraph [ref=e562]:
+        - superscript [ref=e563]: "2"
+        - text: Requires a YouTube Premium membership.
+  - generic [ref=e564]:
+    - generic:
+      - generic [ref=e567]:
+        - generic [ref=e568]:
+          - heading "Sign up for productivity, collaboration, and AI updates" [level=2] [ref=e570]
+          - generic [ref=e572]:
+            - button "1"
+            - button "2"
+        - generic [ref=e576]:
+          - generic [ref=e577]:
+            - generic [ref=e582]:
+              - generic: First name*
+              - generic [ref=e584]:
+                - generic: First name*
+                - textbox "First name" [ref=e587]
+            - generic [ref=e592]:
+              - generic: Last name*
+              - generic [ref=e594]:
+                - generic: Last name*
+                - textbox "Last name" [ref=e597]
+            - generic [ref=e602]:
+              - generic: Business email*
+              - generic [ref=e604]:
+                - generic: Business email*
+                - textbox "Business email" [ref=e607]
+            - generic [ref=e610]:
+              - combobox "Selected country" [ref=e612]:
+                - generic [ref=e613]: Philippines +63
+                - generic [ref=e617]: "+63"
+              - textbox "905 123 4567" [ref=e618]
+          - button "Open the Continue page" [ref=e621] [cursor=pointer]:
+            - generic [ref=e622]: Continue
+      - contentinfo [ref=e624]:
+        - generic [ref=e625]:
+          - generic [ref=e626]:
+            - generic [ref=e627]:
+              - generic [ref=e628]:
+                - paragraph [ref=e630]:
+                  - text: Follow our
+                  - link "Open the Blog page" [ref=e632] [cursor=pointer]:
+                    - /url: https://workspace.google.com/blog/?hl=en-PH
+                    - text: Blog
+                - list [ref=e633]:
+                  - listitem [ref=e634]:
+                    - link "Open the footer social links X page in a new tab" [ref=e635] [cursor=pointer]:
+                      - /url: https://x.com/googleworkspace
+                      - img "Follow us on X" [ref=e637]
+                  - listitem [ref=e638]:
+                    - link "Open the footer social links YouTube page in a new tab" [ref=e639] [cursor=pointer]:
+                      - /url: https://www.youtube.com/channel/UCBmwzQnSoj9b6HzNmFrg_yw/
+                      - img "YouTube" [ref=e641]
+                  - listitem [ref=e642]:
+                    - link "Open the footer social links LinkedIn page in a new tab" [ref=e643] [cursor=pointer]:
+                      - /url: https://www.linkedin.com/showcase/googleworkspace/
+                      - img "LinkedIn" [ref=e645]
+                  - listitem [ref=e646]:
+                    - link "Open the footer social links Instagram page in a new tab" [ref=e647] [cursor=pointer]:
+                      - /url: https://www.instagram.com/googleworkspace/
+                      - img "Instagram" [ref=e649]
+                  - listitem [ref=e650]:
+                    - link "Open the footer social links Facebook page in a new tab" [ref=e651] [cursor=pointer]:
+                      - /url: https://www.facebook.com/googleworkspace/
+                      - img "Facebook" [ref=e653]
+                  - listitem [ref=e654]:
+                    - link "Open the footer social links TikTok page in a new tab" [ref=e655] [cursor=pointer]:
+                      - /url: https://goo.gle/3xj0b2F
+                      - img "TikTok" [ref=e657]
+              - textbox "Search this site" [ref=e659]
+            - generic [ref=e660]:
+              - group [ref=e661]:
+                - generic "Included applications" [ref=e662] [cursor=pointer]
+              - group [ref=e667]:
+                - generic "Security and management" [ref=e668] [cursor=pointer]
+              - group [ref=e673]:
+                - generic "Solutions" [ref=e674] [cursor=pointer]
+              - group [ref=e679]:
+                - generic "Pricing" [ref=e680] [cursor=pointer]
+              - group [ref=e685]:
+                - generic "Add-ons" [ref=e686] [cursor=pointer]
+              - group [ref=e691]:
+                - generic "Resources" [ref=e692] [cursor=pointer]
+              - group [ref=e697]:
+                - generic "Learning and support" [ref=e698] [cursor=pointer]
+              - group [ref=e703]:
+                - generic "More from Google" [ref=e704] [cursor=pointer]
+          - generic [ref=e709]:
+            - generic [ref=e710]:
+              - img "Google" [ref=e713]
+              - list [ref=e714]:
+                - listitem [ref=e715]:
+                  - link "Open the Privacy page in a new tab" [ref=e716] [cursor=pointer]:
+                    - /url: https://policies.google.com/privacy?hl=en_ph
+                    - text: Privacy
+                - listitem [ref=e717]:
+                  - link "Open the Terms page in a new tab" [ref=e718] [cursor=pointer]:
+                    - /url: https://policies.google.com/terms?hl=en_ph
+                    - text: Terms
+                - listitem [ref=e719]:
+                  - link "Open the About Google page in a new tab" [ref=e720] [cursor=pointer]:
+                    - /url: https://about.google/?hl=en_ph
+                    - text: About Google
+                - listitem [ref=e721]:
+                  - link "Open the Google Products page in a new tab" [ref=e722] [cursor=pointer]:
+                    - /url: https://www.google.com/intl/en_ph/about/products/?from=gafb-meet-def-en_ph
+                    - text: Google Products
+                - listitem [ref=e723]:
+                  - link "Open the Help page in a new tab" [ref=e724] [cursor=pointer]:
+                    - /url: https://support.google.com/workspace/?hl=en_ph
+                    - text: Help
+              - generic [ref=e725]:
+                - link "Open the Help page in a new tab" [ref=e727] [cursor=pointer]:
+                  - /url: https://support.google.com/a
+                  - generic [ref=e731]: Help
+                - button "Change Language" [ref=e734] [cursor=pointer]:
+                  - generic [ref=e738]:
+                    - generic [ref=e739]: English – Philippines
+                    - generic [ref=e741]: Change Language
+            - region "Language List":
+              - generic [ref=e742]:
+                - link "Open the Bahasa Indonesia locale page" [ref=e743] [cursor=pointer]:
+                  - /url: https://workspace.google.com/intl/id/products/meet/?from=gafb-meet-def-en_ph
+                  - text: Bahasa Indonesia
+                - link "Open the Čeština locale page" [ref=e744] [cursor=pointer]:
+                  - /url: https://workspace.google.com/intl/cs/products/meet/?from=gafb-meet-def-en_ph
+                  - text: Čeština
+                - link "Open the Dansk locale page" [ref=e745] [cursor=pointer]:
+                  - /url: https://workspace.google.com/intl/da/products/meet/?from=gafb-meet-def-en_ph
+                  - text: Dansk
+                - link "Open the Deutsch locale page" [ref=e746] [cursor=pointer]:
+                  - /url: https://workspace.google.com/intl/de/products/meet/?from=gafb-meet-def-en_ph
+                  - text: Deutsch
+                - link "Open the Deutsch – Schweiz locale page" [ref=e747] [cursor=pointer]:
+                  - /url: https://workspace.google.com/intl/de_ch/products/meet/?from=gafb-meet-def-en_ph
+                  - text: Deutsch – Schweiz
+                - link "Open the English locale page" [ref=e748] [cursor=pointer]:
+                  - /url: https://workspace.google.com/intl/en/products/meet/?from=gafb-meet-def-en_ph
+                  - text: English
+                - link "Open the English – Australia locale page" [ref=e749] [cursor=pointer]:
+                  - /url: https://workspace.google.com/intl/en_au/products/meet/?from=gafb-meet-def-en_ph
+                  - text: English – Australia
+                - link "Open the English – Canada locale page" [ref=e750] [cursor=pointer]:
+                  - /url: https://workspace.google.com/intl/en_ca/products/meet/?from=gafb-meet-def-en_ph
+                  - text: English – Canada
+                - link "Open the English – India locale page" [ref=e751] [cursor=pointer]:
+                  - /url: https://workspace.google.com/intl/en_in/products/meet/?from=gafb-meet-def-en_ph
+                  - text: English – India
+                - link "Open the English – Indonesia locale page" [ref=e752] [cursor=pointer]:
+                  - /url: https://workspace.google.com/intl/en_id/products/meet/?from=gafb-meet-def-en_ph
+                  - text: English – Indonesia
+                - link "Open the English – Ireland locale page" [ref=e753] [cursor=pointer]:
+                  - /url: https://workspace.google.com/intl/en_ie/products/meet/?from=gafb-meet-def-en_ph
+                  - text: English – Ireland
+                - link "Open the English – Malaysia locale page" [ref=e754] [cursor=pointer]:
+                  - /url: https://workspace.google.com/intl/en_my/products/meet/?from=gafb-meet-def-en_ph
+                  - text: English – Malaysia
+                - link "Open the English – New Zealand locale page" [ref=e755] [cursor=pointer]:
+                  - /url: https://workspace.google.com/intl/en_nz/products/meet/?from=gafb-meet-def-en_ph
+                  - text: English – New Zealand
+                - generic [ref=e756]: English – Philippines
+                - link "Open the English – Singapore locale page" [ref=e757] [cursor=pointer]:
+                  - /url: https://workspace.google.com/intl/en_sg/products/meet/?from=gafb-meet-def-en_ph
+                  - text: English – Singapore
+                - link "Open the English – South Africa locale page" [ref=e758] [cursor=pointer]:
+                  - /url: https://workspace.google.com/intl/en_za/products/meet/?from=gafb-meet-def-en_ph
+                  - text: English – South Africa
+                - link "Open the English – United Kingdom locale page" [ref=e759] [cursor=pointer]:
+                  - /url: https://workspace.google.com/intl/en_uk/products/meet/?from=gafb-meet-def-en_ph
+                  - text: English – United Kingdom
+                - link "Open the Español locale page" [ref=e760] [cursor=pointer]:
+                  - /url: https://workspace.google.com/intl/es/products/meet/?from=gafb-meet-def-en_ph
+                  - text: Español
+                - link "Open the Español (Latinoamérica) locale page" [ref=e761] [cursor=pointer]:
+                  - /url: https://workspace.google.com/intl/es-419/products/meet/?from=gafb-meet-def-en_ph
+                  - text: Español (Latinoamérica)
+                - link "Open the Español (Latinoamérica) – Argentina locale page" [ref=e762] [cursor=pointer]:
+                  - /url: https://workspace.google.com/intl/es-419_ar/products/meet/?from=gafb-meet-def-en_ph
+                  - text: Español (Latinoamérica) – Argentina
+                - link "Open the Español (Latinoamérica) – Estados Unidos locale page" [ref=e763] [cursor=pointer]:
+                  - /url: https://workspace.google.com/intl/es-419_us/products/meet/?from=gafb-meet-def-en_ph
+                  - text: Español (Latinoamérica) – Estados Unidos
+                - link "Open the Español (Latinoamérica) – México locale page" [ref=e764] [cursor=pointer]:
+                  - /url: https://workspace.google.com/intl/es-419_mx/products/meet/?from=gafb-meet-def-en_ph
+                  - text: Español (Latinoamérica) – México
+                - link "Open the Français locale page" [ref=e765] [cursor=pointer]:
+                  - /url: https://workspace.google.com/intl/fr/products/meet/?from=gafb-meet-def-en_ph
+                  - text: Français
+                - link "Open the Français – Canada locale page" [ref=e766] [cursor=pointer]:
+                  - /url: https://workspace.google.com/intl/fr_ca/products/meet/?from=gafb-meet-def-en_ph
+                  - text: Français – Canada
+                - link "Open the Français – Suisse locale page" [ref=e767] [cursor=pointer]:
+                  - /url: https://workspace.google.com/intl/fr_ch/products/meet/?from=gafb-meet-def-en_ph
+                  - text: Français – Suisse
+                - link "Open the Italiano locale page" [ref=e768] [cursor=pointer]:
+                  - /url: https://workspace.google.com/intl/it/products/meet/?from=gafb-meet-def-en_ph
+                  - text: Italiano
+                - link "Open the Magyar locale page" [ref=e769] [cursor=pointer]:
+                  - /url: https://workspace.google.com/intl/hu/products/meet/?from=gafb-meet-def-en_ph
+                  - text: Magyar
+                - link "Open the Nederlands locale page" [ref=e770] [cursor=pointer]:
+                  - /url: https://workspace.google.com/intl/nl/products/meet/?from=gafb-meet-def-en_ph
+                  - text: Nederlands
+                - link "Open the Norsk locale page" [ref=e771] [cursor=pointer]:
+                  - /url: https://workspace.google.com/intl/no/products/meet/?from=gafb-meet-def-en_ph
+                  - text: Norsk
+                - link "Open the Polski locale page" [ref=e772] [cursor=pointer]:
+                  - /url: https://workspace.google.com/intl/pl/products/meet/?from=gafb-meet-def-en_ph
+                  - text: Polski
+                - link "Open the Português (Brasil) locale page" [ref=e773] [cursor=pointer]:
+                  - /url: https://workspace.google.com/intl/pt-BR/products/meet/?from=gafb-meet-def-en_ph
+                  - text: Português (Brasil)
+                - link "Open the Português (Portugal) locale page" [ref=e774] [cursor=pointer]:
+                  - /url: https://workspace.google.com/intl/pt-PT/products/meet/?from=gafb-meet-def-en_ph
+                  - text: Português (Portugal)
+                - link "Open the Suomi locale page" [ref=e775] [cursor=pointer]:
+                  - /url: https://workspace.google.com/intl/fi/products/meet/?from=gafb-meet-def-en_ph
+                  - text: Suomi
+                - link "Open the Svenska locale page" [ref=e776] [cursor=pointer]:
+                  - /url: https://workspace.google.com/intl/sv/products/meet/?from=gafb-meet-def-en_ph
+                  - text: Svenska
+                - link "Open the Tiếng Việt locale page" [ref=e777] [cursor=pointer]:
+                  - /url: https://workspace.google.com/intl/vi/products/meet/?from=gafb-meet-def-en_ph
+                  - text: Tiếng Việt
+                - link "Open the Türkçe locale page" [ref=e778] [cursor=pointer]:
+                  - /url: https://workspace.google.com/intl/tr/products/meet/?from=gafb-meet-def-en_ph
+                  - text: Türkçe
+                - link "Open the Русский locale page" [ref=e779] [cursor=pointer]:
+                  - /url: https://workspace.google.com/intl/ru/products/meet/?from=gafb-meet-def-en_ph
+                  - text: Русский
+                - link "Open the Українська locale page" [ref=e780] [cursor=pointer]:
+                  - /url: https://workspace.google.com/intl/uk/products/meet/?from=gafb-meet-def-en_ph
+                  - text: Українська
+                - link "Open the עברית locale page" [ref=e781] [cursor=pointer]:
+                  - /url: https://workspace.google.com/intl/iw/products/meet/?from=gafb-meet-def-en_ph
+                  - text: עברית
+                - link "Open the العربية locale page" [ref=e782] [cursor=pointer]:
+                  - /url: https://workspace.google.com/intl/ar/products/meet/?from=gafb-meet-def-en_ph
+                  - text: العربية
+                - link "Open the العربية – مصر locale page" [ref=e783] [cursor=pointer]:
+                  - /url: https://workspace.google.com/intl/ar_eg/products/meet/?from=gafb-meet-def-en_ph
+                  - text: العربية – مصر
+                - link "Open the ไทย locale page" [ref=e784] [cursor=pointer]:
+                  - /url: https://workspace.google.com/intl/th/products/meet/?from=gafb-meet-def-en_ph
+                  - text: ไทย
+                - link "Open the 한국어 locale page" [ref=e785] [cursor=pointer]:
+                  - /url: https://workspace.google.com/intl/ko/products/meet/?from=gafb-meet-def-en_ph
+                  - text: 한국어
+                - link "Open the 中文 (香港) locale page" [ref=e786] [cursor=pointer]:
+                  - /url: https://workspace.google.com/intl/zh-HK/products/meet/?from=gafb-meet-def-en_ph
+                  - text: 中文 (香港)
+                - link "Open the 中文（简体中文） locale page" [ref=e787] [cursor=pointer]:
+                  - /url: https://workspace.google.com/intl/zh-CN/products/meet/?from=gafb-meet-def-en_ph
+                  - text: 中文（简体中文）
+                - link "Open the 中文（繁體中文） locale page" [ref=e788] [cursor=pointer]:
+                  - /url: https://workspace.google.com/intl/zh-TW/products/meet/?from=gafb-meet-def-en_ph
+                  - text: 中文（繁體中文）
+                - link "Open the 日本語 locale page" [ref=e789] [cursor=pointer]:
+                  - /url: https://workspace.google.com/intl/ja/products/meet/?from=gafb-meet-def-en_ph
+                  - text: 日本語

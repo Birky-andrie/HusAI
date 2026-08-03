@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { api } from '../lib/api.js';
 
 /**
@@ -29,6 +30,23 @@ const RATE_LABELS = {
   responseLatencySeconds: 'Response time (s)',
 };
 
+/**
+ * What each number actually measures. The tile shows a figure; this says what
+ * the figure is *about* — without it, "Conciseness 64" is a score with no
+ * stated criterion, which is the main thing users distrust about AI scoring.
+ */
+const DIMENSION_HELP = {
+  overall: 'The average of your four communication scores for each call or practice session.',
+  confidence: 'Assertive, self-assured delivery — scored down by excessive hedging or apologising.',
+  clarity: 'How easy you are to follow, and whether your main point lands plainly and early.',
+  conciseness: 'Saying what is needed without rambling or filler.',
+  professionalism: 'Warm, courteous, client-appropriate tone and follow-through.',
+  fillerPer100Words: 'Filler words ("um", "like", "you know") per 100 words you spoke.',
+  apologyPer100Words: 'How often you apologised, per 100 words you spoke.',
+  hedgePer100Words: 'Hedging phrases ("maybe", "I think", "if that\'s okay") per 100 words.',
+  responseLatencySeconds: 'Average seconds between the client finishing and you replying.',
+};
+
 function Delta({ current, previous, downIsGood }) {
   if (current === null || previous === null) return <span className="delta muted">vs previous: —</span>;
   const diff = Math.round((current - previous) * 10) / 10;
@@ -38,6 +56,99 @@ function Delta({ current, previous, downIsGood }) {
     <span className={`delta ${improved ? 'good' : 'bad'}`}>
       {diff > 0 ? '▲' : '▼'} {Math.abs(diff)} vs previous
     </span>
+  );
+}
+
+/**
+ * The "why is my score this number" panel behind a stat tile.
+ *
+ * Deliberately shows the individual data points rather than only restating the
+ * average: a 62 made of five mediocre calls and a 62 made of one disaster
+ * among four strong calls call for completely different responses, and the
+ * average alone hides which one you are looking at.
+ */
+function StatBreakdown({ dimension, label, isScore }) {
+  const [data, setData] = useState(null);
+  const [error, setError] = useState('');
+
+  useEffect(() => {
+    let active = true;
+    setData(null);
+    setError('');
+    api
+      .get(`/api/progress/breakdown?dimension=${encodeURIComponent(dimension)}`)
+      .then((d) => active && setData(d))
+      .catch((e) => active && setError(e.message));
+    return () => {
+      active = false;
+    };
+  }, [dimension]);
+
+  if (error) return <div className="banner error">{error}</div>;
+  if (!data)
+    return (
+      <div className="stat-breakdown">
+        <div className="spinner" />
+      </div>
+    );
+
+  const fmt = (iso) => new Date(iso).toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
+  const avgOf = (rows) =>
+    rows.length ? Math.round((rows.reduce((s, r) => s + r.value, 0) / rows.length) * 10) / 10 : null;
+
+  const row = (p, i) => (
+    <li key={`${p.refId}-${i}`}>
+      <span className="bd-value">{p.value}</span>
+      <span className="bd-meta">
+        {p.source === 'call' ? 'Call' : 'Practice'} · {fmt(p.at)}
+      </span>
+      {p.linkable ? (
+        <Link to={p.source === 'call' ? `/history/${p.refId}` : `/practice/${p.refId}`}>View</Link>
+      ) : (
+        <span className="bd-gone">deleted</span>
+      )}
+    </li>
+  );
+
+  return (
+    <div className="stat-breakdown">
+      <p className="bd-help">{DIMENSION_HELP[dimension]}</p>
+
+      <h4>
+        How this {isScore ? 'score' : 'figure'} is calculated
+      </h4>
+      <p className="bd-formula">
+        The average of your {data.contributing.length} most recent
+        {data.contributing.length === 1 ? ' result' : ' results'}
+        {data.totalDataPoints > data.contributing.length && (
+          <> — out of {data.totalDataPoints} recorded in total</>
+        )}
+        .
+      </p>
+
+      {data.contributing.length === 0 ? (
+        <p className="bd-formula">No data points yet.</p>
+      ) : (
+        <>
+          <h5>
+            Counting toward it now{avgOf(data.contributing) !== null && <> — average {avgOf(data.contributing)}</>}
+          </h5>
+          <ul className="bd-list">{data.contributing.map(row)}</ul>
+        </>
+      )}
+
+      {data.previous.length > 0 && (
+        <>
+          <h5>
+            Compared against{avgOf(data.previous) !== null && <> — average {avgOf(data.previous)}</>}
+          </h5>
+          <ul className="bd-list muted">{data.previous.map(row)}</ul>
+          <p className="bd-formula">
+            The arrow on the tile is the difference between these two averages.
+          </p>
+        </>
+      )}
+    </div>
   );
 }
 
@@ -146,6 +257,8 @@ export default function ProgressPage() {
   const [dimension, setDimension] = useState('overall');
   const [history, setHistory] = useState(null);
   const [showTable, setShowTable] = useState(false);
+  // Which stat tile has its "why is this number what it is" panel open.
+  const [openStat, setOpenStat] = useState(null);
 
   useEffect(() => {
     api
@@ -197,23 +310,39 @@ export default function ProgressPage() {
       ) : (
         <>
           <div className="tile-row">
-            {summary.scores
-              .filter((s) => s.dataPoints > 0)
-              .map((s) => (
-                <div className="stat-tile" key={s.dimension}>
-                  <span className="stat-label">{SCORE_LABELS[s.dimension]}</span>
+            {[
+              ...summary.scores.filter((s) => s.dataPoints > 0).map((s) => ({ ...s, downIsGood: false })),
+              ...summary.rates.map((r) => ({ ...r, downIsGood: true })),
+            ].map((s) => {
+              const label = SCORE_LABELS[s.dimension] || RATE_LABELS[s.dimension] || s.dimension;
+              const open = openStat === s.dimension;
+              return (
+                <button
+                  type="button"
+                  className={`stat-tile expandable${open ? ' open' : ''}`}
+                  key={s.dimension}
+                  onClick={() => setOpenStat(open ? null : s.dimension)}
+                  aria-expanded={open}
+                  aria-controls="stat-breakdown-panel"
+                >
+                  <span className="stat-label">{label}</span>
                   <span className="stat-value">{s.current ?? '—'}</span>
-                  <Delta current={s.current} previous={s.previous} downIsGood={false} />
-                </div>
-              ))}
-            {summary.rates.map((r) => (
-              <div className="stat-tile" key={r.dimension}>
-                <span className="stat-label">{RATE_LABELS[r.dimension] || r.dimension}</span>
-                <span className="stat-value">{r.current ?? '—'}</span>
-                <Delta current={r.current} previous={r.previous} downIsGood />
-              </div>
-            ))}
+                  <Delta current={s.current} previous={s.previous} downIsGood={s.downIsGood} />
+                  <span className="stat-why">{open ? 'Hide' : 'Why?'}</span>
+                </button>
+              );
+            })}
           </div>
+
+          {openStat && (
+            <div id="stat-breakdown-panel">
+              <StatBreakdown
+                dimension={openStat}
+                label={SCORE_LABELS[openStat] || RATE_LABELS[openStat] || openStat}
+                isScore={openStat in SCORE_LABELS}
+              />
+            </div>
+          )}
 
           <div className="chart-panel">
             <div className="chart-controls">

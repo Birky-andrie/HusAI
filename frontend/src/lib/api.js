@@ -7,8 +7,10 @@ export const API_BASE = import.meta.env.VITE_API_BASE_URL || '';
 async function toError(resp) {
   let message = `HTTP ${resp.status}`;
   let code = '';
+  let body = null;
   try {
     const data = await resp.json();
+    body = data;
     if (data.message) message = data.message;
     if (data.error) code = data.error;
   } catch {
@@ -17,6 +19,10 @@ async function toError(resp) {
   const err = new Error(message);
   err.status = resp.status;
   err.code = code;
+  // The whole payload, because some errors carry data the caller needs and not
+  // just text — a 402 from /api/meetings still returns the saved meeting id and
+  // which limit was hit, and losing that would mean losing the transcript.
+  err.body = body;
   return err;
 }
 

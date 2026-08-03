@@ -27,6 +27,7 @@ import ProgressPage from './pages/ProgressPage.jsx';
 import SettingsPage from './pages/SettingsPage.jsx';
 import PlansPage from './pages/PlansPage.jsx';
 import HelpPage from './pages/HelpPage.jsx';
+import TermsPage from './pages/TermsPage.jsx';
 import { isPro, planLabel } from './billing/plan.js';
 
 // Minimal inline nav icons (stroke, currentColor) — visual only.
@@ -94,6 +95,9 @@ function AppRoutes({ location }) {
       <Route path="/forgot-password" element={<ForgotPasswordPage />} />
       <Route path="/reset-password" element={<ResetPasswordPage />} />
       <Route path="/oauth-complete" element={<OAuthCompletePage />} />
+      {/* Public: people must be able to read the terms before signing up, and
+          link to them from outside the app. */}
+      <Route path="/terms" element={<TermsPage />} />
       <Route path="/dashboard" element={<RequireAuth><DashboardPage /></RequireAuth>} />
       <Route path="/call" element={<RequireAuth><CallPage /></RequireAuth>} />
       <Route path="/history" element={<RequireAuth><HistoryPage /></RequireAuth>} />

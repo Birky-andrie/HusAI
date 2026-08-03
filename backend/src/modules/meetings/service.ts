@@ -9,6 +9,8 @@ export interface StoredReview {
   insights: ReviewResult['insights'];
   roleplayExercises: ReviewResult['roleplayExercises'];
   scores: ReviewResult['scores'];
+  /** Absent on reviews generated before per-dimension breakdowns existed. */
+  scoreDetails: ReviewResult['scoreDetails'];
   metrics: CallMetrics;
   createdAt: Date;
 }
@@ -19,17 +21,30 @@ type ReviewRow = {
   insightsJson: string;
   exercisesJson: string;
   scoresJson: string;
+  scoreDetailsJson: string | null;
   metricsJson: string;
   createdAt: Date;
 };
 
 export function parseReviewRow(row: ReviewRow): StoredReview {
+  // A corrupt breakdown must not take the whole review down with it — the
+  // scores, insights and exercises are the substance and parse independently.
+  let scoreDetails: ReviewResult['scoreDetails'];
+  if (row.scoreDetailsJson) {
+    try {
+      scoreDetails = JSON.parse(row.scoreDetailsJson);
+    } catch {
+      console.warn(`review ${row.id}: unreadable scoreDetailsJson, omitting breakdown`);
+    }
+  }
+
   return {
     id: row.id,
     overallScore: row.overallScore,
     insights: JSON.parse(row.insightsJson),
     roleplayExercises: JSON.parse(row.exercisesJson),
     scores: JSON.parse(row.scoresJson),
+    scoreDetails,
     metrics: JSON.parse(row.metricsJson),
     createdAt: row.createdAt,
   };
@@ -67,6 +82,7 @@ export async function generateReviewForMeeting(
       insightsJson: JSON.stringify(result.insights),
       exercisesJson: JSON.stringify(result.roleplayExercises),
       scoresJson: JSON.stringify(result.scores),
+      scoreDetailsJson: result.scoreDetails ? JSON.stringify(result.scoreDetails) : null,
       metricsJson: JSON.stringify(metrics),
     },
   });

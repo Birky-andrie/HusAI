@@ -1,8 +1,10 @@
 import { Router } from 'express';
 import { prisma } from '../../db.js';
 import { config } from '../../config.js';
-import { authRequired } from '../../middleware/auth.js';
+import { authRequired, forgetProvisioned } from '../../middleware/auth.js';
 import { resolveEntitlements } from '../../lib/entitlements.js';
+import { usageStatusForUser } from '../../lib/usage.js';
+import { TERMS_VERSION } from '../../lib/terms.js';
 import { cancelSubscriptionForUser } from '../billing/service.js';
 import { stripeEnabled } from '../billing/stripe.js';
 
@@ -55,8 +57,46 @@ router.get('/me', async (req, res) => {
       notificationPrefs: user.settings.notificationPrefsJson ? JSON.parse(user.settings.notificationPrefsJson) : {},
     },
     // Always server-derived — the client never decides its own plan.
-    subscription: resolveEntitlements(user.subscription),
+    subscription: resolveEntitlements(user.subscription, user),
+    terms: {
+      acceptedAt: user.termsAcceptedAt,
+      acceptedVersion: user.termsAcceptedVersion,
+      currentVersion: TERMS_VERSION,
+      // True when they have never accepted, or accepted an older version and
+      // need to re-consent. RA 10173 treats consent as specific to what was
+      // disclosed, so materially new terms need fresh agreement.
+      needsAcceptance: user.termsAcceptedVersion !== TERMS_VERSION,
+    },
   });
+});
+
+/**
+ * Current usage against the plan's limits. The client calls this before
+ * offering to start a call, so a free user who is out of allowance is stopped
+ * at the button rather than after they have already talked to a client.
+ */
+router.get('/me/usage', async (req, res) => {
+  res.json(await usageStatusForUser(req.user!.id));
+});
+
+/**
+ * Record acceptance of the terms. Stores WHICH version was agreed to, because
+ * "they clicked yes once" is not evidence of consent to terms written later.
+ */
+router.post('/me/accept-terms', async (req, res) => {
+  const { version } = (req.body || {}) as { version?: unknown };
+  if (version !== TERMS_VERSION) {
+    return res.status(400).json({
+      error: 'invalid-request',
+      message: `Expected terms version ${TERMS_VERSION}.`,
+      currentVersion: TERMS_VERSION,
+    });
+  }
+  await prisma.user.update({
+    where: { id: req.user!.id },
+    data: { termsAcceptedAt: new Date(), termsAcceptedVersion: TERMS_VERSION },
+  });
+  res.json({ ok: true, acceptedVersion: TERMS_VERSION });
 });
 
 router.patch('/me', async (req, res) => {
@@ -125,11 +165,23 @@ router.patch('/me/settings', async (req, res) => {
   });
 });
 
-/** Best-effort removal of the Supabase auth identity — needs the service-role key. */
-async function deleteSupabaseUser(id: string): Promise<void> {
+/**
+ * Remove the Supabase auth identity. Returns whether it actually happened.
+ *
+ * This is not cosmetic. Sign-in is owned by Supabase, and our `User` row is
+ * re-created just-in-time on the next authenticated request (see
+ * middleware/auth.ts). So if the auth identity survives, the "deleted" account
+ * can be signed straight back into and is silently reborn — the deletion did
+ * not happen in any sense the user would recognise. The caller reports this
+ * honestly rather than claiming success.
+ */
+async function deleteSupabaseUser(id: string): Promise<{ ok: boolean; reason?: string }> {
   if (!config.supabaseServiceRoleKey) {
-    console.warn(`account ${id} deleted locally, but SUPABASE_SERVICE_ROLE_KEY is unset — the Supabase auth user remains.`);
-    return;
+    console.error(
+      `account ${id}: app data deleted, but SUPABASE_SERVICE_ROLE_KEY is unset so the Supabase auth identity REMAINS. ` +
+        `This user can sign in again and be re-provisioned. Set the key to make deletion final.`
+    );
+    return { ok: false, reason: 'service-role-key-missing' };
   }
   try {
     const resp = await fetch(`${config.supabaseUrl}/auth/v1/admin/users/${id}`, {
@@ -139,24 +191,39 @@ async function deleteSupabaseUser(id: string): Promise<void> {
         Authorization: `Bearer ${config.supabaseServiceRoleKey}`,
       },
     });
-    if (!resp.ok) console.error(`Supabase admin delete failed for ${id}:`, resp.status, (await resp.text()).slice(0, 200));
+    if (!resp.ok) {
+      console.error(`Supabase admin delete failed for ${id}:`, resp.status, (await resp.text()).slice(0, 200));
+      return { ok: false, reason: `supabase-${resp.status}` };
+    }
+    return { ok: true };
   } catch (err) {
     console.error(`Supabase admin delete error for ${id}:`, (err as Error).message);
+    return { ok: false, reason: 'supabase-unreachable' };
   }
 }
 
 router.delete('/me', async (req, res) => {
+  const userId = req.user!.id;
+
   // Cancel billing FIRST — deleting the row would otherwise orphan a live
   // subscription and keep charging someone who no longer has an account.
   // Best-effort by design: a Stripe outage must not block account deletion.
-  if (stripeEnabled()) await cancelSubscriptionForUser(req.user!.id);
+  if (stripeEnabled()) await cancelSubscriptionForUser(userId);
 
   // Cascades wipe settings, subscription, meetings, reviews, practice
-  // sessions/turns, and progress metrics with the user row; then remove the
-  // Supabase auth identity.
-  await prisma.user.delete({ where: { id: req.user!.id } });
-  await deleteSupabaseUser(req.user!.id);
-  res.json({ ok: true });
+  // sessions/turns, and progress metrics with the user row.
+  await prisma.user.delete({ where: { id: userId } });
+
+  // Drop the JIT-provisioning cache entry, or a signed-in token for this id
+  // would keep skipping the upsert and operate against a nonexistent row.
+  forgetProvisioned(userId);
+
+  const identity = await deleteSupabaseUser(userId);
+
+  // 200 either way — the user's data IS gone, and there is nothing they can do
+  // about a server-side config gap. `identityRemoved: false` tells the client
+  // (and anyone reading logs) that sign-in credentials may still exist.
+  res.json({ ok: true, identityRemoved: identity.ok, reason: identity.reason });
 });
 
 export default router;

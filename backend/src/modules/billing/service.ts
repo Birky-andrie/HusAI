@@ -61,7 +61,10 @@ export async function createCheckoutSession(opts: {
       metadata: { userId: opts.userId },
       ...(config.stripeTrialDays > 0 ? { trial_period_days: config.stripeTrialDays } : {}),
     },
-    success_url: appUrl('/settings?checkout=success'),
+    // Back to the plans page, which is where "Manage Plan" lives — a customer
+    // who just subscribed most often wants to confirm what they bought or open
+    // the billing portal, and /settings buries that under everything else.
+    success_url: appUrl('/plans?checkout=success'),
     cancel_url: appUrl('/plans?checkout=cancelled'),
     allow_promotion_codes: true,
   });

@@ -43,6 +43,8 @@ export default function FloatingCoach({
   micStream,
   clientAudioActive,
   callStartedAt,
+  muted,
+  onToggleMute,
   conversationMode,
   onToggleConversationMode,
 }) {
@@ -68,10 +70,28 @@ export default function FloatingCoach({
         <MicVisualizer stream={micStream} variant="hero" bars={5} label="Microphone active" />
       </header>
 
-      <div className="coach-status">
+      <div className={`coach-status${muted ? ' muted' : ''}`}>
         <span className="coach-status-live" aria-hidden="true" />
-        {clientAudioActive ? 'Coaching both sides of the call' : 'Listening to your microphone'}
+        {muted
+          ? 'Muted — HusAI cannot hear you'
+          : clientAudioActive
+            ? 'Coaching both sides of the call'
+            : 'Listening to your microphone'}
       </div>
+
+      {/* Mute lives in the floating window as well as the tab: the VA is
+          usually looking at this window, not the app, when they need to cut
+          the mic in a hurry. */}
+      {onToggleMute && (
+        <button
+          className={`coach-mute${muted ? ' on' : ''}`}
+          onClick={onToggleMute}
+          aria-pressed={Boolean(muted)}
+          title={muted ? 'Unmute your microphone' : 'Mute your microphone'}
+        >
+          {muted ? '🔇 Unmute mic' : '🎙 Mute mic'}
+        </button>
+      )}
 
       {/* Reachable from the floating window too — the VA is usually here, not
           in the tab, while the client side is talking. */}

@@ -3,6 +3,20 @@ import { Link, useParams } from 'react-router-dom';
 import { api } from '../lib/api.js';
 import ReviewDashboard from '../components/ReviewDashboard.jsx';
 
+/**
+ * Milliseconds from the call start as "m:ss" (or "h:mm:ss" past an hour).
+ * Offsets, not clock times: what matters when re-reading a call is how far in
+ * something was said, and an offset also avoids exposing when the user works.
+ */
+function formatOffset(ms) {
+  const total = Math.max(0, Math.round(ms / 1000));
+  const h = Math.floor(total / 3600);
+  const m = Math.floor((total % 3600) / 60);
+  const s = total % 60;
+  const pad = (n) => String(n).padStart(2, '0');
+  return h > 0 ? `${h}:${pad(m)}:${pad(s)}` : `${m}:${pad(s)}`;
+}
+
 export default function HistoryDetailPage() {
   const { id } = useParams();
   const [data, setData] = useState(null);
@@ -78,16 +92,32 @@ export default function HistoryDetailPage() {
             more than one participant.
           </p>
         )}
-        {showTranscript && (
-          <div className="transcript-lines">
-            {/* startsWith('Client') matches both "Client side:" and the legacy "Client:" prefix. */}
-            {data.meeting.transcript.split('\n').map((line, i) => (
-              <p key={i} className={`line ${line.startsWith('Client') ? 'client' : 'va'}`}>
-                {line}
-              </p>
-            ))}
-          </div>
-        )}
+        {showTranscript &&
+          // Meetings recorded before timestamps were stored have no timedLines,
+          // so the plain-text path below stays as the fallback rather than
+          // being replaced — old calls still render, just without times.
+          (data.meeting.timedLines?.length ? (
+            <div className="transcript-lines timed">
+              {data.meeting.timedLines.map((line, i) => (
+                <p key={i} className={`line ${line.speaker === 'client' ? 'client' : 'va'}`}>
+                  <time className="line-time" dateTime={`PT${Math.round(line.t / 1000)}S`}>
+                    {formatOffset(line.t)}
+                  </time>
+                  <span className="line-who">{line.speaker === 'client' ? 'Client side' : 'VA'}</span>
+                  <span className="line-text">{line.text}</span>
+                </p>
+              ))}
+            </div>
+          ) : (
+            <div className="transcript-lines">
+              {/* startsWith('Client') matches both "Client side:" and the legacy "Client:" prefix. */}
+              {data.meeting.transcript.split('\n').map((line, i) => (
+                <p key={i} className={`line ${line.startsWith('Client') ? 'client' : 'va'}`}>
+                  {line}
+                </p>
+              ))}
+            </div>
+          ))}
       </div>
     </div>
   );

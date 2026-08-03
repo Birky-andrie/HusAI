@@ -22,7 +22,9 @@ export default function PlansPage() {
   const [busyPriceId, setBusyPriceId] = useState('');
   const [interval, setInterval] = useState('month');
 
-  const cancelled = new URLSearchParams(location.search).get('checkout') === 'cancelled';
+  const checkoutResult = new URLSearchParams(location.search).get('checkout');
+  const cancelled = checkoutResult === 'cancelled';
+  const succeeded = checkoutResult === 'success';
 
   useEffect(() => {
     api
@@ -30,6 +32,13 @@ export default function PlansPage() {
       .then(setData)
       .catch((e) => setError(e.message));
   }, []);
+
+  // Stripe redirects back the instant payment clears, which can beat its own
+  // webhook to our database. Re-reading /api/me here means the page shows the
+  // new plan rather than still claiming they are on Free.
+  useEffect(() => {
+    if (succeeded) refreshMe();
+  }, [succeeded, refreshMe]);
 
   // Only offer the monthly/yearly switch when both are actually configured.
   const intervals = useMemo(() => {
@@ -87,6 +96,14 @@ export default function PlansPage() {
         </div>
       </div>
 
+      {/* `info`, not a new success variant: the design system deliberately
+          defines only danger and warning as semantic colours. */}
+      {succeeded && (
+        <div className="banner info">
+          You&apos;re on Pro — thank you. Your receipt is on its way by email. Use{' '}
+          <strong>Manage Plan</strong> below to update your payment method, see invoices, or cancel.
+        </div>
+      )}
       {cancelled && <div className="banner info">Checkout cancelled — no changes were made to your plan.</div>}
       {error && <div className="banner error">{error}</div>}
 

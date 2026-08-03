@@ -17,7 +17,23 @@ Also score the VA's communication on this call from 0-100 in four dimensions (be
 - conciseness: says what's needed without rambling or filler
 - professionalism: warm, courteous, client-appropriate tone and follow-through
 
+For EVERY dimension you score, also explain the score in a "scoreDetails" entry:
+- reason: 1-2 sentences on WHY this score, naming the specific behaviour in this call that drove it. Not a definition of the dimension — a judgement about this VA on this call.
+- evidence: 1-2 short quotes from the VA's own lines that show it. Use the VA's exact words. If the transcript genuinely contains nothing relevant, use an empty list rather than inventing a quote.
+- improve: one concrete, specific action that would raise this score next call. Something they could actually do differently, not "be more confident".
+
 Be encouraging and specific. Never invent quotes that are not in the transcript.`;
+
+/** Shared shape for each dimension's "why did I get this score" breakdown. */
+const SCORE_DETAIL_SCHEMA = {
+  type: 'OBJECT',
+  properties: {
+    reason: { type: 'STRING' },
+    evidence: { type: 'ARRAY', items: { type: 'STRING' } },
+    improve: { type: 'STRING' },
+  },
+  required: ['reason', 'improve'],
+};
 
 const RESPONSE_SCHEMA = {
   type: 'OBJECT',
@@ -56,7 +72,21 @@ const RESPONSE_SCHEMA = {
       },
       required: ['confidence', 'clarity', 'conciseness', 'professionalism'],
     },
+    scoreDetails: {
+      type: 'OBJECT',
+      properties: {
+        confidence: SCORE_DETAIL_SCHEMA,
+        clarity: SCORE_DETAIL_SCHEMA,
+        conciseness: SCORE_DETAIL_SCHEMA,
+        professionalism: SCORE_DETAIL_SCHEMA,
+      },
+      required: ['confidence', 'clarity', 'conciseness', 'professionalism'],
+    },
   },
+  // scoreDetails is intentionally NOT required: it was added after reviews were
+  // already being generated, and a model that omits it should still produce a
+  // usable review rather than failing schema validation. The UI treats a
+  // missing detail as "no breakdown available for this one".
   required: ['insights', 'roleplayExercises', 'scores'],
 };
 
@@ -79,10 +109,24 @@ export interface ReviewScores {
   professionalism: number;
 }
 
+/** Why a dimension scored what it did, and what to do about it. */
+export interface ScoreDetail {
+  reason: string;
+  evidence?: string[];
+  improve: string;
+}
+
+/**
+ * Per-dimension breakdown. Optional throughout: reviews generated before this
+ * existed have none, and the model may omit it. Callers must handle absence.
+ */
+export type ScoreDetails = Partial<Record<keyof ReviewScores, ScoreDetail>>;
+
 export interface ReviewResult {
   insights: ReviewInsight[];
   roleplayExercises: RoleplayExercise[];
   scores: ReviewScores;
+  scoreDetails?: ScoreDetails;
   /** Which provider produced this review — drives quota accounting upstream. */
   provider?: 'gemini' | 'groq';
   mock?: boolean;
@@ -112,6 +156,35 @@ const MOCK_REVIEW: ReviewResult = {
         'The key news (the report is done) came last. Lead with the headline, then add detail.',
     },
   ],
+  // Same call as `insights` above, one level deeper: this is what a user sees
+  // when they click a specific score tile. Kept consistent with those two
+  // patterns (apologizing -> confidence, buried headline -> clarity) rather
+  // than inventing unrelated commentary, plus two more for the dimensions the
+  // general insights above don't cover.
+  scoreDetails: {
+    confidence: {
+      reason:
+        'You apologized three times for one small delay, which reads as uncertain rather than in control of the situation.',
+      evidence: ['Sorry po, sorry, I will check again, so sorry for that.'],
+      improve: 'One clear apology, then state the fix — skip the rest.',
+    },
+    clarity: {
+      reason:
+        'The actual news — the report was done — came at the end of a long sentence, after several unrelated details.',
+      evidence: ['So I checked the file, and there were some things, and also the schedule... anyway the report is actually done.'],
+      improve: 'Open with the headline: "The report is done." Add the details after.',
+    },
+    conciseness: {
+      reason: 'The same update was repeated in slightly different words twice, which stretched a 10-second update to nearly 30.',
+      evidence: [],
+      improve: 'Say it once, then stop — resist the urge to restate it for reassurance.',
+    },
+    professionalism: {
+      reason: 'Tone stayed warm and courteous throughout, including while walking back the delay — that held up under pressure.',
+      evidence: [],
+      improve: 'Keep this — it is the steadiest of your four scores this call.',
+    },
+  },
   roleplayExercises: [
     {
       title: 'One Apology Rule',
@@ -157,14 +230,49 @@ function validateReview(parsed: unknown): Omit<ReviewResult, 'provider' | 'mock'
       conciseness: clampScore(rawScores.conciseness),
       professionalism: clampScore(rawScores.professionalism),
     },
+    scoreDetails: validateScoreDetails(p.scoreDetails),
   };
+}
+
+/**
+ * Per-dimension breakdowns, validated leniently: a dimension whose detail is
+ * malformed is dropped rather than failing the whole review. This is a
+ * nice-to-have layer over scores that already stand on their own, so a model
+ * that returns three good details and one bad one should still ship three.
+ *
+ * Returns undefined (not {}) when nothing survives, so the UI's "no breakdown"
+ * check is a single falsy test.
+ */
+function validateScoreDetails(raw: unknown): ScoreDetails | undefined {
+  if (!raw || typeof raw !== 'object') return undefined;
+  const source = raw as Record<string, unknown>;
+  const out: ScoreDetails = {};
+
+  for (const dim of SCORE_DIMENSIONS) {
+    const d = source[dim];
+    if (!d || typeof d !== 'object') continue;
+    const { reason, evidence, improve } = d as Record<string, unknown>;
+    if (typeof reason !== 'string' || !reason.trim()) continue;
+    if (typeof improve !== 'string' || !improve.trim()) continue;
+    out[dim] = {
+      reason: reason.trim(),
+      // Quotes are capped at 3: this renders in a popover, and a wall of
+      // evidence defeats the point of a quick "why did I get this".
+      evidence: Array.isArray(evidence)
+        ? evidence.filter((q): q is string => typeof q === 'string' && q.trim().length > 0).slice(0, 3)
+        : [],
+      improve: improve.trim(),
+    };
+  }
+
+  return Object.keys(out).length ? out : undefined;
 }
 
 // Groq has no responseSchema equivalent, so the shape rides in the prompt.
 const GROQ_SHAPE_NOTE = `
 
 Respond ONLY with JSON in exactly this shape:
-{"insights": [{"pattern": "...", "evidence": "...", "explanation": "..."}], "roleplayExercises": [{"title": "...", "scenario": "...", "targetSkill": "..."}], "scores": {"confidence": 0, "clarity": 0, "conciseness": 0, "professionalism": 0}}`;
+{"insights": [{"pattern": "...", "evidence": "...", "explanation": "..."}], "roleplayExercises": [{"title": "...", "scenario": "...", "targetSkill": "..."}], "scores": {"confidence": 0, "clarity": 0, "conciseness": 0, "professionalism": 0}, "scoreDetails": {"confidence": {"reason": "...", "evidence": ["..."], "improve": "..."}, "clarity": {"reason": "...", "evidence": ["..."], "improve": "..."}, "conciseness": {"reason": "...", "evidence": ["..."], "improve": "..."}, "professionalism": {"reason": "...", "evidence": ["..."], "improve": "..."}}}`;
 
 // Bigger than the Lifeline/Practice model — the review needs real reasoning.
 const GROQ_REVIEW_MODEL = 'llama-3.3-70b-versatile';

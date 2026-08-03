@@ -81,10 +81,47 @@ const TESTIMONIALS = [
   { quote: 'Practice sessions feel like the real thing. I walk into calls already warmed up.', name: 'Priya M.', role: 'Sales VA' },
 ];
 
+/**
+ * Marketing pricing for the public landing page.
+ *
+ * These figures are HARDCODED and are the one place in the app where a price
+ * is written by hand — the signed-in /plans page reads amount and currency
+ * live from Stripe, so it can never drift from what a customer is charged.
+ * This page can. If the Stripe price changes, change it here too, or the
+ * landing page starts lying.
+ *
+ * The tiers and limits below must match `backend/src/modules/billing/plans.ts`
+ * (which tiers exist) and `backend/src/lib/entitlements.ts` (FREE_LIMITS).
+ */
 const PLANS = [
-  { name: 'Professional', tagline: 'For individuals', price: '$29', unit: '/mo', features: ['15 hours live coaching', 'Post-call reviews', 'Basic analytics', 'Email support'], cta: 'Choose Professional' },
-  { name: 'Pro', tagline: 'For serious communicators', price: '$79', unit: '/mo', features: ['Unlimited live coaching', 'AI Review & Replay', 'Deep analytics & trends', 'Personalized practice', 'Priority support'], cta: 'Choose Pro', popular: true },
-  { name: 'Enterprise', tagline: 'For teams', price: 'Custom', unit: '', features: ['Everything in Pro', 'Team dashboards', 'SSO & custom integrations', 'Dedicated success manager'], cta: 'Contact Sales' },
+  {
+    name: 'Free',
+    tagline: 'Try it on real calls',
+    price: '₱0',
+    unit: '/mo',
+    features: [
+      '3 coached calls per month',
+      '30 minutes of live coaching',
+      'Post-call AI review',
+      'Practice roleplays',
+    ],
+    cta: 'Start free',
+  },
+  {
+    name: 'Pro',
+    tagline: 'For virtual assistants who want to level up faster',
+    price: '₱199',
+    unit: '/mo',
+    features: [
+      'Unlimited calls and minutes',
+      'AI Review & Replay on every call',
+      'Deep analytics & progress trends',
+      'Personalised practice sessions',
+      'Priority support',
+    ],
+    cta: 'Go Pro',
+    popular: true,
+  },
 ];
 
 export default function LandingPage({ onStart, startDisabled }) {

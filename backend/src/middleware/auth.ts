@@ -51,6 +51,20 @@ async function ensureUser(id: string, email: string, displayName: string | null)
 }
 
 /**
+ * Forget that a user was provisioned.
+ *
+ * MUST be called when an account is deleted. `provisioned` is a per-process
+ * cache that skips the upsert on every request after the first; if a deleted
+ * user's id stays in it and they sign in again (their Supabase identity can
+ * outlive our row — see deleteSupabaseUser), `ensureUser` would short-circuit
+ * and never recreate the `User` row, leaving a valid token whose foreign keys
+ * point at nothing. Every subsequent write would fail on a missing FK.
+ */
+export function forgetProvisioned(id: string): void {
+  provisioned.delete(id);
+}
+
+/**
  * Verify a Supabase access token and resolve it to our app user, provisioning
  * the row on first sight. Returns null on any failure. Shared by the HTTP
  * middleware and the WebSocket handshake.

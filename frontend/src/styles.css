@@ -938,6 +938,17 @@ button:disabled {
   letter-spacing: 0.04em;
   animation: pulse 1.4s infinite;
 }
+/* Muted drops both the "AI is live" fuchsia and the pulse — a pulsing badge
+   next to the word MUTED would say two contradictory things at once. */
+.live-dot.muted {
+  color: var(--text-muted);
+  animation: none;
+}
+.mic-toggle.muted {
+  border-color: var(--danger-border);
+  color: var(--danger-text);
+  background: var(--danger-soft);
+}
 @keyframes pulse {
   50% {
     opacity: 0.35;
@@ -984,6 +995,50 @@ button:disabled {
   display: flex;
   gap: 10px;
   align-items: baseline;
+}
+
+/* Timestamped transcript (meetings recorded since transcriptJson exists). */
+.transcript-lines.timed .line {
+  gap: 12px;
+}
+.line-time {
+  flex: 0 0 auto;
+  /* Tabular figures so the times form a straight column instead of jittering
+     as digit widths change down the transcript. */
+  font-variant-numeric: tabular-nums;
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  min-width: 3.4em;
+  text-align: right;
+}
+.line-who {
+  flex: 0 0 auto;
+  min-width: 5.6em;
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-secondary);
+}
+.transcript-lines.timed .line.client .line-who {
+  color: var(--accent-text);
+}
+.line-text {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+@media (max-width: 640px) {
+  /* Stacked on narrow screens: three columns of fixed-width metadata leaves
+     almost nothing for the actual words. */
+  .transcript-lines.timed .line {
+    flex-wrap: wrap;
+    gap: 4px 10px;
+  }
+  .line-text {
+    flex-basis: 100%;
+  }
 }
 
 .speaker-tag {
@@ -1635,6 +1690,108 @@ a.list-row:hover {
   letter-spacing: 0.05em;
   color: var(--text-secondary);
 }
+
+/* Push-to-talk dictation on the practice page. The recording state uses the
+   same fuchsia "live AI / listening" language as the call's mic surfaces, so
+   an active mic looks the same everywhere in the app. */
+.mic-button.recording {
+  border-color: var(--live);
+  color: var(--live-bright);
+  background: var(--live-soft);
+}
+.mic-button.recording::before {
+  content: '';
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  margin-right: 7px;
+  border-radius: 50%;
+  background: var(--live);
+  animation: mic-pulse 1.6s var(--ease) infinite;
+}
+@keyframes mic-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.35; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .mic-button.recording::before {
+    animation: none;
+  }
+}
+
+/* A score that can explain itself. Only rendered as a button when a breakdown
+   exists, so the affordance never lies about being interactive. */
+.score-tile.expandable {
+  cursor: pointer;
+  font: inherit;
+  color: inherit;
+  text-align: center;
+  transition: border-color var(--dur) var(--ease-out), background var(--dur) var(--ease-out);
+}
+.score-tile.expandable:hover,
+.score-tile.expandable:focus-visible {
+  border-color: var(--border-accent);
+  background: var(--card);
+}
+.score-tile.expandable.open {
+  border-color: var(--border-accent);
+  background: var(--accent-soft);
+}
+.score-why {
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: var(--accent-text);
+}
+
+.score-detail {
+  margin: 4px 0 8px;
+  padding: 16px 18px;
+  border: 1px solid var(--border-accent);
+  border-radius: var(--radius-sm);
+  background: var(--card);
+}
+.score-detail h4 {
+  margin: 0 0 8px;
+  font-size: 0.98rem;
+  /* The dimension name arrives lowercase from the data key. */
+  text-transform: capitalize;
+}
+.score-detail h5 {
+  margin: 14px 0 6px;
+  font-size: 0.74rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-secondary);
+}
+.score-detail p {
+  margin: 0;
+  line-height: 1.55;
+  color: var(--text-body);
+}
+.score-evidence {
+  margin: 0;
+  padding-left: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  color: var(--text-body);
+}
+.score-evidence li {
+  font-style: italic;
+  line-height: 1.5;
+}
+.score-improve {
+  margin-top: 14px !important;
+  padding-top: 12px;
+  border-top: 1px solid var(--border);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .score-tile.expandable {
+    transition: none;
+  }
+}
 .review-actions {
   margin-top: 18px;
   text-align: center;
@@ -1817,6 +1974,104 @@ a.list-row:hover {
 .stat-value {
   font-size: 1.7rem;
   font-weight: 600;
+}
+
+/* A stat that can explain where its number came from. Rendered as a real
+   button so it is keyboard-reachable — a div with onClick would leave this
+   whole row unusable without a mouse. */
+.stat-tile.expandable {
+  cursor: pointer;
+  font: inherit;
+  color: inherit;
+  text-align: left;
+  transition: border-color var(--dur) var(--ease-out), background var(--dur) var(--ease-out);
+}
+.stat-tile.expandable:hover,
+.stat-tile.expandable:focus-visible {
+  border-color: var(--border-accent);
+}
+.stat-tile.expandable.open {
+  border-color: var(--border-accent);
+  background: var(--accent-soft);
+}
+.stat-why {
+  margin-top: 2px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: var(--accent-text);
+}
+
+.stat-breakdown {
+  margin: -6px 0 20px;
+  padding: 18px 20px;
+  border: 1px solid var(--border-accent);
+  border-radius: var(--radius);
+  background: var(--card);
+}
+.stat-breakdown h4 {
+  margin: 14px 0 6px;
+  font-size: 0.98rem;
+}
+.stat-breakdown h5 {
+  margin: 16px 0 8px;
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-secondary);
+}
+.bd-help {
+  margin: 0;
+  line-height: 1.55;
+  color: var(--text-body);
+}
+.bd-formula {
+  margin: 0;
+  font-size: 0.88rem;
+  line-height: 1.5;
+  color: var(--text-secondary);
+}
+.bd-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.bd-list.muted {
+  opacity: 0.72;
+}
+.bd-list li {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  padding: 8px 12px;
+  border-radius: var(--radius-sm);
+  background: var(--card-2);
+}
+.bd-value {
+  /* Tabular so the column of numbers lines up rather than jittering. */
+  font-variant-numeric: tabular-nums;
+  font-weight: 700;
+  min-width: 2.6em;
+}
+.bd-meta {
+  flex: 1 1 auto;
+  min-width: 0;
+  font-size: 0.84rem;
+  color: var(--text-secondary);
+}
+.bd-gone {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  font-style: italic;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .stat-tile.expandable {
+    transition: none;
+  }
 }
 .delta {
   font-size: 0.78rem;
@@ -2579,6 +2834,42 @@ a.list-row:hover {
   background: var(--live);
   box-shadow: 0 0 6px var(--live);
 }
+/* Muted: the dot stops claiming the "AI is live" signal, because it isn't. */
+.coach-status.muted {
+  color: var(--danger-text);
+}
+.coach-status.muted .coach-status-live {
+  background: var(--danger);
+  box-shadow: none;
+}
+
+.coach-mute {
+  width: 100%;
+  margin-top: 8px;
+  padding: 7px 10px;
+  font-size: 0.74rem;
+  font-weight: 600;
+  color: var(--text-body);
+  background: var(--card-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: border-color var(--dur) var(--ease-out), background var(--dur) var(--ease-out);
+}
+.coach-mute:hover {
+  border-color: var(--border-2);
+}
+.coach-mute.on {
+  border-color: var(--danger-border);
+  color: var(--danger-text);
+  background: var(--danger-soft);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .coach-mute {
+    transition: none;
+  }
+}
 
 .coach-footer {
   display: flex;
@@ -2695,4 +2986,54 @@ a.list-row:hover {
 .smart-reply-copy:hover {
   background: var(--card);
   color: var(--accent-text);
+}
+
+/* ---------------------------------------------------------------------------
+   Legal pages (Terms of Service / Privacy Notice).
+
+   Measured for reading rather than scanning: a narrower column and looser
+   leading than the app's data-dense surfaces, because this is the one place
+   in the product people actually read prose end to end.
+   --------------------------------------------------------------------------- */
+.legal-page {
+  max-width: 76ch;
+  line-height: 1.68;
+}
+.legal-page h3 {
+  margin: 30px 0 10px;
+  font-size: 1.06rem;
+}
+.legal-page p,
+.legal-page li {
+  color: var(--text-body);
+}
+.legal-page ul {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding-left: 20px;
+  margin: 10px 0;
+}
+.legal-page a {
+  color: var(--accent-text);
+}
+
+.legal-callout {
+  margin: 18px 0 6px;
+  padding: 16px 20px;
+  border: 1px solid var(--border-2);
+  border-radius: var(--radius-sm);
+  background: var(--card);
+}
+.legal-callout h3 {
+  margin-top: 0;
+}
+/* The no-AI-training commitment is the single thing a cautious user is looking
+   for, so it gets the accent treatment rather than sitting in the body text. */
+.legal-callout.strong {
+  border-color: var(--border-accent);
+  background: var(--accent-soft);
+}
+.legal-callout.strong p:first-child {
+  margin-top: 0;
 }

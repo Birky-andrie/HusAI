@@ -1013,9 +1013,15 @@
 }
 
 /* Pricing */
+/* Auto-fit rather than a fixed column count: the tier list is data-driven, and
+   hardcoding 3 left an empty column the moment the catalog dropped to Free +
+   Pro. The max-width keeps two cards from stretching into billboards on a wide
+   screen, and `justify-content: center` keeps them centred rather than pinned
+   left with dead space beside them. */
 .lp-plans {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(auto-fit, minmax(280px, 380px));
+  justify-content: center;
   gap: 18px;
   align-items: start;
 }

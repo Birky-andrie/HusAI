@@ -15,6 +15,12 @@ export default function CallView({
   onStartCall,
   onEndCall,
   onBack,
+  muted,
+  onToggleMute,
+  // Free-tier allowance spent. Presentation only — the server refuses the call
+  // regardless, this just avoids letting someone talk to a real client first.
+  startDisabled = false,
+  startDisabledReason = '',
 }) {
   return (
     <div className="call-view">
@@ -24,6 +30,9 @@ export default function CallView({
         </div>
       )}
       {micError && <div className="banner error">{micError}</div>}
+      {!callActive && startDisabled && startDisabledReason && (
+        <div className="banner warning">{startDisabledReason}</div>
+      )}
 
       <div className="controls">
         {!callActive ? (
@@ -34,18 +43,28 @@ export default function CallView({
             <button
               className="primary"
               onClick={onStartCall}
-              disabled={transcriptionUnavailable || starting}
+              disabled={transcriptionUnavailable || starting || startDisabled}
               aria-busy={starting}
             >
               {starting ? 'Starting…' : 'Start Call'}
             </button>
           </>
         ) : (
-          <button className="danger" onClick={onEndCall}>
-            End Call
-          </button>
+          <>
+            <button
+              className={`secondary mic-toggle${muted ? ' muted' : ''}`}
+              onClick={onToggleMute}
+              aria-pressed={Boolean(muted)}
+              title={muted ? 'Unmute your microphone' : 'Mute your microphone'}
+            >
+              {muted ? '🔇 Unmute' : '🎙 Mute'}
+            </button>
+            <button className="danger" onClick={onEndCall}>
+              End Call
+            </button>
+          </>
         )}
-        {callActive && <span className="live-dot">● LIVE</span>}
+        {callActive && <span className={`live-dot${muted ? ' muted' : ''}`}>{muted ? '● MUTED' : '● LIVE'}</span>}
         {callActive &&
           floatingCoach.supported &&
           (floatingCoach.active ? (

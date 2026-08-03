@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { api } from '../lib/api.js';
+import useDictation from '../hooks/useDictation.js';
 
 function FeedbackCard({ feedback }) {
   const [open, setOpen] = useState(true);
@@ -84,6 +85,13 @@ export default function PracticeSessionPage() {
   const [ending, setEnding] = useState(false);
   const [clientDone, setClientDone] = useState(false);
   const scrollRef = useRef(null);
+
+  // Speaking the reply is closer to the real skill than typing it, so
+  // dictation appends into the same draft the user can then edit before
+  // sending — it assists the answer rather than replacing the compose step.
+  const dictation = useDictation({
+    onText: (text) => setDraft((prev) => (prev ? `${prev.trim()} ${text}` : text)),
+  });
 
   useEffect(() => {
     api
@@ -190,18 +198,35 @@ export default function PracticeSessionPage() {
           {clientDone && (
             <div className="banner info">The client wrapped up the conversation — end the session to get your summary.</div>
           )}
+          {dictation.error && <div className="banner error">{dictation.error}</div>}
+
           <form className="chat-input" onSubmit={send}>
             <textarea
-              value={draft}
+              value={draft + (dictation.interim ? ` ${dictation.interim}` : '')}
               onChange={(e) => setDraft(e.target.value)}
               onKeyDown={(e) => {
                 if (e.key === 'Enter' && !e.shiftKey) send(e);
               }}
-              placeholder="Type your reply to the client… (Enter to send, Shift+Enter for a new line)"
+              placeholder={
+                dictation.recording
+                  ? 'Listening… speak your reply, then stop to edit it.'
+                  : 'Type or speak your reply to the client… (Enter to send, Shift+Enter for a new line)'
+              }
               rows={2}
               disabled={sending}
             />
             <div className="chat-actions">
+              {dictation.supported && (
+                <button
+                  className={`secondary mic-button${dictation.recording ? ' recording' : ''}`}
+                  type="button"
+                  onClick={dictation.toggle}
+                  disabled={sending}
+                  aria-pressed={dictation.recording}
+                >
+                  {dictation.recording ? '⏹ Stop' : '🎙 Speak'}
+                </button>
+              )}
               <button className="primary" type="submit" disabled={sending || !draft.trim()}>
                 {sending ? 'Client is replying…' : 'Send'}
               </button>

@@ -27,6 +27,26 @@ model User {
   emailVerifiedAt DateTime?
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
+
+  // Manual tier lever for the prototype. When set, this WINS over the billing
+  // subscription — it is how a tier gets granted without anyone paying Stripe.
+  //   'unlimited' -> full Pro, no quota (what existing alpha users are given)
+  //   'pro'       -> full Pro, no quota
+  //   'free'      -> forced onto free limits even if a subscription exists
+  //   null        -> normal behaviour: the Stripe subscription decides
+  // Deliberately a plain nullable string, not an enum: the schema is enum-free
+  // for portability, and this is validated in lib/entitlements.ts.
+  planOverride    String?
+  // Why the override was granted, so a row is auditable a month from now
+  // ("alpha grandfather", "demo day judge", "refund goodwill").
+  planOverrideNote String?
+
+  // Data Privacy Act (RA 10173) records consent as a "freely given, specific,
+  // informed indication" evidenced by written/electronic means. Storing the
+  // moment and the version accepted is that evidence — a bare boolean would
+  // not tell us WHICH terms they agreed to once the terms change.
+  termsAcceptedAt      DateTime?
+  termsAcceptedVersion String?
   settings        UserSettings?
   subscription    Subscription?
   meetings        Meeting[]
@@ -79,8 +99,22 @@ model Meeting {
   durationSeconds Int
   platform        String // 'web' | 'desktop'
   transcript      String // "VA:"/"Client:"-labeled lines
+
+  // Timestamped transcript: JSON array of { t, speaker, text } where `t` is
+  // milliseconds from the call start. The live session already tracks this per
+  // line (it sorts by it) and used to throw it away when flattening to the
+  // labeled string above — this keeps it so the post-call view can show when
+  // each line was said.
+  //
+  // Additive on purpose. `transcript` stays the source of truth for the AI
+  // prompts and for every meeting recorded before this column existed; when
+  // this is null the UI simply renders the transcript without timestamps.
+  transcriptJson  String?
+
   createdAt       DateTime @default(now())
   review          Review?
+
+  @@index([userId, startedAt])
 }
 
 model Review {
@@ -93,6 +127,11 @@ model Review {
   insightsJson  String // JSON as String: Prisma has no Json type on SQLite
   exercisesJson String
   scoresJson    String
+  // Per-dimension "why did I score this" breakdown: { confidence: { reason,
+  // evidence[], improve }, ... }. Nullable because reviews generated before
+  // this existed have none, and because a model may omit it — the UI shows the
+  // score without a breakdown in that case rather than erroring.
+  scoreDetailsJson String?
   metricsJson   String
   createdAt     DateTime @default(now())
   practiceSessions PracticeSession[]

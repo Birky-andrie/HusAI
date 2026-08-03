@@ -24,6 +24,24 @@ function onPublicPath() {
   return PUBLIC_HASH_PATHS.has(hash);
 }
 
+/**
+ * True when a string is uninformative to show a user — specifically the
+ * `"{}"` (or `"[object Object]"`) that leaks through supabase-js in a known
+ * case: its fetch handler treats EVERY 5xx response as a generic "retryable
+ * network error" and discards the real JSON body without parsing it, so the
+ * message ends up being `JSON.stringify()` of a raw Response object (which has
+ * no own enumerable properties) — literally the string "{}". That happens even
+ * when the server sent a perfectly good message, e.g. Supabase Auth returning
+ * `{"code":"unexpected_failure","message":"Error sending confirmation email"}`
+ * for a signup whose confirmation email failed to send. See auth-js's
+ * `handleError()` — the 5xx branch throws before the JSON body is ever read.
+ */
+function looksUninformative(message) {
+  if (!message) return true;
+  const trimmed = message.trim();
+  return trimmed === '{}' || trimmed === '[object Object]' || (trimmed.startsWith('{') && trimmed.endsWith('}'));
+}
+
 /** Turn a Supabase auth error into a friendly Error (keeps `.code` for callers). */
 function friendly(error) {
   const code = error?.code || '';
@@ -35,7 +53,18 @@ function friendly(error) {
     over_email_send_rate_limit: 'Too many emails sent — please wait a minute and try again.',
     same_password: 'Your new password must be different from your current one.',
   };
-  const e = new Error(map[code] || error?.message || 'Something went wrong. Please try again.');
+  // supabase-js names this 'AuthRetryableFetchError' for any 5xx/network-level
+  // failure — the server hiccuped, not the user. Worth its own message because
+  // "please try again" is actually true here, unlike the generic fallback.
+  const isServerSide = error?.name === 'AuthRetryableFetchError';
+  const rawMessage = error?.message;
+  const message =
+    map[code] ||
+    (isServerSide || looksUninformative(rawMessage)
+      ? "We couldn't reach the server. Please try again in a moment."
+      : rawMessage) ||
+    'Something went wrong. Please try again.';
+  const e = new Error(message);
   e.code = code;
   return e;
 }

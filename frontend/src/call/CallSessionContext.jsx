@@ -128,6 +128,15 @@ export function CallSessionProvider({ children }) {
   const [reviewLoading, setReviewLoading] = useState(false);
   const [reviewError, setReviewError] = useState('');
   const [savedMeetingId, setSavedMeetingId] = useState(null);
+  // Set when the free-tier allowance ran out. Distinct from reviewError because
+  // it is not a failure: the call saved fine, the review is simply gated, and
+  // the UI shows an upgrade prompt rather than a retry button.
+  const [limitReached, setLimitReached] = useState(null);
+
+  // Mic mute. Held here rather than in either UI because the control appears in
+  // BOTH the main window and the floating coach — a VA muting from the PiP
+  // window must see the main tab agree, and vice versa.
+  const [muted, setMuted] = useState(false);
 
   // Conversation Mode: keep coaching the VA on how to JOIN an ongoing
   // client-side discussion, instead of only filling silences. Opt-in because it
@@ -382,6 +391,45 @@ export function CallSessionProvider({ children }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [callActive, micStream]);
 
+  /**
+   * Mute disables the mic track itself (so the level meter and, on desktop,
+   * Whisper's segment recorder correctly go silent — a disabled track produces
+   * real silence, not just muted playback, so the VAD in useSegmentTranscription
+   * sees no speech and never spends a Whisper call on it).
+   *
+   * That is NOT sufficient on web, and shipping it alone was a bug: Chrome's
+   * SpeechRecognition (`useWebSpeechTranscription`) opens its own capture
+   * straight from the OS microphone — `new SpeechRecognitionImpl()` takes no
+   * stream argument at all — so it is entirely independent of the getUserMedia
+   * track we hold and keeps transcribing through it regardless of `enabled`.
+   * The only way to actually stop it is to stop the recognizer itself, which is
+   * why this also calls `webSpeech.stop()`/`start()` on web. Desktop has no
+   * separate engine to worry about — Whisper only ever sees the one stream.
+   */
+  const toggleMute = useCallback(() => {
+    setMuted((wasMuted) => {
+      const next = !wasMuted;
+      micStreamRef.current?.getAudioTracks().forEach((t) => {
+        t.enabled = !next;
+      });
+      if (!isDesktop) {
+        if (next) webSpeech.stop();
+        else webSpeech.start();
+      }
+      return next;
+    });
+  }, [isDesktop, webSpeech]);
+
+  // A new mic stream (starting a call) always begins unmuted, and any stale
+  // mute state must not silently carry over onto it.
+  useEffect(() => {
+    if (!micStream) return;
+    micStream.getAudioTracks().forEach((t) => {
+      t.enabled = true;
+    });
+    setMuted(false);
+  }, [micStream]);
+
   // Start client-channel transcription whenever a shared stream appears.
   useEffect(() => {
     if (!callActive || !clientStream) return;
@@ -448,12 +496,17 @@ export function CallSessionProvider({ children }) {
   }, [stopClientShare]);
 
   /** Persist the call as a Meeting; the review comes back in the same response. */
-  const saveMeeting = useCallback(async (transcript, durationSeconds, avgResponseLatencySeconds) => {
+  const saveMeeting = useCallback(async (transcript, timedLines, durationSeconds, avgResponseLatencySeconds) => {
     setReviewLoading(true);
     setReviewError('');
+    setLimitReached(null);
     try {
       const result = await api.post('/api/meetings', {
         transcript,
+        // Same lines as the flattened transcript, but keeping the per-line
+        // timestamps this session already tracks, so the post-call view can
+        // show when each thing was said.
+        timedLines,
         durationSeconds,
         platform: window.electronAPI?.isDesktop ? 'desktop' : 'web',
         startedAt: callStartedAtRef.current || Date.now(),
@@ -467,7 +520,14 @@ export function CallSessionProvider({ children }) {
         setReviewError('Your call is saved. The review is taking longer than expected — try again in a moment.');
       }
     } catch (err) {
-      setReviewError(err.message || 'Could not save this call. Please try again.');
+      // 402 = free-tier allowance spent. The call itself was still saved, so
+      // this is an upgrade prompt, not a failure — the transcript is safe.
+      if (err.status === 402 && err.body?.error === 'limit-reached') {
+        setSavedMeetingId(err.body.meeting?.id || null);
+        setLimitReached({ message: err.body.message, blockedBy: err.body.blockedBy });
+      } else {
+        setReviewError(err.message || 'Could not save this call. Please try again.');
+      }
     } finally {
       setReviewLoading(false);
     }
@@ -505,9 +565,22 @@ export function CallSessionProvider({ children }) {
       ? Math.round((Date.now() - callStartedAtRef.current) / 1000)
       : 0;
 
+    // Timestamps are relative to the call start, not wall-clock epoch, so the
+    // post-call view can render "02:14" without needing to know when the call
+    // began — and so the payload leaks nothing about the user's timezone.
+    const startedAt = callStartedAtRef.current || 0;
+    const timedLines = [...linesRef.current]
+      .sort((a, b) => a.t - b.t)
+      .map((l) => ({ t: Math.max(0, l.t - startedAt), speaker: l.speaker, text: l.text }));
+
     setShowReview(true);
     if (fullTranscript.trim()) {
-      saveMeeting(fullTranscript, durationSecondsRef.current, computeAvgResponseLatency(linesRef.current));
+      saveMeeting(
+        fullTranscript,
+        timedLines,
+        durationSecondsRef.current,
+        computeAvgResponseLatency(linesRef.current)
+      );
     } else {
       setReviewError('No speech was captured during this call, so there is nothing to review yet.');
     }
@@ -537,6 +610,10 @@ export function CallSessionProvider({ children }) {
     },
     startCall,
     endCall,
+    // Mic mute, shared by the main window and the floating coach so the two
+    // can never disagree about whether HusAI is listening.
+    muted,
+    toggleMute,
     // Conversation Mode: keep suggesting ways to JOIN an ongoing client-side
     // discussion, instead of only coaching the VA's own silences.
     conversationMode,
@@ -551,6 +628,7 @@ export function CallSessionProvider({ children }) {
     review,
     reviewLoading,
     reviewError,
+    limitReached,
     savedMeetingId,
     retryReview,
     closeReview: () => setShowReview(false),
@@ -583,6 +661,8 @@ export function CallSessionProvider({ children }) {
             micStream={micStream}
             callStartedAt={callActive ? callStartedAtRef.current : null}
             clientAudioActive={Boolean(clientStream)}
+            muted={muted}
+            onToggleMute={toggleMute}
             conversationMode={conversationMode}
             onToggleConversationMode={toggleConversationMode}
           />,
